@@ -16,6 +16,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import BadgeIcon from "@mui/icons-material/Badge";
 import { usePathname } from "next/navigation";
 import Unauthorized from "../unauthorized";
+import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 
 //import { mainListItems } from "./ListItems";
 interface DrawerProps {
@@ -85,6 +86,16 @@ export default function DrawerComponent({
             isActive={pathname === "/dashboard/candidato/register"}
           />
         )}
+
+        <ListItems
+          label="Turmas"
+          icon={<MapsHomeWorkIcon />}
+          to="/dashboard/turmas"
+          isActive={
+            pathname === "/dashboard/turmas" ||
+            pathname.startsWith("/dashboard/turmas")
+          }
+        />
 
         <ListItems
           label="Liberar voto"
