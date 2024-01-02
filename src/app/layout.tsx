@@ -10,8 +10,8 @@ import { UserContextProvider } from "@/userContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SED - Sistema de Eleição de Diretores",
-  description: "Sistema de Eleição de Diretores",
+  title: "CLD 2024 - SEMED",
+  description: "Controle de Livros Didáticos - 2024",
 };
 
 export default async function RootLayout({

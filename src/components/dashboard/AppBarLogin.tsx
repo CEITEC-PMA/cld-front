@@ -38,7 +38,7 @@ export default function AppBarLogin() {
         >
           <div style={containerStyle}>
             <Typography variant="h6" color="inherit" noWrap sx={titleStyle}>
-              SED - Sistema de Eleição de Diretores
+              CLD 2024 - SEMED
             </Typography>
             <div style={logoStyle}>
               <Image

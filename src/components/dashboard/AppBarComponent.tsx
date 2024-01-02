@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { apiUrl } from "@/utils/api";
 import { useUserContext } from "@/userContext";
+import { Tooltip } from "@mui/material";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -101,7 +102,7 @@ export default function AppBarComponent({
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          Sistema de Eleição de Diretores
+          CLD 2024 - SEMED
         </Typography>
         <div>
           <Image
@@ -122,13 +123,15 @@ export default function AppBarComponent({
         >
           {user?.nome}
         </Typography>
-        <IconButton
-          onClick={() => handleOnClick()}
-          color="inherit"
-          sx={{ marginLeft: "10px" }}
-        >
-          <LogoutIcon />
-        </IconButton>
+        <Tooltip title="Sair">
+          <IconButton
+            onClick={() => handleOnClick()}
+            color="inherit"
+            sx={{ marginLeft: "10px" }}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </AppBar>
   );
