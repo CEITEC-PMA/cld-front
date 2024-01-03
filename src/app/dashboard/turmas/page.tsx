@@ -11,24 +11,28 @@ import {
   DialogProps,
   DialogTitle,
   FormControl,
-  FormControlLabel,
   IconButton,
+  Input,
   InputLabel,
   MenuItem,
   Select,
-  Switch,
+  TextField,
   Typography,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React, { MouseEvent, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function Turmas() {
   const { user } = useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState<DialogProps["maxWidth"]>("sm");
+  const [selectedTurma, setSelectedTurma] = React.useState<string>("");
+  const [qtdeAlunos, setQtdeAlunos] = React.useState<number | null>(null);
+
   const columns: GridColDef[] = [
     {
       field: "turma",
@@ -55,10 +59,18 @@ export default function Turmas() {
         <div>
           <IconButton
             color="primary"
-            onClick={(event) => console.log(event, params.row._id)}
+            onClick={(event) => handleEditar(event, params.row._id)}
             title="Editar"
           >
             <EditIcon />
+          </IconButton>
+
+          <IconButton
+            color="error"
+            onClick={(event) => handleDeletar(event, params.row._id)}
+            title="Remover"
+          >
+            <DeleteIcon />
           </IconButton>
         </div>
       ),
@@ -77,6 +89,26 @@ export default function Turmas() {
 
   const handleClose = () => {
     setIsModalOpen(false);
+  };
+
+  const handleSave = () => {
+    console.log("Turma selecionada:", selectedTurma);
+    console.log("Quantidade de alunos:", qtdeAlunos);
+    setIsModalOpen(false);
+  };
+
+  const handleEditar = async (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    id: string
+  ) => {
+    setIsModalOpen(true);
+  };
+
+  const handleDeletar = async (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    id: string
+  ) => {
+    console.log("deletou");
   };
 
   return (
@@ -126,45 +158,53 @@ export default function Turmas() {
                 flexDirection: "column",
                 m: "auto",
                 width: "fit-content",
+                gap: "4px",
               }}
             >
-              <FormControl sx={{ mt: 2, minWidth: 120 }}>
-                <InputLabel htmlFor="max-width">maxWidth</InputLabel>
+              <FormControl sx={{ mt: 4, minWidth: 120 }}>
+                <InputLabel htmlFor="turma">Turma</InputLabel>
                 <Select
-                  autoFocus
-                  value={maxWidth}
+                  value={selectedTurma}
                   label="Turma"
-                  inputProps={{
-                    name: "max-width",
-                    id: "max-width",
-                  }}
+                  onChange={(e) => setSelectedTurma(e.target.value as string)}
                 >
-                  <MenuItem value={false as any}>Selecione</MenuItem>
                   <MenuItem value="Infantil I">Infantil I</MenuItem>
-                  <MenuItem value="Infantil I">Infantil II</MenuItem>
-                  <MenuItem value="Infantil I">Infantil III</MenuItem>
-                  <MenuItem value="Infantil I">Infantil IV</MenuItem>
-                  <MenuItem value="Infantil I">Infantil V</MenuItem>
-                  <MenuItem value="Infantil I">1º Ano</MenuItem>
-                  <MenuItem value="Infantil I">2º Ano</MenuItem>
-                  <MenuItem value="Infantil I">3º Ano</MenuItem>
-                  <MenuItem value="Infantil I">4º Ano</MenuItem>
-                  <MenuItem value="Infantil I">5º Ano</MenuItem>
-                  <MenuItem value="Infantil I">6º Ano</MenuItem>
-                  <MenuItem value="Infantil I">7º Ano</MenuItem>
-                  <MenuItem value="Infantil I">8º Ano</MenuItem>
-                  <MenuItem value="Infantil I">9º Ano</MenuItem>
+                  <MenuItem value="Infantil II">Infantil II</MenuItem>
+                  <MenuItem value="Infantil III">Infantil III</MenuItem>
+                  <MenuItem value="Infantil IV">Infantil IV</MenuItem>
+                  <MenuItem value="Infantil V">Infantil V</MenuItem>
+                  <MenuItem value="1º Ano">1º Ano</MenuItem>
+                  <MenuItem value="2º Ano">2º Ano</MenuItem>
+                  <MenuItem value="3º Ano">3º Ano</MenuItem>
+                  <MenuItem value="4º Ano">4º Ano</MenuItem>
+                  <MenuItem value="5º Ano">5º Ano</MenuItem>
+                  <MenuItem value="6º Ano">6º Ano</MenuItem>
+                  <MenuItem value="7º Ano">7º Ano</MenuItem>
+                  <MenuItem value="8º Ano">8º Ano</MenuItem>
+                  <MenuItem value="9º Ano">9º Ano</MenuItem>
                 </Select>
               </FormControl>
-              <FormControlLabel
-                sx={{ mt: 1 }}
-                control={<Switch checked={fullWidth} />}
-                label="Full width"
-              />
+              <FormControl sx={{ mt: 4 }}>
+                <TextField
+                  label="Quantidade de Alunos"
+                  variant="outlined"
+                  type="number"
+                  id="qtdeAlunos"
+                  value={qtdeAlunos ?? ""}
+                  onChange={(e) =>
+                    setQtdeAlunos(parseInt(e.target.value, 10) || null)
+                  }
+                />
+              </FormControl>
             </Box>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Close</Button>
+          <DialogActions sx={{ mb: 1, mr: 1 }}>
+            <Button variant="contained" color="success" onClick={handleSave}>
+              Salvar
+            </Button>
+            <Button variant="contained" color="error" onClick={handleClose}>
+              Cancelar
+            </Button>
           </DialogActions>
         </Dialog>
       </Container>
