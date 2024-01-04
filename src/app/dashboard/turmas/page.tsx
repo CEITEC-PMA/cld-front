@@ -37,6 +37,7 @@ type Turma = {
   id: string;
   turma: string;
   qtdeAlunos: number | null;
+  qtdeProf: number | null;
 };
 
 export default function Turmas() {
@@ -58,6 +59,7 @@ export default function Turmas() {
   );
   const [rows, setRows] = useState<readonly Turma[]>([]);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [isEditMode, setIsEditMode] = React.useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -118,7 +120,7 @@ export default function Turmas() {
 
   useEffect(() => {
     fetchTurmas();
-  }, [rows]);
+  }, []);
 
   const fetchTurmas = async () => {
     try {
@@ -140,47 +142,64 @@ export default function Turmas() {
   };
 
   const handleClose = () => {
-    reset();
+    reset({ selectedTurma: "", qtdeAlunos: null, qtdeProf: null });
     setSelectedItemId(null);
     setIsModalOpen(false);
     setOpenConfirm(false);
+    setIsEditMode(false);
   };
 
-  const handleSave: SubmitHandler<FormData> = (data) => {
-    const { selectedTurma, qtdeAlunos } = data;
+  const handleSave: SubmitHandler<FormData> = async (data) => {
+    try {
+      const { selectedTurma, qtdeAlunos, qtdeProf } = data;
+      const turmaExists = rows.some((row) => row.turma === selectedTurma);
 
-    if (!selectedTurma || qtdeAlunos === undefined) {
+      if (turmaExists) {
+        console.error(
+          "Essa turma já existe, favor verificar e/ou editar os dados."
+        );
+        alert("Essa turma já existe, favor verificar e/ou editar os dados.");
+      } else {
+        const response = await fetch("http://localhost:3000/turmas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            turma: selectedTurma,
+            qtdeAlunos: qtdeAlunos,
+            qtdeProf: qtdeProf,
+          }),
+        });
+
+        if (response.ok) {
+          console.log(data);
+          console.log("Sucesso:", await response.json());
+          reset();
+          setIsModalOpen(false);
+          fetchTurmas();
+        } else {
+          console.error("Erro ao salvar a turma.");
+        }
+      }
+    } catch (error) {
       console.error("Por favor, preencha todos os campos antes de salvar.");
       alert("Por favor, preencha todos os campos antes de salvar.");
-      return;
     }
-
-    fetch("http://localhost:3000/turmas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        turma: selectedTurma,
-        qtdeAlunos: qtdeAlunos,
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(data);
-        console.log("Sucesso:", result);
-        reset();
-        setIsModalOpen(false);
-      })
-      .catch((error) => {
-        console.error("Erro:", error);
-      });
   };
 
   const handleEditar = (id: string) => {
     setSelectedItemId(id);
     setIsModalOpen(true);
-    console.log(id);
+    setIsEditMode(true);
+
+    const selectedRow = rows.find((row) => row.id === id);
+
+    if (selectedRow) {
+      setValue("selectedTurma", selectedRow.turma);
+      setValue("qtdeAlunos", selectedRow.qtdeAlunos);
+      setValue("qtdeProf", selectedRow.qtdeProf);
+    }
   };
 
   const handleDeletar = async (id: string) => {
@@ -277,8 +296,9 @@ export default function Turmas() {
                     name="selectedTurma"
                     control={control}
                     defaultValue=""
+                    rules={{ required: "Por favor, selecione uma turma." }}
                     render={({ field }) => (
-                      <Select {...field}>
+                      <Select {...field} disabled={isEditMode}>
                         <MenuItem value="Infantil I">Infantil I</MenuItem>
                         <MenuItem value="Infantil II">Infantil II</MenuItem>
                         <MenuItem value="Infantil III">Infantil III</MenuItem>
@@ -296,11 +316,20 @@ export default function Turmas() {
                       </Select>
                     )}
                   />
+                  {errors.selectedTurma && (
+                    <Typography variant="caption" color="error">
+                      {errors.selectedTurma.message}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl sx={{ mt: 3 }}>
                   <Controller
                     name="qtdeAlunos"
                     control={control}
+                    rules={{
+                      required: "Por favor, insira a quantidade de alunos.",
+                    }}
                     render={({ field }) => (
                       <TextField
                         {...field}
@@ -310,11 +339,21 @@ export default function Turmas() {
                       />
                     )}
                   />
+                  {errors.qtdeAlunos && (
+                    <Typography variant="caption" color="error">
+                      {errors.qtdeAlunos.message}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl sx={{ mt: 3 }}>
                   <Controller
                     name="qtdeProf"
                     control={control}
+                    rules={{
+                      required:
+                        "Por favor, insira a quantidade de professores.",
+                    }}
                     render={({ field }) => (
                       <TextField
                         {...field}
@@ -324,6 +363,11 @@ export default function Turmas() {
                       />
                     )}
                   />
+                  {errors.qtdeProf && (
+                    <Typography variant="caption" color="error">
+                      {errors.qtdeProf.message}
+                    </Typography>
+                  )}
                 </FormControl>
               </Box>
               <DialogActions sx={{ mt: 2 }}>
@@ -333,7 +377,7 @@ export default function Turmas() {
                   color="success"
                   type="submit"
                 >
-                  Salvar
+                  {selectedItemId ? "Salvar" : "Criar turma"}
                 </Button>
                 <Button
                   startIcon={<BlockIcon />}
