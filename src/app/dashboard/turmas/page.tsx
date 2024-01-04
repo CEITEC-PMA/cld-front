@@ -32,6 +32,12 @@ type FormData = {
   qtdeAlunos: number | null;
 };
 
+type Turma = {
+  id: string;
+  turma: string;
+  qtdeAlunos: number | null;
+};
+
 export default function Turmas() {
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState<DialogProps["maxWidth"]>("sm");
@@ -49,7 +55,8 @@ export default function Turmas() {
   const [selectedItemId, setSelectedItemId] = React.useState<string | null>(
     null
   );
-  const [rows, setRows] = useState("");
+  const [rows, setRows] = useState<readonly Turma[]>([]);
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -77,7 +84,7 @@ export default function Turmas() {
         <div>
           <IconButton
             color="primary"
-            onClick={() => handleEditar(params.row._id)}
+            onClick={() => handleEditar(params.row.id)}
             title="Editar"
           >
             <EditIcon />
@@ -85,7 +92,7 @@ export default function Turmas() {
 
           <IconButton
             color="error"
-            onClick={() => handleDeletar(params.row._id)}
+            onClick={() => handleDeletar(params.row.id)}
             title="Remover"
           >
             <DeleteIcon />
@@ -102,13 +109,23 @@ export default function Turmas() {
   // ];
 
   useEffect(() => {
-    fetch("/api/v1/turmas") // Substitua pela rota correta do seu backend
-      .then((response) => response.json())
-      .then((data) => setRows(data))
-      .catch((error) =>
-        console.error("Erro ao obter dados do backend:", error)
-      );
-  }, []);
+    fetchTurmas();
+  }, [rows]);
+
+  const fetchTurmas = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/turmas");
+
+      if (response.ok) {
+        const data = await response.json();
+        setRows(data);
+      } else {
+        console.error("Erro ao obter dados do backend.");
+      }
+    } catch (error) {
+      console.error("Erro durante a busca de turmas:", error);
+    }
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -118,12 +135,19 @@ export default function Turmas() {
     reset();
     setSelectedItemId(null);
     setIsModalOpen(false);
+    setOpenConfirm(false);
   };
 
   const handleSave: SubmitHandler<FormData> = (data) => {
     const { selectedTurma, qtdeAlunos } = data;
 
-    fetch("/api/v1/turmas", {
+    if (!selectedTurma || qtdeAlunos === undefined) {
+      console.error("Por favor, preencha todos os campos antes de salvar.");
+      alert("Por favor, preencha todos os campos antes de salvar.");
+      return;
+    }
+
+    fetch("http://localhost:3000/turmas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -150,8 +174,40 @@ export default function Turmas() {
     setIsModalOpen(true);
   };
 
-  const handleDeletar = (id: string) => {
-    console.log("Deletou:", id);
+  const handleDeletar = async (id: string) => {
+    setSelectedItemId(id);
+    setOpenConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedItemId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/turmas/${selectedItemId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          console.log(`Turma excluída com sucesso`);
+          alert(`Turma excluída com sucesso`);
+          fetchTurmas();
+        } else {
+          console.error(`Erro ao excluir turma`);
+          alert(`Erro ao excluir turma`);
+        }
+      } catch (error) {
+        console.error("Erro durante a exclusão:", error);
+        alert("Erro durante a exclusão");
+      } finally {
+        setSelectedItemId(null);
+        setOpenConfirm(false);
+      }
+    }
   };
 
   return (
@@ -173,7 +229,7 @@ export default function Turmas() {
 
           <Box marginTop="16px" width="100%" maxWidth="800px" marginX="auto">
             <DataGrid
-              getRowId={(row) => row._id}
+              getRowId={(row) => row.id}
               rows={rows}
               columns={columns}
               autoHeight
@@ -265,6 +321,39 @@ export default function Turmas() {
               </DialogActions>
             </form>
           </DialogContent>
+        </Dialog>
+        <Dialog
+          open={openConfirm}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Tem certeza que deseja excluir a turma?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Essa ação não poderá ser desfeita!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              startIcon={<CheckIcon />}
+              variant="contained"
+              color="success"
+              onClick={handleConfirmDelete}
+            >
+              Excluir
+            </Button>
+            <Button
+              startIcon={<BlockIcon />}
+              variant="contained"
+              color="error"
+              onClick={handleClose}
+            >
+              Voltar
+            </Button>
+          </DialogActions>
         </Dialog>
       </Container>
     </Box>

@@ -1,0 +1,24 @@
+{
+  "turmas": [
+    {
+      "id": 1,
+      "turma": "Infantil I",
+      "qtdeAlunos": 20
+    },
+    {
+      "id": 2,
+      "turma": "Infantil II",
+      "qtdeAlunos": 45
+    },
+    {
+      "id": 3,
+      "turma": "Infantil III",
+      "qtdeAlunos": 30
+    },
+    {
+      "turma": "9º Ano",
+      "qtdeAlunos": "40",
+      "id": 4
+    }
+  ]
+}
