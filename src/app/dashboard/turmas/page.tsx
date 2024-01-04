@@ -221,8 +221,6 @@ export default function Turmas() {
         );
 
         if (response.ok) {
-          console.log(`Turma excluída com sucesso`);
-          alert(`Turma excluída com sucesso`);
           fetchTurmas();
         } else {
           console.error(`Erro ao excluir turma`);
