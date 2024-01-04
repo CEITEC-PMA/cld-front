@@ -172,6 +172,7 @@ export default function Turmas() {
   const handleEditar = (id: string) => {
     setSelectedItemId(id);
     setIsModalOpen(true);
+    console.log(id);
   };
 
   const handleDeletar = async (id: string) => {
@@ -244,7 +245,9 @@ export default function Turmas() {
           open={isModalOpen}
           onClose={handleClose}
         >
-          <DialogTitle>Adicionar nova turma</DialogTitle>
+          <DialogTitle>
+            {selectedItemId ? "Editar turma" : "Adicionar nova turma"}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
               Selecione a turma e insira a quantidade de alunos
