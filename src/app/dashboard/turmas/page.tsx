@@ -30,6 +30,7 @@ import { useUserContext } from "@/userContext";
 type FormData = {
   selectedTurma: string;
   qtdeAlunos: number | null;
+  qtdeProf: number | null;
 };
 
 type Turma = {
@@ -69,6 +70,13 @@ export default function Turmas() {
     {
       field: "qtdeAlunos",
       headerName: "QTDE (alunos)",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "qtdeProf",
+      headerName: "QTDE (professores)",
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -263,7 +271,7 @@ export default function Turmas() {
                   gap: "4px",
                 }}
               >
-                <FormControl sx={{ mt: 4, minWidth: 120 }}>
+                <FormControl sx={{ mt: 3, minWidth: 120 }}>
                   <InputLabel htmlFor="turma">Turma</InputLabel>
                   <Controller
                     name="selectedTurma"
@@ -289,7 +297,7 @@ export default function Turmas() {
                     )}
                   />
                 </FormControl>
-                <FormControl sx={{ mt: 4 }}>
+                <FormControl sx={{ mt: 3 }}>
                   <Controller
                     name="qtdeAlunos"
                     control={control}
@@ -297,6 +305,20 @@ export default function Turmas() {
                       <TextField
                         {...field}
                         label="Quantidade de Alunos"
+                        variant="outlined"
+                        type="number"
+                      />
+                    )}
+                  />
+                </FormControl>
+                <FormControl sx={{ mt: 3 }}>
+                  <Controller
+                    name="qtdeProf"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Quantidade de Professores"
                         variant="outlined"
                         type="number"
                       />
