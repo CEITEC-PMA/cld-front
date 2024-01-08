@@ -2,6 +2,7 @@
 import React, { MouseEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
+  Backdrop,
   Box,
   Button,
   Container,
@@ -17,15 +18,24 @@ import {
   MenuItem,
   Select,
   TextField,
+  ThemeProvider,
   Typography,
+  createTheme,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  ptBR,
+} from "@mui/x-data-grid";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import BlockIcon from "@mui/icons-material/Block";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
+import { ptBR as corePtBR } from "@mui/material/locale";
 
 type FormData = {
   selectedTurma: string;
@@ -60,6 +70,7 @@ export default function Turmas() {
   const [rows, setRows] = useState<readonly Turma[]>([]);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -112,11 +123,15 @@ export default function Turmas() {
     },
   ];
 
-  // const rows = [
-  //   { _id: 1, turma: "Infantil I", qtdeAlunos: 20 },
-  //   { _id: 2, turma: "Infantil II", qtdeAlunos: 45 },
-  //   { _id: 3, turma: "Infantil III", qtdeAlunos: 30 },
-  // ];
+  const theme = createTheme(
+    {
+      palette: {
+        primary: { main: "#1976d2" },
+      },
+    },
+    ptBR,
+    corePtBR
+  );
 
   useEffect(() => {
     fetchTurmas();
@@ -124,15 +139,19 @@ export default function Turmas() {
 
   const fetchTurmas = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch("http://localhost:3000/turmas");
 
       if (response.ok) {
         const data = await response.json();
         setRows(data);
+        setIsLoading(false);
       } else {
+        setIsLoading(false);
         console.error("Erro ao obter dados do backend.");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Erro durante a busca de turmas:", error);
     }
   };
@@ -151,6 +170,7 @@ export default function Turmas() {
 
   const handleSave: SubmitHandler<FormData> = async (data) => {
     try {
+      setIsLoading(true);
       const { selectedTurma, qtdeAlunos, qtdeProf } = data;
       const turmaExists = rows.some((row) => row.turma === selectedTurma);
 
@@ -159,6 +179,7 @@ export default function Turmas() {
           "Essa turma já existe, favor verificar e/ou editar os dados."
         );
         alert("Essa turma já existe, favor verificar e/ou editar os dados.");
+        setIsLoading(false);
       } else {
         const response = await fetch("http://localhost:3000/turmas", {
           method: "POST",
@@ -177,12 +198,15 @@ export default function Turmas() {
           console.log("Sucesso:", await response.json());
           reset();
           setIsModalOpen(false);
+          setIsLoading(false);
           fetchTurmas();
         } else {
+          setIsLoading(false);
           console.error("Erro ao salvar a turma.");
         }
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Por favor, preencha todos os campos antes de salvar.");
       alert("Por favor, preencha todos os campos antes de salvar.");
     }
@@ -239,31 +263,48 @@ export default function Turmas() {
   return (
     <Box margin="24px">
       <Container>
-        <Typography variant="h3" marginBottom="12px" textAlign="center">
-          Lista de Turmas - {user.nome}
-        </Typography>
+        {isLoading ? (
+          <Typography variant="h3" marginBottom="12px" textAlign="center">
+            Carregando
+          </Typography>
+        ) : (
+          <>
+            <Typography variant="h3" marginBottom="12px" textAlign="center">
+              Lista de Turmas - {user.nome}
+            </Typography>
+            <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
+              <Button
+                startIcon={<AddCircleIcon />}
+                size="large"
+                variant="contained"
+                onClick={openModal}
+              >
+                Adicionar turma
+              </Button>
 
-        <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
-          <Button
-            startIcon={<AddCircleIcon />}
-            size="large"
-            variant="contained"
-            onClick={openModal}
-          >
-            Adicionar turma
-          </Button>
-
-          <Box marginTop="16px" width="100%" maxWidth="800px" marginX="auto">
-            <DataGrid
-              getRowId={(row) => row.id}
-              rows={rows}
-              columns={columns}
-              autoHeight
-              pageSizeOptions={[5, 10]}
-              disableRowSelectionOnClick
-            />
-          </Box>
-        </Box>
+              <Box
+                marginTop="16px"
+                width="100%"
+                maxWidth="800px"
+                marginX="auto"
+              >
+                <ThemeProvider theme={theme}>
+                  <DataGrid
+                    getRowId={(row) => row.id}
+                    rows={rows}
+                    columns={columns}
+                    autoHeight
+                    pageSizeOptions={[5, 10]}
+                    localeText={
+                      ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                    }
+                    disableRowSelectionOnClick
+                  />
+                </ThemeProvider>
+              </Box>
+            </Box>{" "}
+          </>
+        )}
         <Dialog
           fullWidth={fullWidth}
           maxWidth={maxWidth}
@@ -422,6 +463,13 @@ export default function Turmas() {
             </Button>
           </DialogActions>
         </Dialog>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isLoading}
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Container>
     </Box>
   );
