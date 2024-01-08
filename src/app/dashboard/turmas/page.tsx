@@ -71,6 +71,7 @@ export default function Turmas() {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -174,12 +175,41 @@ export default function Turmas() {
       const { selectedTurma, qtdeAlunos, qtdeProf } = data;
       const turmaExists = rows.some((row) => row.turma === selectedTurma);
 
-      if (turmaExists) {
+      if (turmaExists && !isEditMode) {
         console.error(
           "Essa turma já existe, favor verificar e/ou editar os dados."
         );
         alert("Essa turma já existe, favor verificar e/ou editar os dados.");
         setIsLoading(false);
+        handleClose();
+      } else if (isEditMode) {
+        const response = await fetch(
+          `http://localhost:3000/turmas/${selectedItemId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              turma: selectedTurma,
+              qtdeAlunos: qtdeAlunos,
+              qtdeProf: qtdeProf,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          console.log(data);
+          console.log("Sucesso ao editar:", await response.json());
+          reset();
+          setIsModalOpen(false);
+          setIsLoading(false);
+          handleClose();
+          fetchTurmas();
+        } else {
+          setIsLoading(false);
+          console.error("Erro ao editar a turma.");
+        }
       } else {
         const response = await fetch("http://localhost:3000/turmas", {
           method: "POST",
