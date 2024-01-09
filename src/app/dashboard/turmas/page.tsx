@@ -26,6 +26,7 @@ import {
   DataGrid,
   GridColDef,
   GridRenderCellParams,
+  GridSortModel,
   ptBR,
 } from "@mui/x-data-grid";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -36,6 +37,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
+import { apiUrl } from "@/utils/api";
 
 type FormData = {
   selectedTurma: string;
@@ -44,8 +46,8 @@ type FormData = {
 };
 
 type Turma = {
-  id: string;
-  turma: string;
+  _id: string;
+  nomeTurma: string;
   qtdeAlunos: number | null;
   qtdeProf: number | null;
 };
@@ -71,11 +73,13 @@ export default function Turmas() {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+    { field: "nomeTurma", sort: "asc" },
+  ]);
 
   const columns: GridColDef[] = [
     {
-      field: "turma",
+      field: "nomeTurma",
       headerName: "TURMA",
       flex: 1,
       align: "center",
@@ -106,7 +110,7 @@ export default function Turmas() {
         <div>
           <IconButton
             color="primary"
-            onClick={() => handleEditar(params.row.id)}
+            onClick={() => handleEditar(params.row._id)}
             title="Editar"
           >
             <EditIcon />
@@ -114,7 +118,7 @@ export default function Turmas() {
 
           <IconButton
             color="error"
-            onClick={() => handleDeletar(params.row.id)}
+            onClick={() => handleDeletar(params.row._id)}
             title="Remover"
           >
             <DeleteIcon />
@@ -139,9 +143,14 @@ export default function Turmas() {
   }, []);
 
   const fetchTurmas = async () => {
+    const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:3000/turmas");
+      const response = await fetch(`${apiUrl}/api/v1/turma`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -155,6 +164,10 @@ export default function Turmas() {
       setIsLoading(false);
       console.error("Erro durante a busca de turmas:", error);
     }
+  };
+
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
   };
 
   const openModal = () => {
@@ -173,7 +186,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const { selectedTurma, qtdeAlunos, qtdeProf } = data;
-      const turmaExists = rows.some((row) => row.turma === selectedTurma);
+      const turmaExists = rows.some((row) => row.nomeTurma === selectedTurma);
 
       if (turmaExists && !isEditMode) {
         console.error(
@@ -183,15 +196,16 @@ export default function Turmas() {
         setIsLoading(false);
         handleClose();
       } else if (isEditMode) {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/turmas/${selectedItemId}`,
+          `${apiUrl}/api/v1/turma/${selectedItemId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              turma: selectedTurma,
               qtdeAlunos: qtdeAlunos,
               qtdeProf: qtdeProf,
             }),
@@ -211,21 +225,22 @@ export default function Turmas() {
           console.error("Erro ao editar a turma.");
         }
       } else {
-        const response = await fetch("http://localhost:3000/turmas", {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${apiUrl}/api/v1/turma`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            turma: selectedTurma,
+            nomeTurma: selectedTurma,
             qtdeAlunos: qtdeAlunos,
             qtdeProf: qtdeProf,
+            zona: user._id,
           }),
         });
 
         if (response.ok) {
-          console.log(data);
-          console.log("Sucesso:", await response.json());
           reset();
           setIsModalOpen(false);
           setIsLoading(false);
@@ -243,14 +258,15 @@ export default function Turmas() {
   };
 
   const handleEditar = (id: string) => {
+    console.log(id);
     setSelectedItemId(id);
     setIsModalOpen(true);
     setIsEditMode(true);
 
-    const selectedRow = rows.find((row) => row.id === id);
+    const selectedRow = rows.find((row) => row._id === id);
 
     if (selectedRow) {
-      setValue("selectedTurma", selectedRow.turma);
+      setValue("selectedTurma", selectedRow.nomeTurma);
       setValue("qtdeAlunos", selectedRow.qtdeAlunos);
       setValue("qtdeProf", selectedRow.qtdeProf);
     }
@@ -264,12 +280,14 @@ export default function Turmas() {
   const handleConfirmDelete = async () => {
     if (selectedItemId) {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:3000/turmas/${selectedItemId}`,
+          `${apiUrl}/api/v1/turma/${selectedItemId}`,
           {
-            method: "DELETE",
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -320,11 +338,17 @@ export default function Turmas() {
               >
                 <ThemeProvider theme={theme}>
                   <DataGrid
-                    getRowId={(row) => row.id}
+                    getRowId={(row) => row._id}
                     rows={rows}
                     columns={columns}
-                    autoHeight
-                    pageSizeOptions={[5, 10]}
+                    sortModel={sortModel}
+                    onSortModelChange={handleSortModelChange}
+                    initialState={{
+                      pagination: {
+                        paginationModel: { page: 0, pageSize: 10 },
+                      },
+                    }}
+                    pageSizeOptions={[5, 10, 25]}
                     localeText={
                       ptBR?.components?.MuiDataGrid?.defaultProps.localeText
                     }
@@ -360,7 +384,7 @@ export default function Turmas() {
                 }}
               >
                 <FormControl sx={{ mt: 3, minWidth: 120 }}>
-                  <InputLabel htmlFor="turma">Turma</InputLabel>
+                  <InputLabel htmlFor="nomeTurma">Turma</InputLabel>
                   <Controller
                     name="selectedTurma"
                     control={control}
