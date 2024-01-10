@@ -4,20 +4,8 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Backdrop,
   Box,
-  Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogProps,
-  DialogTitle,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -29,19 +17,11 @@ import {
   GridSortModel,
   ptBR,
 } from "@mui/x-data-grid";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
 import { apiUrl } from "@/utils/api";
 import Unauthorized from "@/components/unauthorized";
-
-type FormData = {
-  selectedTurma: string;
-  qtdeAlunos: number | null;
-  qtdeProf: number | null;
-};
 
 type Turma = {
   _id: string;
@@ -59,20 +39,9 @@ interface Zona {
 export default function TurmaDetalhe({ params }: { params: { id: string } }) {
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState<DialogProps["maxWidth"]>("sm");
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>();
 
   const { user } = useUserContext();
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedItemId, setSelectedItemId] = React.useState<string | null>(
-    null
-  );
   const [rows, setRows] = useState<readonly Turma[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { id } = params;
@@ -163,12 +132,6 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
     setSortModel(model);
   };
 
-  const handleClose = () => {
-    reset({ selectedTurma: "", qtdeAlunos: null, qtdeProf: null });
-    setSelectedItemId(null);
-    setIsModalOpen(false);
-  };
-
   if (!user.role || !user.role.includes("super-adm")) return <Unauthorized />;
 
   return (
@@ -219,7 +182,6 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={isLoading}
-          onClick={handleClose}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
