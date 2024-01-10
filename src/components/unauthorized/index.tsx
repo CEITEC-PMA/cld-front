@@ -47,7 +47,7 @@ export default function Unauthorized() {
         marginTop={2}
         color=" #0f4c81"
       >
-        ELEIÇÕES MUNICIPAIS DE DIRETORES BIÊNIO 2024/25
+        Credenciais não autorizadas
       </Typography>
       <Box
         display="flex"
@@ -64,7 +64,7 @@ export default function Unauthorized() {
         >
           Você não possui autorização para acessar essa página
         </Typography>
-        <Box width="100%" maxWidth="400px" alignSelf="center" marginTop="48px">
+        {/* <Box width="100%" maxWidth="400px" alignSelf="center" marginTop="48px">
           <Typography align="center" marginBottom="6px">
             Você será redirecionado em 5 segundos
           </Typography>
@@ -74,7 +74,7 @@ export default function Unauthorized() {
             color="success"
             style={{ height: 10, width: "100%" }}
           />
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );

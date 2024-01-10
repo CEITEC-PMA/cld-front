@@ -7,6 +7,8 @@ import { useUserContext } from "@/userContext";
 import useTimeCheck from "@/hooks/useTimeCheck";
 import { usePathname } from "next/navigation";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface DrawerProps {
   open: boolean;
@@ -67,15 +69,39 @@ export default function DrawerComponent({
       <Divider />
 
       <List component="nav">
-        <ListItems
-          label="Turmas"
-          icon={<MapsHomeWorkIcon />}
-          to="/dashboard/turmas"
-          isActive={
-            pathname === "/dashboard/turmas" ||
-            pathname.startsWith("/dashboard/turmas")
-          }
-        />
+        {user.role?.includes("super-adm") ? (
+          <ListItems
+            label="Lista de turmas"
+            icon={<AssessmentIcon />}
+            to="/dashboard/gerenciamento"
+            isActive={
+              pathname === "/dashboard/gerenciamento" ||
+              pathname.startsWith("/dashboard/gerenciamento")
+            }
+          />
+        ) : (
+          <ListItems
+            label="Turmas da unidade"
+            icon={<MapsHomeWorkIcon />}
+            to="/dashboard/turmas"
+            isActive={
+              pathname === "/dashboard/turmas" ||
+              pathname.startsWith("/dashboard/turmas")
+            }
+          />
+        )}
+
+        {user.role?.includes("super-adm") && (
+          <ListItems
+            label="Detalhar unidade"
+            icon={<SearchIcon />}
+            to="/dashboard/busca"
+            isActive={
+              pathname === "/dashboard/busca" ||
+              pathname.startsWith("/dashboard/busca")
+            }
+          />
+        )}
 
         {user.role?.includes("super-adm") && (
           <ListItems
