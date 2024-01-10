@@ -317,8 +317,11 @@ export default function Turmas() {
           </Typography>
         ) : (
           <>
-            <Typography variant="h3" marginBottom="12px" textAlign="center">
-              Lista de Turmas - {user.nome}
+            <Typography variant="h3" marginBottom="8px" textAlign="center">
+              Lista de Turmas
+            </Typography>
+            <Typography variant="h5" marginBottom="6px" textAlign="center">
+              {user.nome}
             </Typography>
             <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
               <Button
@@ -383,7 +386,7 @@ export default function Turmas() {
                   gap: "4px",
                 }}
               >
-                <FormControl sx={{ mt: 3, minWidth: 120 }}>
+                <FormControl sx={{ mt: 6, minWidth: 120 }}>
                   <InputLabel htmlFor="nomeTurma">Turma</InputLabel>
                   <Controller
                     name="selectedTurma"
@@ -446,6 +449,10 @@ export default function Turmas() {
                     rules={{
                       required:
                         "Por favor, insira a quantidade de professores.",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "Insira apenas números inteiros.",
+                      },
                     }}
                     render={({ field }) => (
                       <TextField
@@ -453,6 +460,11 @@ export default function Turmas() {
                         label="Quantidade de Professores"
                         variant="outlined"
                         type="number"
+                        InputProps={{
+                          inputProps: {
+                            pattern: /^[0-9]+$/,
+                          },
+                        }}
                       />
                     )}
                   />
