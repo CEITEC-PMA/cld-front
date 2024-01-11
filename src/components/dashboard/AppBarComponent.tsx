@@ -37,14 +37,13 @@ export default function AppBarComponent({
     } else {
       //fetch
       const getDadosUser = async () => {
-        const response = await fetch(`${apiUrl}/api/v1/usuarios`, {
+        const response = await fetch(`${apiUrl}/v1/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const resJson = await response.json();
-        // console.log(resJson);
-        setUser(resJson.usuario);
+        setUser(resJson);
         return response;
       };
       getDadosUser();

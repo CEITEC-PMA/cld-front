@@ -94,8 +94,10 @@ export default function LoginPage() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ password, inep }),
-    }).then(() => {
-      localStorage.setItem("token", token);
+    }).then(async (response) => {
+      const resJson = await response.json();
+      const tokenBackEnd = resJson.tokens.access.token;
+      localStorage.setItem("token", tokenBackEnd);
       router.push("/dashboard");
     });
   };
@@ -134,10 +136,8 @@ export default function LoginPage() {
           .then(async (response) => {
             if (response.status === 200) {
               const resJson = await response.json();
-              console.log(resJson);
               if (resJson.user.acesso === 0) {
                 const tokenBackEnd = resJson.tokens.access.token;
-                console.log(tokenBackEnd);
                 localStorage.setItem("token", tokenBackEnd);
                 handleOpenDialog();
               } else {
@@ -198,6 +198,7 @@ export default function LoginPage() {
             type="tel"
             id="inep"
             autoComplete="inep"
+            onChange={handleChangeInep}
           />
           <TextField
             margin="normal"
@@ -233,7 +234,9 @@ export default function LoginPage() {
                 type="tel"
                 id="inep"
                 autoComplete="inep"
-                onChange={handleChangeInep}
+                value={inep}
+                aria-readonly
+                disabled
               />
               <TextField
                 autoFocus
