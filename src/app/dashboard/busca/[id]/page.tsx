@@ -108,11 +108,14 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
     const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/api/v1/turma/gerenciamento`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${apiUrl}/api/v1/turma/gerenciamento/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

@@ -103,7 +103,7 @@ export default function DrawerComponent({
           />
         )}
 
-        {user.role?.includes("super-adm") && (
+        {user.role?.includes("ceitec") && (
           <ListItems
             label="Redefinição de senha"
             icon={<RotateLeftIcon />}
