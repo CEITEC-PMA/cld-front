@@ -32,6 +32,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [openSnack, setOpenSnack] = useState(false);
+  const [inep, setInep] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(false);
@@ -86,17 +87,21 @@ export default function LoginPage() {
   };
 
   const handleResetPassword = async () => {
-    await fetch(`${apiUrl}/api/v1/zona/`, {
-      method: "PUT",
+    await fetch(`${apiUrl}/v1/auth/reset-password-inep`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, inep }),
     }).then(() => {
       localStorage.setItem("token", token);
       router.push("/dashboard");
     });
+  };
+
+  const handleChangeInep = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInep(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -119,7 +124,7 @@ export default function LoginPage() {
         setErrorMessage("A senha deve ter pelo menos 6 caracteres");
         setOpen(true);
       } else {
-        const response = await fetch(`${apiUrl}/api/v1/usuarios/login`, {
+        const response = await fetch(`${apiUrl}/v1/auth/login-inep`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -129,12 +134,14 @@ export default function LoginPage() {
           .then(async (response) => {
             if (response.status === 200) {
               const resJson = await response.json();
-              if (resJson.usuario.acesso === 0) {
-                const tokenBackEnd = resJson.usuario.token;
-                setToken(tokenBackEnd);
+              console.log(resJson);
+              if (resJson.user.acesso === 0) {
+                const tokenBackEnd = resJson.tokens.access.token;
+                console.log(tokenBackEnd);
+                localStorage.setItem("token", tokenBackEnd);
                 handleOpenDialog();
               } else {
-                const token = resJson.usuario.token;
+                const token = resJson.user.token;
                 localStorage.setItem("token", token);
                 router.push("/dashboard");
               }
@@ -217,6 +224,17 @@ export default function LoginPage() {
                 Neste primeiro acesso, redefina sua senha. Sua senha deve conter
                 pelo menos 8 caracteres, com pelo menos 1 letra e 1 número.
               </DialogContentText>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="inep"
+                label="INEP"
+                type="tel"
+                id="inep"
+                autoComplete="inep"
+                onChange={handleChangeInep}
+              />
               <TextField
                 autoFocus
                 margin="dense"
