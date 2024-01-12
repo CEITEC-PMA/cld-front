@@ -61,15 +61,15 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           variant={smDown ? "h5" : mdDown ? "h4" : "h3"}
           align="center"
           marginBottom="8px"
-          noWrap
           sx={{
             backgroundColor: "#dedede",
             borderRadius: "10px",
             padding: "4px",
             fontWeight: "bold",
+            fontSize: "36px",
           }}
         >
-          Cadastro de Unidade de Ensino
+          Cadastrar Unidade de Ensino
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container padding={2} spacing={2} alignItems="center">
