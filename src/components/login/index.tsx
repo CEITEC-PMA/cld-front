@@ -269,6 +269,11 @@ export default function LoginPage() {
           >
             Enviar
           </Button>
+
+          {/* <Typography variant="subtitle2" align="center">
+            Não tem uma conta? <a href="link">Registre-se</a>
+          </Typography> */}
+
           <Dialog open={openDialog}>
             <DialogTitle>Redefina a sua senha</DialogTitle>
             <DialogContent>
