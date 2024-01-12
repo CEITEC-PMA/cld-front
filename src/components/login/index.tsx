@@ -32,7 +32,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [openSnack, setOpenSnack] = useState(false);
-  const [cpf, setCpf] = useState("");
+  const [inep, setInep] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(false);
@@ -87,13 +87,13 @@ export default function LoginPage() {
   };
 
   const handleResetPassword = async () => {
-    await fetch(`${apiUrl}/v1/auth/reset-password-cpf`, {
+    await fetch(`${apiUrl}/v1/auth/reset-password-inep`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ password, cpf }),
+      body: JSON.stringify({ password, inep }),
     }).then(async (response) => {
       const resJson = await response.json();
       const tokenBackEnd = resJson.tokens.access.token;
@@ -103,57 +103,98 @@ export default function LoginPage() {
   };
 
   const handleChangeCpf = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCpf(event.target.value);
+    setInep(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const dataToSend = {
-      cpf: data.get("cpf"),
+      inep: data.get("inep"),
       password: data.get("senha"),
     };
-    const { password, cpf } = dataToSend;
+    const { password, inep } = dataToSend;
 
-    if (!cpf) {
-      setErrorMessage("Por favor digite o número do CPF");
-      setOpen(true);
-    }
-    if (!password) {
-      setErrorMessage("Por favor digite uma senha");
-      setOpen(true);
-    } else {
-      if (password.length < 6) {
+    if (inep && inep.length === 8) {
+      if (!password) {
+        setErrorMessage("Por favor digite uma senha");
+        setOpen(true);
+      }
+
+      if (password && password.length < 6) {
         setErrorMessage("A senha deve ter pelo menos 6 caracteres");
         setOpen(true);
-      } else {
-        const response = await fetch(`${apiUrl}/v1/auth/login-cpf`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        })
-          .then(async (response) => {
-            if (response.status === 200) {
-              const resJson = await response.json();
-              if (resJson.user.acesso === 0) {
-                const tokenBackEnd = resJson.tokens.access.token;
-                localStorage.setItem("token", tokenBackEnd);
-                handleOpenDialog();
-              } else {
-                const token = resJson.user.token;
-                localStorage.setItem("token", token);
-                router.push("/dashboard");
-              }
-            } else if (response.status === 401) {
-              throw new Error("CPF ou Senha Inválidos");
+      }
+
+      const response = await fetch(`${apiUrl}/v1/auth/login-inep`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      })
+        .then(async (response) => {
+          if (response.status === 200) {
+            const resJson = await response.json();
+            console.log("entrou na validação como INEP");
+            if (resJson.user.acesso === 0) {
+              const tokenBackEnd = resJson.tokens.access.token;
+              localStorage.setItem("token", tokenBackEnd);
+              handleOpenDialog();
+            } else {
+              const token = resJson.user.token;
+              localStorage.setItem("token", token);
+              router.push("/dashboard");
             }
+          } else if (response.status === 401) {
+            throw new Error("INEP/CPF ou senha inválidos");
+          }
+        })
+        .catch((error) => {
+          setErrorMessage(error.message);
+          setOpen(true);
+        });
+    } else {
+      if (!inep) {
+        setErrorMessage("Por favor digite o número do INEP");
+        setOpen(true);
+      }
+      if (!password) {
+        setErrorMessage("Por favor digite uma senha");
+        setOpen(true);
+      } else {
+        if (password.length < 6) {
+          setErrorMessage("A senha deve ter pelo menos 6 caracteres");
+          setOpen(true);
+        } else {
+          const response = await fetch(`${apiUrl}/v1/auth/login-cpf`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataToSend),
           })
-          .catch((error) => {
-            setErrorMessage(error.message);
-            setOpen(true);
-          });
+            .then(async (response) => {
+              if (response.status === 200) {
+                const resJson = await response.json();
+                if (resJson.user.acesso === 0) {
+                  const tokenBackEnd = resJson.tokens.access.token;
+                  localStorage.setItem("token", tokenBackEnd);
+                  handleOpenDialog();
+                } else {
+                  const token = resJson.user.token;
+                  localStorage.setItem("token", token);
+                  router.push("/dashboard");
+                }
+              } else if (response.status === 401) {
+                throw new Error("INEP/CPF ou Senha Inválidos");
+              }
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+              setOpen(true);
+            });
+        }
       }
     }
   };
@@ -194,11 +235,11 @@ export default function LoginPage() {
             margin="normal"
             required
             fullWidth
-            name="cpf"
-            label="CPF"
+            name="inep"
+            label="INEP/CPF"
             type="tel"
-            id="cpf"
-            autoComplete="cpf"
+            id="inep"
+            autoComplete="inep"
             onChange={handleChangeCpf}
           />
           <TextField
@@ -230,12 +271,12 @@ export default function LoginPage() {
                 margin="normal"
                 required
                 fullWidth
-                name="cpf"
-                label="CPF"
+                name="inep"
+                label="INEP/CPF"
                 type="tel"
-                id="cpf"
-                autoComplete="cpf"
-                value={cpf}
+                id="inep"
+                autoComplete="inep"
+                value={inep}
                 aria-readonly
                 disabled
               />
