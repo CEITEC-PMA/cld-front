@@ -46,6 +46,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
 
+  const onSubmitHandler: SubmitHandler<TForm> = (data) => {
+    console.log("Dados do formulário enviados:", data);
+
+    onSubmit(data);
+  };
+
   if (!user.role || user.role !== "admin") return <Unauthorized />;
 
   return (
@@ -71,7 +77,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
         >
           Cadastrar Unidade de Ensino
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
             <Grid item xs={12}>
               <Typography
@@ -164,7 +170,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               <Typography variant={smDown ? "h6" : "h5"}>Endereço</Typography>
             </Grid>
             <Grid item container xs={12} display="flex" spacing={2}>
-              <Grid item xs={smDown ? 3.5 : mdDown ? 3 : 1}>
+              <Grid item xs={smDown ? 4.2 : mdDown ? 3 : 1.9}>
                 <Controller
                   name="endereco.cep"
                   control={control}
@@ -218,7 +224,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 3 : 1.5}>
+              <Grid item xs={mdDown ? 3 : 1.05}>
                 <Controller
                   name="endereco.quadra"
                   control={control}
@@ -242,7 +248,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 3 : 1.5}>
+              <Grid item xs={mdDown ? 3 : 1.05}>
                 <Controller
                   name="endereco.lote"
                   control={control}
