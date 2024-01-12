@@ -237,10 +237,19 @@ export default function LoginPage() {
             fullWidth
             name="inep"
             label="INEP/CPF"
-            type="tel"
+            type="number"
             id="inep"
             autoComplete="inep"
             onChange={handleChangeCpf}
+            sx={{
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                {
+                  display: "none",
+                },
+              "& input[type=number]": {
+                MozAppearance: "textfield",
+              },
+            }}
           />
           <TextField
             margin="normal"

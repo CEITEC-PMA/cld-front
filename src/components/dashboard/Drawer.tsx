@@ -88,10 +88,10 @@ export default function DrawerComponent({
           />
         )} */}
 
-        {user.role === "user" && (
+        {user.role === "admin" && (
           <ListItems
             label="Cadastrar unidade"
-            icon={<AssessmentIcon />}
+            icon={<MapsHomeWorkIcon />}
             to="/dashboard/registro"
             isActive={
               pathname === "/dashboard/registro" ||
@@ -112,7 +112,7 @@ export default function DrawerComponent({
           />
         )}
 
-        {user.role?.includes("ceitec") && (
+        {user.role === "admin" && (
           <ListItems
             label="Redefinição de senha"
             icon={<RotateLeftIcon />}
