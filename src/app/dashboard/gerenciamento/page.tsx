@@ -282,7 +282,7 @@ export default function TurmasTotais() {
     }
   };
 
-  if (!user.role || !user.role.includes("super-adm")) return <Unauthorized />;
+  if (!user.role || user.role !== "admin") return <Unauthorized />;
 
   return (
     <Box margin="24px">
