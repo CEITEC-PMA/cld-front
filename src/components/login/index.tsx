@@ -142,7 +142,7 @@ export default function LoginPage() {
               localStorage.setItem("token", tokenBackEnd);
               handleOpenDialog();
             } else {
-              const token = resJson.user.token;
+              const token = resJson.tokens.access.token;
               localStorage.setItem("token", token);
               router.push("/dashboard");
             }
@@ -182,7 +182,7 @@ export default function LoginPage() {
                   localStorage.setItem("token", tokenBackEnd);
                   handleOpenDialog();
                 } else {
-                  const token = resJson.user.token;
+                  const token = resJson.tokens.access.token;
                   localStorage.setItem("token", token);
                   router.push("/dashboard");
                 }

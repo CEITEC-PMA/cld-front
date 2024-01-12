@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 type User = {
   _id: string;
   nome: string;
-  role?: string[];
+  role?: string;
   acesso?: number;
   token?: string;
 };

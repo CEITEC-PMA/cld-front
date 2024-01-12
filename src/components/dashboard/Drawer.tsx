@@ -4,7 +4,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import ListItems from "./listItems";
 import { useUserContext } from "@/userContext";
-import useTimeCheck from "@/hooks/useTimeCheck";
 import { usePathname } from "next/navigation";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import AssessmentIcon from "@mui/icons-material/Assessment";
@@ -49,8 +48,6 @@ export default function DrawerComponent({
     },
   }));
 
-  const isBeforeDeadline = useTimeCheck();
-
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar
@@ -69,7 +66,7 @@ export default function DrawerComponent({
       <Divider />
 
       <List component="nav">
-        {user.role?.includes("super-adm") ? (
+        {/* {user.role?.includes("super-adm") ? (
           <ListItems
             label="Lista de turmas"
             icon={<AssessmentIcon />}
@@ -87,6 +84,18 @@ export default function DrawerComponent({
             isActive={
               pathname === "/dashboard/turmas" ||
               pathname.startsWith("/dashboard/turmas")
+            }
+          />
+        )} */}
+
+        {user.role === "user" && (
+          <ListItems
+            label="Cadastrar unidade"
+            icon={<AssessmentIcon />}
+            to="/dashboard/registro"
+            isActive={
+              pathname === "/dashboard/registro" ||
+              pathname.startsWith("/dashboard/registro")
             }
           />
         )}
