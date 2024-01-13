@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import InputMask from "react-input-mask";
 
 export type TForm = {
   name: string;
@@ -133,21 +134,31 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                  <TextField
-                    fullWidth
-                    type="number"
-                    label="Telefone"
-                    sx={{
-                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                        {
-                          display: "none",
-                        },
-                      "& input[type=number]": {
-                        MozAppearance: "textfield",
-                      },
-                    }}
-                    {...field}
-                  />
+                  <InputMask
+                    mask="(62) 9999-9999"
+                    value={field.value}
+                    onChange={field.onChange}
+                  >
+                    {
+                      //@ts-ignore
+                      () => (
+                        <TextField
+                          fullWidth
+                          type="tel"
+                          label="Telefone"
+                          sx={{
+                            "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                              {
+                                display: "none",
+                              },
+                            "& input[type=number]": {
+                              MozAppearance: "textfield",
+                            },
+                          }}
+                        />
+                      )
+                    }
+                  </InputMask>
                 )}
               />
             </Grid>
