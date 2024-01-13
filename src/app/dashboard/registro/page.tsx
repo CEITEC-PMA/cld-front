@@ -98,6 +98,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     fullWidth
                     label="Nome da Unidade de Ensino"
                     {...field}
+                    value={field.value.toUpperCase()}
                   />
                 )}
               />
@@ -205,6 +206,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Logradouro"
                       {...field}
+                      value={field.value.toUpperCase()}
                     />
                   )}
                 />
@@ -220,6 +222,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Complemento"
                       {...field}
+                      value={field.value.toUpperCase()}
                     />
                   )}
                 />
@@ -283,6 +286,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Bairro"
                       {...field}
+                      value={field.value.toUpperCase()}
                     />
                   )}
                 />
@@ -298,6 +302,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Localidade"
                       {...field}
+                      value={field.value.toUpperCase()}
                     />
                   )}
                 />
@@ -308,7 +313,13 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   control={control}
                   defaultValue={""}
                   render={({ field }) => (
-                    <TextField fullWidth type="string" label="UF" {...field} />
+                    <TextField
+                      fullWidth
+                      type="string"
+                      label="UF"
+                      {...field}
+                      value={field.value.toUpperCase()}
+                    />
                   )}
                 />
               </Grid>
