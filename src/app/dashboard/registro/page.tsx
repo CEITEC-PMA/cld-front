@@ -282,10 +282,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                         field.onChange(e);
                       }}
                     >
-                      {unidades &&
-                        unidades.map((unidade: TForm) => (
-                          <MenuItem key={unidade.inep} value={unidade.nome}>
-                            {unidade.nome}
+                      {users &&
+                        users.map((user: TUser, i) => (
+                          <MenuItem key={i} value={user.nome}>
+                            {user.nome}
                           </MenuItem>
                         ))}
                     </Select>
