@@ -18,59 +18,25 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 import { apiUrl } from "@/utils/api";
-
-export type TForm = {
-  _id: string;
-  nome: string;
-  userAdmin: string;
-  inep: number;
-  fone?: string;
-  email: string;
-  endereco?: {
-    coordinates: {
-      coordinateX: number;
-      coordinateY: number;
-    };
-    cep?: string;
-    logradouro?: string;
-    complemento?: string;
-    quadra?: number;
-    lote?: number;
-    bairro?: string;
-    localidade?: string;
-    uf?: string;
-  };
-};
-
-export type TUser = {
-  id: string;
-  unidadeId: any[];
-  role: string;
-  acesso: number;
-  isEmailVerified: boolean;
-  ativo: boolean;
-  deletado: boolean;
-  email: string;
-  username: string;
-  nome: string;
-};
+import { TUser } from "@/utils/types/user.types";
+import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 
 interface Props {
-  onSubmit: SubmitHandler<TForm>;
+  onSubmit: SubmitHandler<TUnidadeEscolar>;
 }
 
 const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const { user } = useUserContext();
-  const { control, handleSubmit, setValue, watch } = useForm<TForm>();
+  const { control, handleSubmit, setValue, watch } = useForm<TUnidadeEscolar>();
   const cep = watch("endereco.cep");
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(false);
-  const [unidades, setUnidades] = useState<TForm[]>([]);
+  const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
 
-  const onSubmitHandler: SubmitHandler<TForm> = (data) => {
+  const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = (data) => {
     console.log("Dados do formulário enviados:", data);
 
     onSubmit(data);
@@ -101,7 +67,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       }
     };
     getDados();
-  }, [user._id]);
+  }, [user.id]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -128,7 +94,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       }
     };
     getDados();
-  }, [user._id]);
+  }, [user.id]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -155,7 +121,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       }
     };
     getDados();
-  }, [user._id]);
+  }, [user.id]);
 
   useEffect(() => {
     if (cep?.length !== 8) return;
@@ -246,7 +212,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       }}
                     >
                       {unidades &&
-                        unidades.map((unidade: TForm) => (
+                        unidades.map((unidade: TUnidadeEscolar) => (
                           <MenuItem key={unidade.inep} value={unidade.nome}>
                             {unidade.nome}
                           </MenuItem>
@@ -279,10 +245,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                           console.log(idUserSelecionado);
                         }
 
-                        //   setValue("inep", unidadeSelecionada.inep);
-                        //   setValue("email", unidadeSelecionada.email);
-                        // }
-
                         field.onChange(e);
                       }}
                     >
@@ -297,7 +259,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 6 : 4}>
+            <Grid item xs={3.5}>
               <Controller
                 name="inep"
                 control={control}
@@ -356,7 +318,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 12 : 4}>
+            <Grid item xs={mdDown ? 12 : 6}>
               <Controller
                 name="email"
                 control={control}

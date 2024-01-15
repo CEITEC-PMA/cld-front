@@ -2,7 +2,7 @@
 import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 
 type User = {
-  _id: string;
+  id: string;
   nome: string;
   role?: string;
   acesso?: number;
@@ -15,7 +15,7 @@ type UserContextType = {
 };
 
 const UserContext = React.createContext<UserContextType>({
-  user: { nome: "", _id: "" },
+  user: { nome: "", id: "" },
   setUser: () => {},
 });
 

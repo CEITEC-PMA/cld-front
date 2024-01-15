@@ -14,44 +14,38 @@ import {
 import React, { useEffect, useState, ChangeEvent } from "react";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import { useRouter } from "next/navigation";
-import { Candidato } from "@/utils/types/candidato.types";
 import { apiUrl } from "@/utils/api";
 import CustomModal from "@/components/modal";
 import { useUserContext } from "@/userContext";
 import Unauthorized from "@/components/unauthorized";
-
-interface Zona {
-  inep: string;
-  nome: string;
-  _id: string;
-}
+import { TUser } from "@/utils/types/user.types";
 
 export default function Settings() {
   const router = useRouter();
   const [token, setToken] = useState("" as string | null);
   const [textFieldValue, setTextFieldValue] = useState<string>("");
-  const [candidato, setCandidato] = useState({
-    foto: [],
-  } as unknown as Candidato);
+
   const { user } = useUserContext();
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
-  const [zonas, setZonas] = useState<Zona[]>([]);
+  const [users, setUsers] = useState<TUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<Zona | null>(null);
+  const [selectedOption, setSelectedOption] = useState<TUser | null>(null);
   const [inputValue, setInputValue] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  console.log(user.id);
 
   useEffect(() => {
     setIsLoading(true);
 
     const token = localStorage.getItem("token");
-    if (user._id) {
+    if (user.id) {
       const getDados = async () => {
         try {
-          const response = await fetch(`${apiUrl}/api/v1/zona`, {
+          const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -62,7 +56,7 @@ export default function Settings() {
           }
 
           const responseJson = await response.json();
-          setZonas(responseJson.zona);
+          setUsers(responseJson.results);
           setIsLoading(false);
           return response;
         } catch (error) {
@@ -73,7 +67,9 @@ export default function Settings() {
 
       getDados();
     }
-  }, [user._id]);
+  }, [user.id]);
+
+  console.log(users);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -111,18 +107,18 @@ export default function Settings() {
     }
   };
 
-  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setTextFieldValue(event.target.value);
-  // };
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextFieldValue(event.target.value);
+  };
 
   const handleOptionChange = (
     event: React.ChangeEvent<{}>,
-    value: Zona | null
+    value: TUser | null
   ) => {
     setSelectedOption(value);
   };
 
-  if (!user.role || !user.role.includes("super-adm")) return <Unauthorized />;
+  if (user.role !== "admin") return <Unauthorized />;
 
   return (
     <Box margin="24px">
@@ -143,12 +139,12 @@ export default function Settings() {
           {isLoading === false && (
             <Box marginTop={4}>
               <Autocomplete
-                options={zonas}
+                options={users}
                 getOptionLabel={(option) => option.nome}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Digite o nome da Unidade de Ensino"
+                    label="Digite o nome do usuário"
                     variant="outlined"
                     onChange={(e) => setInputValue(e.target.value)}
                     sx={{ width: 500, backgroundColor: "#fff" }}
@@ -157,7 +153,7 @@ export default function Settings() {
                 value={selectedOption}
                 onChange={handleOptionChange}
                 renderOption={(props, option) => (
-                  <li {...props} key={option._id}>
+                  <li {...props} key={option.id}>
                     {option.nome}
                   </li>
                 )}
