@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Unauthorized from "@/components/unauthorized";
 import { useUserContext } from "@/userContext";
 import {
   Box,
   Button,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
   useMediaQuery,
@@ -14,25 +17,26 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
+import { apiUrl } from "@/utils/api";
 
 export type TForm = {
-  name: string;
+  nome: string;
   inep: number;
-  fone: string;
+  fone?: string;
   email: string;
-  endereco: {
+  endereco?: {
     coordinates: {
       coordinateX: number;
       coordinateY: number;
     };
-    cep: string;
-    logradouro: string;
-    complemento: string;
-    quadra: number;
-    lote: number;
-    bairro: string;
-    localidade: string;
-    uf: string;
+    cep?: string;
+    logradouro?: string;
+    complemento?: string;
+    quadra?: number;
+    lote?: number;
+    bairro?: string;
+    localidade?: string;
+    uf?: string;
   };
 };
 
@@ -42,15 +46,75 @@ interface Props {
 
 const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const { user } = useUserContext();
-  const { control, handleSubmit } = useForm<TForm>();
+  const { control, handleSubmit, setValue, watch } = useForm<TForm>();
+  const cep = watch("endereco.cep");
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const [isLoading, setIsLoading] = useState(false);
+  const [unidades, setUnidades] = useState<TForm[]>([]);
 
   const onSubmitHandler: SubmitHandler<TForm> = (data) => {
     console.log("Dados do formulário enviados:", data);
 
     onSubmit(data);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    const getDados = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseJson = await response.json();
+        setUnidades(responseJson.results);
+        setIsLoading(false);
+        return response;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      }
+    };
+    getDados();
+  }, [user._id]);
+
+  useEffect(() => {
+    if (cep?.length !== 8) return;
+    isValidCEP(cep);
+    handleBuscaCep(cep);
+  }, [cep]);
+
+  const isValidCEP = (cep: string) => {
+    const cepRegex = /^[0-9]{8}$/;
+    return cepRegex.test(cep);
+  };
+
+  const handleBuscaCep = async (cep: string) => {
+    if (!isValidCEP) {
+      console.log("Cep inválido");
+      return;
+    }
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const resJson = await response.json();
+      console.log(resJson);
+
+      setValue("endereco.logradouro", resJson.logradouro);
+      setValue("endereco.bairro", resJson.bairro);
+      setValue("endereco.localidade", resJson.localidade);
+      setValue("endereco.uf", resJson.uf);
+    } catch (error) {
+      alert("Falha ao receber os dados do CEP");
+    }
   };
 
   if (!user.role || user.role !== "admin") return <Unauthorized />;
@@ -88,19 +152,38 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 Dados Gerais
               </Typography>
             </Grid>
-            <Grid item xs={mdDown ? 12 : 8}>
+            <Grid
+              item
+              xs={mdDown ? 12 : 4}
+              sx={{ minWidth: mdDown ? "400px" : "500px" }}
+            >
               <Controller
-                name="name"
+                name="nome"
                 control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    autoFocus
-                    fullWidth
+                render={({ field, fieldState }) => (
+                  <Select
                     label="Nome da Unidade de Ensino"
-                    {...field}
-                    value={field.value.toUpperCase()}
-                  />
+                    value={field.value || ""}
+                    onChange={(e) => {
+                      const unidadeSelecionada = unidades.find(
+                        (unidade) => unidade.nome === e.target.value
+                      );
+
+                      if (unidadeSelecionada) {
+                        setValue("inep", unidadeSelecionada.inep);
+                        setValue("email", unidadeSelecionada.email);
+                      }
+
+                      field.onChange(e);
+                    }}
+                  >
+                    {unidades &&
+                      unidades.map((unidade: TForm) => (
+                        <MenuItem key={unidade.inep} value={unidade.nome}>
+                          {unidade.nome}
+                        </MenuItem>
+                      ))}
+                  </Select>
                 )}
               />
             </Grid>
@@ -114,6 +197,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     fullWidth
                     type="number"
                     label="INEP"
+                    InputProps={{ readOnly: true }}
                     sx={{
                       "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                         {
@@ -168,7 +252,13 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                  <TextField type="email" fullWidth label="Email" {...field} />
+                  <TextField
+                    type="email"
+                    fullWidth
+                    label="Email"
+                    InputProps={{ readOnly: true }}
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -217,7 +307,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Logradouro"
                       {...field}
-                      value={field.value.toUpperCase()}
+                      value={field.value?.toUpperCase()}
                     />
                   )}
                 />
@@ -233,7 +323,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Complemento"
                       {...field}
-                      value={field.value.toUpperCase()}
+                      value={field.value?.toUpperCase()}
                     />
                   )}
                 />
@@ -297,7 +387,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Bairro"
                       {...field}
-                      value={field.value.toUpperCase()}
+                      value={field.value?.toUpperCase()}
                     />
                   )}
                 />
@@ -313,7 +403,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="Localidade"
                       {...field}
-                      value={field.value.toUpperCase()}
+                      value={field.value?.toUpperCase()}
                     />
                   )}
                 />
@@ -329,7 +419,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       type="string"
                       label="UF"
                       {...field}
-                      value={field.value.toUpperCase()}
+                      value={field.value?.toUpperCase()}
                     />
                   )}
                 />

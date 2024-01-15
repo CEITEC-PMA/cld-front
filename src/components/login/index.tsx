@@ -136,7 +136,6 @@ export default function LoginPage() {
         .then(async (response) => {
           if (response.status === 200) {
             const resJson = await response.json();
-            console.log("entrou na validação como INEP");
             if (resJson.user.acesso === 0) {
               const tokenBackEnd = resJson.tokens.access.token;
               localStorage.setItem("token", tokenBackEnd);
