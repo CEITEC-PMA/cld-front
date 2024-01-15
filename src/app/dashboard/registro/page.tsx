@@ -41,6 +41,18 @@ export type TForm = {
   };
 };
 
+export type TUser = {
+  unidadeId: any[];
+  role: string;
+  acesso: number;
+  isEmailVerified: boolean;
+  ativo: boolean;
+  deletado: boolean;
+  email: string;
+  username: string;
+  nome: string;
+};
+
 interface Props {
   onSubmit: SubmitHandler<TForm>;
 }
@@ -54,6 +66,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<TForm[]>([]);
+  const [users, setUsers] = useState<TUser[]>([]);
 
   const onSubmitHandler: SubmitHandler<TForm> = (data) => {
     console.log("Dados do formulário enviados:", data);
@@ -78,6 +91,33 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
         const responseJson = await response.json();
         setUnidades(responseJson.results);
+        setIsLoading(false);
+        return response;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      }
+    };
+    getDados();
+  }, [user._id]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    const getDados = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseJson = await response.json();
+        setUsers(responseJson.results);
         setIsLoading(false);
         return response;
       } catch (error) {
@@ -143,6 +183,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       alert("Falha ao receber os dados do CEP");
     }
   };
+
+  console.log(users);
 
   if (!user.role || user.role !== "admin") return <Unauthorized />;
 
@@ -450,6 +492,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       fullWidth
                       type="string"
                       label="Bairro"
+                      InputProps={{ readOnly: true }}
                       {...field}
                       value={field.value?.toUpperCase()}
                     />
