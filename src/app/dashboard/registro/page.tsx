@@ -21,6 +21,7 @@ import { apiUrl } from "@/utils/api";
 
 export type TForm = {
   nome: string;
+  userAdmin: string;
   inep: number;
   fone?: string;
   email: string;
@@ -59,6 +60,33 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
     onSubmit(data);
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    const getDados = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseJson = await response.json();
+        setUnidades(responseJson.results);
+        setIsLoading(false);
+        return response;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      }
+    };
+    getDados();
+  }, [user._id]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -151,42 +179,79 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 Dados Gerais
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={mdDown ? 12 : 4}
-              sx={{ minWidth: mdDown ? "400px" : "500px" }}
-            >
+            <Grid item xs={12}>
               <Controller
                 name="nome"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <Select
-                    label="Nome da Unidade de Ensino"
-                    value={field.value || ""}
-                    onChange={(e) => {
-                      const unidadeSelecionada = unidades.find(
-                        (unidade) => unidade.nome === e.target.value
-                      );
+                  <>
+                    <InputLabel id="nome">Nome da Unidade de Ensino</InputLabel>
+                    <Select
+                      label="Nome da Unidade de Ensino"
+                      labelId="nome"
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        const unidadeSelecionada = unidades.find(
+                          (unidade) => unidade.nome === e.target.value
+                        );
 
-                      if (unidadeSelecionada) {
-                        setValue("inep", unidadeSelecionada.inep);
-                        setValue("email", unidadeSelecionada.email);
-                      }
+                        if (unidadeSelecionada) {
+                          setValue("inep", unidadeSelecionada.inep);
+                          setValue("email", unidadeSelecionada.email);
+                        }
 
-                      field.onChange(e);
-                    }}
-                  >
-                    {unidades &&
-                      unidades.map((unidade: TForm) => (
-                        <MenuItem key={unidade.inep} value={unidade.nome}>
-                          {unidade.nome}
-                        </MenuItem>
-                      ))}
-                  </Select>
+                        field.onChange(e);
+                      }}
+                    >
+                      {unidades &&
+                        unidades.map((unidade: TForm) => (
+                          <MenuItem key={unidade.inep} value={unidade.nome}>
+                            {unidade.nome}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </>
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 6 : 2}>
+            <Grid item xs={12}>
+              <Controller
+                name="userAdmin"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <>
+                    <InputLabel id="userAdmin">
+                      Administrador da Unidade de Ensino
+                    </InputLabel>
+                    <Select
+                      labelId="userAdmin"
+                      label="Administrador da Unidade de Ensino"
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        // const unidadeSelecionada = unidades.find(
+                        //   (unidade) => unidade.nome === e.target.value
+                        // );
+
+                        // if (unidadeSelecionada) {
+                        //   setValue("inep", unidadeSelecionada.inep);
+                        //   setValue("email", unidadeSelecionada.email);
+                        // }
+
+                        field.onChange(e);
+                      }}
+                    >
+                      {unidades &&
+                        unidades.map((unidade: TForm) => (
+                          <MenuItem key={unidade.inep} value={unidade.nome}>
+                            {unidade.nome}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </>
+                )}
+              />
+            </Grid>
+            <Grid item xs={mdDown ? 6 : 4}>
               <Controller
                 name="inep"
                 control={control}
@@ -211,7 +276,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 6 : 2}>
+            <Grid item xs={mdDown ? 6 : 2.5}>
               <Controller
                 name="fone"
                 control={control}
@@ -401,6 +466,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       fullWidth
                       type="string"
                       label="Localidade"
+                      InputProps={{ readOnly: true }}
                       {...field}
                       value={field.value?.toUpperCase()}
                     />
@@ -417,6 +483,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       fullWidth
                       type="string"
                       label="UF"
+                      InputProps={{ readOnly: true }}
                       {...field}
                       value={field.value?.toUpperCase()}
                     />

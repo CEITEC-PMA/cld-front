@@ -24,6 +24,7 @@ import {
 import type { DialogProps } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [open, setOpen] = React.useState(false);
@@ -269,9 +270,19 @@ export default function LoginPage() {
             Enviar
           </Button>
 
-          {/* <Typography variant="subtitle2" align="center">
-            Não tem uma conta? <a href="link">Registre-se</a>
-          </Typography> */}
+          <Typography variant="subtitle2" align="center">
+            Não tem uma conta?{" "}
+            <Link
+              href="/register/user"
+              style={{
+                color: "inherit",
+                textDecoration: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Registre-se aqui
+            </Link>
+          </Typography>
 
           <Dialog open={openDialog}>
             <DialogTitle>Redefina a sua senha</DialogTitle>

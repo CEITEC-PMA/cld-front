@@ -1,537 +1,537 @@
 [
   {
     "nome": "CEI - ÁGAPE",
-    "inep": "52099792",
-    "email": "comissaoagape@edu.anapolis.go.gov.br"
+    "username": "52099792",
+    "email": "cei-agape@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - BATISTA CENTRAL",
-    "inep": "52097145",
-    "email": "comissaobatistacentral@edu.anapolis.go.gov.br"
+    "username": "52097145",
+    "email": "cei-batistacentral@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - BETE SHALOM III",
-    "inep": "52097137",
-    "email": "comissaoshalom3@edu.anapolis.go.gov.br"
+    "username": "52097137",
+    "email": "cei-beteshalom3@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - BETE SHALOM MADUREIRA",
-    "inep": "52125238",
-    "email": "comissaomadureira@edu.anapolis.go.gov.br"
+    "username": "52125238",
+    "email": "cei-beteshalomadureira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - BETESDA ESPERANÇA",
-    "inep": "52096211",
-    "email": "comissaoceibetesdaesperanca@edu.anapolis.go.gov.br"
+    "username": "52096211",
+    "email": "cei-betesdaesperanca@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - BETESDA JARDIM PRIMAVERA",
-    "inep": "52129209",
-    "email": "comissaoceibetesdaprimavera@edu.anapolis.go.gov.br"
+    "username": "52129209",
+    "email": "cei-betesdaprimavera@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - PELICANO",
-    "inep": "52125220",
-    "email": "comissaopelicano@edu.anapolis.go.gov.br"
+    "username": "52125220",
+    "email": "cei-pelicano@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - RAINHA DA PAZ",
-    "inep": "52097129",
-    "email": "comissaorainhadapaz@edu.anapolis.go.gov.br"
+    "username": "52097129",
+    "email": "cei-rainhadapaz@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - PIONEIRA",
-    "inep": "52089215",
-    "email": "comissaopioneira@edu.anapolis.go.gov.br"
+    "username": "52089215",
+    "email": "cei-pioneira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - PRESBITERIANA RENOVADA CENTRAL",
-    "inep": "52097153",
-    "email": "comissaopresbrenovada@edu.anapolis.go.gov.br"
+    "username": "52097153",
+    "email": "cei-presbrenovada@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CEI - SANTA TEREZINHA",
-    "inep": "52204359",
-    "email": "comissaoterezinha@edu.anapolis.go.gov.br"
+    "username": "52204359",
+    "email": "cei-terezinha@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - AMÉLIA JACOB",
-    "inep": "52104915",
-    "email": "comissaoameliajacob@edu.anapolis.go.gov.br"
+    "username": "52104915",
+    "email": "cmei-amelia@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - ANITA MALFATTI",
-    "inep": "52099768",
-    "email": "comissaoanitamalfatti@edu.anapolis.go.gov.br"
+    "username": "52099768",
+    "email": "cmei-anitamalfatti@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - CIBELE TEODORO TELES",
-    "inep": "52079376",
-    "email": "comissaocibele@edu.anapolis.go.gov.br"
+    "username": "52079376",
+    "email": "cmei-cibeleteodoro@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - CASIMIRO DE ABREU",
-    "inep": "52098940",
-    "email": "comissaocasimiroabreu@edu.anapolis.go.gov.br"
+    "username": "52098940",
+    "email": "cmei-casimiro@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - CARLOS DRUMMOND",
-    "inep": "52097714",
-    "email": "comissaocarlosdrummond@edu.anapolis.go.gov.br"
+    "username": "52097714",
+    "email": "cmei-carlosdrummond@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - ARNALDO STECKELBERG",
-    "inep": "52096203",
-    "email": "comissaoarnaldo@edu.anapolis.go.gov.br"
+    "username": "52096203",
+    "email": "cmei-arnaldo@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - CLARICE LISPECTOR",
-    "inep": "52099776",
-    "email": "comissaoclaricelispector@edu.anapolis.go.gov.br"
+    "username": "52099776",
+    "email": "cmei-clarice@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - DESEMBARGADOR AIR BORGES",
-    "inep": "52128202",
-    "email": "comissaocmeiairborges@edu.anapolis.go.gov.br"
+    "username": "52128202",
+    "email": "cmei-desairborges@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - CRISTIANE ALVES DE ALMEIDA",
-    "inep": "52090272",
-    "email": "comissaocristianealves@edu.anapolis.go.gov.br"
+    "username": "52090272",
+    "email": "cmei-cristianealves@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - DONA IRIS ARAUJO",
-    "inep": "52079325",
-    "email": "comissaodonairis@edu.anapolis.go.gov.br"
+    "username": "52079325",
+    "email": "cmei-irisaraujo@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - DONA JANDIRA BRETAS",
-    "inep": "52079350",
-    "email": "comissaojandira@edu.anapolis.go.gov.br"
+    "username": "52079350",
+    "email": "cmei-donajandira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - DRª ZILDA ARNS NEUMAN",
-    "inep": "52096890",
-    "email": "comissaozildaarns@edu.anapolis.go.gov.br"
+    "username": "52096890",
+    "email": "cmei-drazilda@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - GRACINDA MARIA DA SILVA",
-    "inep": "52095460",
-    "email": "comissaogracinda@edu.anapolis.go.gov.br"
+    "username": "52095460",
+    "email": "cmei-gracindasilva@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - ILDEFONSO LIMIRIO",
-    "inep": "52098761",
-    "email": "comissaoildefonso@edu.anapolis.go.gov.br"
+    "username": "52098761",
+    "email": "cmei-ildefonso@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - JORGE AMADO",
-    "inep": "52097730",
-    "email": "comissaojorgeamado@edu.anapolis.go.gov.br"
+    "username": "52097730",
+    "email": "cmei-jorgeamado@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - JOSÉ CUPERTINO DE PAULA",
-    "inep": "52085481",
-    "email": "comissaocupertino@edu.anapolis.go.gov.br"
+    "username": "52085481",
+    "email": "cmei-josecupertino@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - MAURA HELENA",
-    "inep": "52095479",
-    "email": "comissaomaura@edu.anapolis.go.gov.br"
+    "username": "52095479",
+    "email": "cmei-maura@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - MARIA ZENITA DE JESUS",
-    "inep": "52099784",
-    "email": "comissaomariazenita@edu.anapolis.go.gov.br"
+    "username": "52099784",
+    "email": "cmei-mariazenita@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - MANUEL BANDEIRA",
-    "inep": "52098974",
-    "email": "comissaomanuelbandeira@edu.anapolis.go.gov.br"
+    "username": "52097562",
+    "email": "cmei-manuelbandeira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - NAZARÉ CUNHA LEÃO",
-    "inep": "52104893",
-    "email": "comissaonazarecunha@edu.anapolis.go.gov.br"
+    "username": "52104893",
+    "email": "cmei-nazare@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - MÁRIO QUINTANA",
-    "inep": "52098770",
-    "email": "comissaomarioquintana@edu.anapolis.go.gov.br"
+    "username": "52098770",
+    "email": "cmei-marioquintana@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª CÉLIA MARIA ROCHA MALTA",
-    "inep": "52102190",
-    "email": "comissaoceliamaria@edu.anapolis.go.gov.br"
+    "username": "52102190",
+    "email": "cmei-profcelia@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PAULO FREIRE",
-    "inep": "52266354",
-    "email": "comissaopaulofreire@edu.anapolis.go.gov.br"
+    "username": "52266354",
+    "email": "cmei-paulofreire@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª DALVA MARIA",
-    "inep": "52195350",
-    "email": "comissaodalvamaria@edu.anapolis.go.gov.br"
+    "username": "52195350",
+    "email": "cmei-profdalva@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª RETTIE TIPPLE",
-    "inep": "52123200",
-    "email": "comissaorettie@edu.anapolis.go.gov.br"
+    "username": "52123200",
+    "email": "cmei-profrettie@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª DINA MARIA MIOTTO",
-    "inep": "52104990",
-    "email": "comissaodinamaria@edu.anapolis.go.gov.br"
+    "username": "52104990",
+    "email": "cmei-dinamaria@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª HELENA FERREIRA MELAZZO",
-    "inep": "52102114",
-    "email": "comissaoprofhelena@edu.anapolis.go.gov.br"
+    "username": "52102114",
+    "email": "cmei-profleonor@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª LEONOR MARQUES",
-    "inep": "52101444",
-    "email": "comissaoleonormarques@edu.anapolis.go.gov.br"
+    "username": "52101444",
+    "email": "cmei-profleonor@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. PAROQUIAL SÃO CRISTÓVÃO",
-    "inep": "52096513",
-    "email": "comissaosaocristovao@edu.anapolis.go.gov.br"
+    "username": "52096513",
+    "email": "epsaocristovao@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI HAROLDO ANTÔNIO DE SOUZA",
-    "inep": "52106977",
-    "email": "comissaoharoldo@edu.anapolis.go.gov.br"
+    "username": "52106977",
+    "email": "cmei-haroldo@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª NÚBIA ELIENE",
-    "inep": "52105024",
-    "email": "comissaonubia@edu.anapolis.go.gov.br"
+    "username": "52105024",
+    "email": "cmei-nubiafreitas@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - PROFª CINTHYA RODRIGUES",
-    "inep": "52102211",
-    "email": "comissaocinthyarodrigues@edu.anapolis.go.gov.br"
+    "username": "52102211",
+    "email": "cmei-profcinthya@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. BETESDA JARDIM ESPERANÇA",
-    "inep": "52121003",
-    "email": "comissaoecbjesperanca@edu.anapolis.go.gov.br"
+    "username": "52121003",
+    "email": "e-betesdajardim@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. BETESDA PRIMAVERA",
-    "inep": "52092607",
-    "email": "comissaoecbetesdaprimavera@edu.anapolis.go.gov.br"
+    "username": "52092607",
+    "email": "e-betesdaprimavera@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. PAROQUIAL SANTO ANTÔNIO",
-    "inep": "52021513",
-    "email": "comissaosantoantonio@edu.anapolis.go.gov.br"
+    "username": "52021513",
+    "email": "e-paroquialsantoantonio@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. PRESB. ORVALHO DO HERMOM",
-    "inep": "52094499",
-    "email": "comissaoorvalhohermom@edu.anapolis.go.gov.br"
+    "username": "52094499",
+    "email": "e-presborvalho@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. PRESB. DAYSE FANSTONE",
-    "inep": "52100405",
-    "email": "comissaodaysefanstone@edu.anapolis.go.gov.br"
+    "username": "52100405",
+    "email": "e-presbiterianadayse@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EC. PRESB. FILADÉLFIA",
-    "inep": "52021882",
-    "email": "comissaopresbfiladelfia@edu.anapolis.go.gov.br"
+    "username": "52021882",
+    "email": "e-presbiteriana@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM ALFREDO JACOMOSSI",
-    "inep": "52021726",
-    "email": "comissaoalfredojacomossi@edu.anapolis.go.gov.br"
+    "username": "52021726",
+    "email": "em-alfredojacomossi@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM AFONSINA MENDES DO CARMO",
-    "inep": "52021165",
-    "email": "comissaoafonsinamendes@edu.anapolis.go.gov.br"
+    "username": "52021165",
+    "email": "em-afonsina@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM ANTÔNIO CONSTANTE",
-    "inep": "52021181",
-    "email": "comissaoantonioconstante@edu.anapolis.go.gov.br"
+    "username": "52021181",
+    "email": "em-antonioconstante@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM BELISÁRIA CORREA DE FARIA",
-    "inep": "52021190",
-    "email": "comissaobelisariacorrea@edu.anapolis.go.gov.br"
+    "username": "52021190",
+    "email": "em-belisaria@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM CLOVIS GUERRA",
-    "inep": "52021203",
-    "email": "comissaoclovisguerra@edu.anapolis.go.gov.br"
+    "username": "52021203",
+    "email": "em-clovisguerra@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM CECÍLIA MEIRELES",
-    "inep": "52096602",
-    "email": "comissaoceciliameireles@edu.anapolis.go.gov.br"
+    "username": "52096602",
+    "email": "em-ceciliameireles@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM COMENDADOR MIGUEL PEDREIRO",
-    "inep": "52021351",
-    "email": "comissaocomendadormiguel@edu.anapolis.go.gov.br"
+    "username": "52021351",
+    "email": "em-comiguelpedreiro@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM AYRTON SENNA DA SILVA",
-    "inep": "52079198",
-    "email": "comissaoayrtonsenna@edu.anapolis.go.gov.br"
+    "username": "52079198",
+    "email": "em-ayrtonsenna@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM CORA CORALINA",
-    "inep": "52021211",
-    "email": "comissaocoracoralina@edu.anapolis.go.gov.br"
+    "username": "52021211",
+    "email": "em-coracoralina@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM DR. ADAHYL LOURENÇO DIAS",
-    "inep": "52021254",
-    "email": "comissaodradahyl@edu.anapolis.go.gov.br"
+    "username": "52021254",
+    "email": "em-dradahylourenco@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM DONA ALEXANDRINA",
-    "inep": "52021246",
-    "email": "comissaodonaalexadrina@edu.anapolis.go.gov.br"
+    "username": "52021246",
+    "email": "em-donalexandrina@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM DEPUTADO JOSÉ DE ASSIS",
-    "inep": "52021238",
-    "email": "comissaodepjoseassis@edu.anapolis.go.gov.br"
+    "username": "52021238",
+    "email": "em-deputadojose@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM ELZIRA BALDUINO",
-    "inep": "52021262",
-    "email": "comissaoelzirabalduino@edu.anapolis.go.gov.br"
+    "username": "52021262",
+    "email": "em-elzirabalduino@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM EURÍPEDES ALMEIDA MARTINS",
-    "inep": "52021270",
-    "email": "comissaoeuripedesalmeida@edu.anapolis.go.gov.br"
+    "username": "52021270",
+    "email": "em-euripedes@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM DR. ANAPOLINO DE FARIA",
-    "inep": "52191427",
-    "email": "comissaodranapolino@edu.anapolis.go.gov.br"
+    "username": "52191427",
+    "email": "em-dranapolino@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM INÁCIO SARDINHA DE LISBOA",
-    "inep": "52022080",
-    "email": "comissaoinaciosardinha@edu.anapolis.go.gov.br"
+    "username": "52022080",
+    "email": "em-inaciosardinha@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM JAHIR RIBEIRO GUIMARÃES",
-    "inep": "52071421",
-    "email": "comissaojahirribeiro@edu.anapolis.go.gov.br"
+    "username": "52071421",
+    "email": "em-jahiribeiro@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM GOMES SANTANA RAMOS",
-    "inep": "52022145",
-    "email": "comissaogomessantana@edu.anapolis.go.gov.br"
+    "username": "52022145",
+    "email": "em-gomesantana@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM JOÃO AMÉLIO DA SILVA",
-    "inep": "52021750",
-    "email": "comissaojoaoamelio@edu.anapolis.go.gov.br"
+    "username": "52021750",
+    "email": "em-joaoamelio@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM JERÔNIMO VAZ",
-    "inep": "52021300",
-    "email": "comissaojeronimovaz@edu.anapolis.go.gov.br"
+    "username": "52021300",
+    "email": "em-jeronimovaz@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM JOÃO LUIZ DE OLIVEIRA",
-    "inep": "52021319",
-    "email": "comissaojoaoluiz@edu.anapolis.go.gov.br"
+    "username": "52021319",
+    "email": "em-joaoluizoliveira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM JOÃO BEZE",
-    "inep": "52096220",
-    "email": "comissaojoaobeze@edu.anapolis.go.gov.br"
+    "username": "52096220",
+    "email": "em-joaobeze@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM LINDOLFO PEREIRA DA SILVA",
-    "inep": "52021769",
-    "email": "comissaolindolfopereira@edu.anapolis.go.gov.br"
+    "username": "52021769",
+    "email": "em-lindolfopereira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM LAR SÃO FRANCISCO",
-    "inep": "52021327",
-    "email": "comissaolarsaofrancisco@edu.anapolis.go.gov.br"
+    "username": "52021327",
+    "email": "em-larsaofrancisco@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM LIONS ANHANGUERA",
-    "inep": "52021173",
-    "email": "comissaolionsanhanguera@edu.anapolis.go.gov.br"
+    "username": "52021173",
+    "email": "em-lionsanhanguera@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM MARIA APARECIDA GEBRIM",
-    "inep": "52021335",
-    "email": "comissaomariaaparecida@edu.anapolis.go.gov.br"
+    "username": "52021335",
+    "email": "em-mariaparecida@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM MANOEL GONÇALVES DA CRUZ",
-    "inep": "52022153",
-    "email": "comissaomanuelgoncalves@edu.anapolis.go.gov.br"
+    "username": "52022153",
+    "email": "em-manoelgoncalves@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - JOSÉ EPAMINONDAS RORIZ",
-    "inep": "52079368",
-    "email": "comissaoepaminondas@edu.anapolis.go.gov.br"
+    "username": "52079368",
+    "email": "em-epaminondas@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM MOACYR ROMEU COSTA",
-    "inep": "52021360",
-    "email": "comissaomoacyrromeu@edu.anapolis.go.gov.br"
+    "username": "52021360",
+    "email": "em-moacyromeu@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM LUIZ CARLOS BIZINOTTO",
-    "inep": "52082229",
-    "email": "comissaoluizcarlos@edu.anapolis.go.gov.br"
+    "username": "52082229",
+    "email": "em-luizcarlos@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM MARIA ELIZABETH C. LISBOA",
-    "inep": "52022137",
-    "email": "comissaomariaelizabeth@edu.anapolis.go.gov.br"
+    "username": "52022137",
+    "email": "em-mariaelizabeth@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PASTOR MIGUEL MOREIRA BRAGA",
-    "inep": "52122220",
-    "email": "comissaomiguelmoreira@edu.anapolis.go.gov.br"
+    "username": "52122220",
+    "email": "em-pastormiguel@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PEDRO LUDOVICO TEIXEIRA",
-    "inep": "52021394",
-    "email": "comissaopedroludovico@edu.anapolis.go.gov.br"
+    "username": "52021394",
+    "email": "em-pedroludovico@edu.anapolis.go.gov.br"
   },
   {
     "nome": "CMEI - MARIA CAPUZZO CREMONEZ",
-    "inep": "52079341",
-    "email": "comissaocremonez@edu.anapolis.go.gov.br"
+    "username": "52079341",
+    "email": "em-cremonez@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PEDRO NUNES MOREIRA",
-    "inep": "52093301",
-    "email": "comissaopedronunes@edu.anapolis.go.gov.br"
+    "username": "52093301",
+    "email": "em-pedronunes@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROF. ERNST HEEGER",
-    "inep": "52093298",
-    "email": "comissaoernstheeger@edu.anapolis.go.gov.br"
+    "username": "52093298",
+    "email": "em-profernst@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROF. TASSO BARROS VILELA",
-    "inep": "52021424",
-    "email": "comissaotassobarros@edu.anapolis.go.gov.br"
+    "username": "52021424",
+    "email": "em-proftasso@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROF. JESUS DUARTE",
-    "inep": "52022064",
-    "email": "comissaojesusduarte@edu.anapolis.go.gov.br"
+    "username": "52022064",
+    "email": "em-profjesus@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª FRANCISCA MIGUEL",
-    "inep": "52021742",
-    "email": "comissaofranciscamiguel@edu.anapolis.go.gov.br"
+    "username": "52021742",
+    "email": "em-profrancisca@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª DINALVA LOPES",
-    "inep": "52090264",
-    "email": "comissaodinalvalopes@edu.anapolis.go.gov.br"
+    "username": "52090264",
+    "email": "em-profdinalva@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª EDINÊ RODRIGUES GOMES",
-    "inep": "52021408",
-    "email": "comissaoedinerodrigues@edu.anapolis.go.gov.br"
+    "username": "52021408",
+    "email": "em-profedine@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª MARONITA DIAS DOURADO",
-    "inep": "52093280",
-    "email": "comissaomaronitadias@edu.anapolis.go.gov.br"
+    "username": "52093280",
+    "email": "em-profmaronita@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª ESTHER DE CAMPOS AMARAL",
-    "inep": "52021416",
-    "email": "comissaoestercampos@edu.anapolis.go.gov.br"
+    "username": "52021416",
+    "email": "em-profesther@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª JOSEPHINA SIMÕES",
-    "inep": "52093328",
-    "email": "comissaojosephinasimoes@edu.anapolis.go.gov.br"
+    "username": "52093328",
+    "email": "em-profjosephina@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª LENA LEÃO",
-    "inep": "52093310",
-    "email": "comissaolenaleao@edu.anapolis.go.gov.br"
+    "username": "52093310",
+    "email": "em-proflena@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM PROFª NADYR DE SOUZA ANDRADE",
-    "inep": "52097722",
-    "email": "comissaonadyrsouza@edu.anapolis.go.gov.br"
+    "username": "52097722",
+    "email": "em-profnadyr@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM RAIMUNDA DE OLIVEIRA PASSOS",
-    "inep": "52021777",
-    "email": "comissaoraimundapassos@edu.anapolis.go.gov.br"
+    "username": "52021777",
+    "email": "em-raimundaoliveira@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM RAYMUNDO PAULO HARGREAVES",
-    "inep": "52021785",
-    "email": "comissaoraymundopaulo@edu.anapolis.go.gov.br"
+    "username": "52021785",
+    "email": "em-raymundopaulo@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM SÃO JOSÉ",
-    "inep": "52021459",
-    "email": "comissaosaojose@edu.anapolis.go.gov.br"
+    "username": "52021459",
+    "email": "em-saojose@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM ROSEVIR RIBEIRO DE PAIVA",
-    "inep": "52021432",
-    "email": "comissaorosevirribeiro@edu.anapolis.go.gov.br"
+    "username": "52021432",
+    "email": "em-rosevir@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM REALINO JOSÉ DE OLIVEIRA",
-    "inep": "52021793",
-    "email": "comissaorealinojose@edu.anapolis.go.gov.br"
+    "username": "52021793",
+    "email": "em-realino@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM RODOLF MIKEL GHANNAN",
-    "inep": "52077829",
-    "email": "comissaorodolfmikel@edu.anapolis.go.gov.br"
+    "username": "52077829",
+    "email": "em-rodolfmikel@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM WADY CECILIO",
-    "inep": "52021475",
-    "email": "comissaowadycecilio@edu.anapolis.go.gov.br"
+    "username": "52021475",
+    "email": "em-wadycecilio@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM SENADOR JOSÉ LOURENÇO DIAS",
-    "inep": "52021467",
-    "email": "comissaojoselourencodias@edu.anapolis.go.gov.br"
+    "username": "52021467",
+    "email": "em-senjose@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM WALTER BEZE",
-    "inep": "52021483",
-    "email": "comissaowalterbeze@edu.anapolis.go.gov.br"
+    "username": "52021483",
+    "email": "em-walterbeze@edu.anapolis.go.gov.br"
   },
   {
     "nome": "EM WALMIR BASTOS RIBEIRO",
-    "inep": "52085457",
-    "email": "comissaowalmirbastos@edu.anapolis.go.gov.br"
+    "username": "52085457",
+    "email": "em-walmirbastos@edu.anapolis.go.gov.br"
   },
   {
     "nome": "ESCOLA DESEMBARGADOR AIR BORGES DE ALMEIDA",
-    "inep": "52079333",
-    "email": "comissaoemairborges@edu.anapolis.go.gov.br"
+    "username": "52079333",
+    "email": "em-desairborges@edu.anapolis.go.gov.br"
   },
   {
     "nome": "ESCOLA EVANGÉLICA SHALOM",
-    "inep": "52091600",
-    "email": "comissaoevangelicashalom@edu.anapolis.go.gov.br"
+    "username": "52091600",
+    "email": "e-evangelicashalom@edu.anapolis.go.gov.br"
   }
 ]
