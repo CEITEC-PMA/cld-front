@@ -20,6 +20,7 @@ import InputMask from "react-input-mask";
 import { apiUrl } from "@/utils/api";
 
 export type TForm = {
+  _id: string;
   nome: string;
   userAdmin: string;
   inep: number;
@@ -42,6 +43,7 @@ export type TForm = {
 };
 
 export type TUser = {
+  id: string;
   unidadeId: any[];
   role: string;
   acesso: number;
@@ -184,8 +186,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     }
   };
 
-  console.log(users);
-
   if (!user.role || user.role !== "admin") return <Unauthorized />;
 
   return (
@@ -270,11 +270,15 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       label="Administrador da Unidade de Ensino"
                       value={field.value || ""}
                       onChange={(e) => {
-                        // const unidadeSelecionada = unidades.find(
-                        //   (unidade) => unidade.nome === e.target.value
-                        // );
+                        const userSelecionado = users.find(
+                          (user: TUser) => user.nome === e.target.value
+                        );
 
-                        // if (unidadeSelecionada) {
+                        if (userSelecionado) {
+                          const idUserSelecionado = userSelecionado.id;
+                          console.log(idUserSelecionado);
+                        }
+
                         //   setValue("inep", unidadeSelecionada.inep);
                         //   setValue("email", unidadeSelecionada.email);
                         // }
@@ -384,21 +388,17 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="number"
-                      label="CEP"
-                      sx={{
-                        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                          {
-                            display: "none",
-                          },
-                        "& input[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      }}
-                      {...field}
-                    />
+                    <InputMask
+                      mask="99999999"
+                      maskChar=""
+                      value={field.value}
+                      onChange={field.onChange}
+                    >
+                      {
+                        // @ts-ignore
+                        () => <TextField fullWidth type="text" label="CEP" />
+                      }
+                    </InputMask>
                   )}
                 />
               </Grid>
