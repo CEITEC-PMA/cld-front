@@ -236,7 +236,7 @@ export default function Turmas() {
             nomeTurma: selectedTurma,
             qtdeAlunos: qtdeAlunos,
             qtdeProf: qtdeProf,
-            zona: user._id,
+            zona: user.id,
           }),
         });
 

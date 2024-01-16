@@ -45,7 +45,7 @@ export default function Busca() {
     setIsLoading(true);
 
     const token = localStorage.getItem("token");
-    if (user._id) {
+    if (user.id) {
       const getDados = async () => {
         try {
           const response = await fetch(`${apiUrl}/api/v1/zona`, {
@@ -70,7 +70,7 @@ export default function Busca() {
 
       getDados();
     }
-  }, [user._id]);
+  }, [user.id]);
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -92,7 +92,7 @@ export default function Busca() {
     router.push(`/dashboard/busca/${id}`);
   };
 
-  if (!user.role || !user.role.includes("super-adm")) return <Unauthorized />;
+  if (user.role !== "admin") return <Unauthorized />;
 
   return (
     <Box margin="24px">

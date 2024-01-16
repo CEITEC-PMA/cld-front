@@ -20,6 +20,7 @@ import InputMask from "react-input-mask";
 import { apiUrl } from "@/utils/api";
 import { TUser } from "@/utils/types/user.types";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -35,6 +36,11 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
+  const unidadeParams = useSearchParams();
+
+  const unidade = unidadeParams.get("id");
+
+  console.log(unidade);
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = (data) => {
     console.log("Dados do formulário enviados:", data);
@@ -175,7 +181,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             fontSize: "36px",
           }}
         >
-          Cadastrar Unidade de Ensino
+          {unidade ? `Editar Unidade de Ensino` : "Cadastrar Unidade de Ensino"}
         </Typography>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
