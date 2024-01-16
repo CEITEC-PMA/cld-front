@@ -1,11 +1,26 @@
 "use client";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  ptBR,
+} from "@mui/x-data-grid";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, Container, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  ThemeProvider,
+  Typography,
+  createTheme,
+} from "@mui/material";
 import { MouseEvent, useEffect, useState } from "react";
 import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
@@ -16,12 +31,14 @@ import CustomModal from "@/components/modal";
 import CreateIcon from "@mui/icons-material/Create";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import AddIcon from "@mui/icons-material/Add";
+import { ptBR as corePtBR } from "@mui/material/locale";
 
 export default function ListaUnidades() {
   const { user } = useUserContext();
 
   const router = useRouter();
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -53,7 +70,7 @@ export default function ListaUnidades() {
             <IconButton
               color="primary"
               onClick={(event) => handleEditar(event, params.row.id)}
-              title="Documentação do candidato"
+              title="Editar unidade"
             >
               <CreateIcon />
             </IconButton>
@@ -102,6 +119,16 @@ export default function ListaUnidades() {
       },
     },
   ];
+
+  const theme = createTheme(
+    {
+      palette: {
+        primary: { main: "#1976d2" },
+      },
+    },
+    ptBR,
+    corePtBR
+  );
 
   const handleDetalhar = (
     event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -167,7 +194,7 @@ export default function ListaUnidades() {
   // };
 
   useEffect(() => {
-    //fetch
+    setIsLoading(true);
     const token = localStorage.getItem("token");
     if (user.id) {
       const getDadosUnidades = async () => {
@@ -178,6 +205,7 @@ export default function ListaUnidades() {
         });
         const responseJson = await response.json();
         setUnidades(responseJson.results);
+        setIsLoading(false);
       };
       getDadosUnidades();
     }
@@ -194,33 +222,34 @@ export default function ListaUnidades() {
           Lista de Unidades
         </Typography>
 
-        <Box
-          gap="20px"
-          alignItems="center"
-          display="flex"
-          flexDirection="column"
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} md={8} lg={6}>
+            <Button
+              variant="contained"
+              onClick={handleCreate}
+              startIcon={<AddIcon />}
+            >
+              Adicionar unidade
+            </Button>
+            <ThemeProvider theme={theme}>
+              <DataGrid
+                sx={{ backgroundColor: "#fff", mt: 2 }}
+                getRowId={(row) => row.id}
+                rows={unidades}
+                columns={columns}
+                pageSizeOptions={[5, 10]}
+                disableRowSelectionOnClick
+              />
+            </ThemeProvider>
+          </Grid>
+        </Grid>
+
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isLoading}
         >
-          <Button
-            variant="contained"
-            onClick={handleCreate}
-            startIcon={<AddIcon />}
-          >
-            Adicionar unidade
-          </Button>
-          <DataGrid
-            sx={{ backgroundColor: "#fff", maxWidth: "650px" }}
-            getRowId={(row) => row.id}
-            rows={unidades}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-            disableRowSelectionOnClick
-          />
-        </Box>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Container>
     </Box>
   );
