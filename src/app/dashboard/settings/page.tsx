@@ -36,8 +36,6 @@ export default function Settings() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log(user.id);
-
   useEffect(() => {
     setIsLoading(true);
 
@@ -69,8 +67,6 @@ export default function Settings() {
     }
   }, [user.id]);
 
-  console.log(users);
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -86,9 +82,9 @@ export default function Settings() {
 
   const handleReset = async (inep: string) => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/zona/inep`, {
-        method: "PUT",
-        body: JSON.stringify({ inep: selectedOption?.inep }),
+      const response = await fetch(`${apiUrl}/v1/users/${selectedOption?.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ acesso: 0 }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -117,6 +113,8 @@ export default function Settings() {
   ) => {
     setSelectedOption(value);
   };
+
+  console.log(selectedOption);
 
   if (user.role !== "admin") return <Unauthorized />;
 

@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   Snackbar,
   Stack,
 } from "@mui/material";
@@ -25,6 +26,8 @@ import type { DialogProps } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import CloseIcon from "@mui/icons-material/Close";
+import { styled } from "@mui/material/styles";
 
 export default function LoginPage() {
   const [open, setOpen] = React.useState(false);
@@ -33,6 +36,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
   const [openSnack, setOpenSnack] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
@@ -50,16 +54,26 @@ export default function LoginPage() {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
 
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialogContent-root": {
+      padding: theme.spacing(2),
+    },
+    "& .MuiDialogActions-root": {
+      padding: theme.spacing(1),
+    },
+  }));
+
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
   const handleClose = () => {
     setOpen(false);
+    setOpenAlert(false);
+  };
+
+  const handleOpenAlert = () => {
+    setOpenAlert(true);
   };
 
   const handleCloseSnack = (
@@ -103,7 +117,7 @@ export default function LoginPage() {
     });
   };
 
-  const handleChangeCpf = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
 
@@ -133,19 +147,26 @@ export default function LoginPage() {
       body: JSON.stringify(dataToSend),
     })
       .then(async (response) => {
-        if (response.status === 200) {
-          const resJson = await response.json();
-          if (resJson.user.acesso === 0) {
-            const tokenBackEnd = resJson.tokens.access.token;
-            localStorage.setItem("token", tokenBackEnd);
-            handleOpenDialog();
-          } else {
-            const token = resJson.tokens.access.token;
-            localStorage.setItem("token", token);
-            router.push("/dashboard");
+        const resJson = await response.json();
+        if (
+          resJson.message ===
+          "Usuário inativo. module o usuário em uma unidade para ativar"
+        ) {
+          handleOpenAlert();
+        } else {
+          if (response.status === 200) {
+            if (resJson.user.acesso === 0) {
+              const tokenBackEnd = resJson.tokens.access.token;
+              localStorage.setItem("token", tokenBackEnd);
+              handleOpenDialog();
+            } else {
+              const token = resJson.tokens.access.token;
+              localStorage.setItem("token", token);
+              router.push("/dashboard");
+            }
+          } else if (response.status === 401) {
+            throw new Error("INEP/CPF ou senha inválidos");
           }
-        } else if (response.status === 401) {
-          throw new Error("INEP/CPF ou senha inválidos");
         }
       })
       .catch((error) => {
@@ -195,7 +216,7 @@ export default function LoginPage() {
             type="number"
             id="username"
             autoComplete="username"
-            onChange={handleChangeCpf}
+            onChange={handleChangeUsername}
             sx={{
               "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                 {
@@ -252,7 +273,7 @@ export default function LoginPage() {
                 fullWidth
                 name="username"
                 label="INEP/CPF"
-                type="tel"
+                type="number"
                 id="username"
                 autoComplete="username"
                 value={username}
@@ -326,6 +347,42 @@ export default function LoginPage() {
               Senha redefinida com sucesso!
             </Alert>
           </Snackbar>
+          <BootstrapDialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={openAlert}
+          >
+            <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+              Usuário Inativo
+            </DialogTitle>
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <DialogContent dividers>
+              <Typography gutterBottom>
+                O registro do seu usuário foi encontrado em nosso banco de
+                dados, porém se encontra com status &quot;Inativo&quot;.
+              </Typography>
+              <Typography gutterBottom>
+                Solicite ao adminsitrador da sua Unidade de Ensino a ativação do
+                seu usuário.
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus variant="contained" onClick={handleClose}>
+                ENTENDI
+              </Button>
+            </DialogActions>
+          </BootstrapDialog>
         </Box>
       </Box>
     </Container>
