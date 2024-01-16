@@ -92,6 +92,15 @@ export default function DrawerComponent({
           <ListItems
             label="Cadastrar unidade"
             icon={<MapsHomeWorkIcon />}
+            to="/dashboard/unidade"
+            isActive={pathname === "/dashboard/unidade"}
+          />
+        )}
+
+        {user.role === "admin" && (
+          <ListItems
+            label="Listar unidades"
+            icon={<MapsHomeWorkIcon />}
             to="/dashboard/registro"
             isActive={
               pathname === "/dashboard/registro" ||

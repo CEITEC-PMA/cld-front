@@ -114,26 +114,38 @@ export default function Settings() {
     setSelectedOption(value);
   };
 
-  console.log(selectedOption);
-
   if (user.role !== "admin") return <Unauthorized />;
 
   return (
-    <Box margin="24px">
-      <Grid container alignItems="center" flexDirection="column">
-        <Grid item>
-          <Typography variant="h3" marginBottom="12x" textAlign="center">
-            Redefinição de senha de usuário
-          </Typography>
-        </Grid>
-        <Grid
-          item
-          marginTop="200px"
-          alignItems="center"
-          display="flex"
-          flexDirection="column"
-          gap="24px"
-        >
+    <Box
+      padding={4}
+      justifyItems="center"
+      alignItems="center"
+      alignContent="center"
+      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px" }}
+      height="90vh"
+      display="flex"
+      justifyContent="center"
+    >
+      <Box
+        borderRadius="15px"
+        padding={2}
+        alignItems="center"
+        display="flex"
+        flexDirection="column"
+        justifySelf="center"
+        justifyContent="center"
+        justifyItems="center"
+        height="100%"
+        minWidth={smDown ? "350px" : mdDown ? "450px" : "600px"}
+        sx={{ backgroundColor: "#fff" }}
+      >
+        <Grid container alignItems="center" flexDirection="column" gap={12}>
+          <Grid item alignContent="flex-start" margin={4}>
+            <Typography variant="h3" marginBottom="12x" textAlign="center">
+              Redefinição de senha de usuário
+            </Typography>
+          </Grid>
           {isLoading === false && (
             <Box marginTop={4}>
               <Autocomplete
@@ -145,7 +157,11 @@ export default function Settings() {
                     label="Digite o nome do usuário"
                     variant="outlined"
                     onChange={(e) => setInputValue(e.target.value)}
-                    sx={{ width: 500, backgroundColor: "#fff" }}
+                    sx={{
+                      maxWidth: "700px",
+                      minWidth: "450px",
+                      backgroundColor: "#fff",
+                    }}
                   />
                 )}
                 value={selectedOption}
@@ -179,7 +195,7 @@ export default function Settings() {
             onNoButtonClick={closeModal}
           />
         </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 }
