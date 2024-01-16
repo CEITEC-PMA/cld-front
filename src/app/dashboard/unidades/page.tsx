@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { MouseEvent, useEffect, useState } from "react";
 import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
@@ -15,6 +15,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import CustomModal from "@/components/modal";
 import CreateIcon from "@mui/icons-material/Create";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function ListaUnidades() {
   const { user } = useUserContext();
@@ -182,26 +183,32 @@ export default function ListaUnidades() {
     }
   }, [user.id]);
 
+  const handleCreate = () => {
+    console.log("criar unidade");
+  };
+
   return (
     <Box margin="24px">
       <Container>
         <Typography variant="h3" marginBottom="12x" textAlign="center">
           Lista de Unidades
         </Typography>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            maxWidth: "680px",
-            height: "645px",
-            width: "100%",
-            background: "#fff",
-            margin: "0 auto",
-          }}
+
+        <Box
+          gap="20px"
+          alignItems="center"
+          display="flex"
+          flexDirection="column"
         >
+          <Button
+            variant="contained"
+            onClick={handleCreate}
+            startIcon={<AddIcon />}
+          >
+            Adicionar unidade
+          </Button>
           <DataGrid
+            sx={{ backgroundColor: "#fff", maxWidth: "650px" }}
             getRowId={(row) => row.id}
             rows={unidades}
             columns={columns}
@@ -213,7 +220,7 @@ export default function ListaUnidades() {
             pageSizeOptions={[5, 10]}
             disableRowSelectionOnClick
           />
-        </div>
+        </Box>
       </Container>
     </Box>
   );
