@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -30,10 +30,10 @@ export default function AppBarComponent({
   const { user, setUser } = useUserContext();
   const router = useRouter();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/login");
+      router.push("/");
     } else {
       //fetch
       const getDadosUser = async () => {

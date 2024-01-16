@@ -62,11 +62,7 @@ export default function DashboardPage() {
             variant="body1"
             color=" #0f4c81"
           >
-            Bem-vindo à nossa plataforma de eleição de diretores escolares, uma
-            ferramenta crucial para moldar o futuro da educação em nossa
-            comunidade. Aqui, reconhecemos a importância fundamental das
-            eleições de diretores para aprimorar e fortalecer nossa comunidade
-            escolar.
+            Bem-vindo ao Sistema de Levantamendo de Livros Didáticos.
           </Typography>
         </Box>
       </Box>
