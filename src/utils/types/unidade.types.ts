@@ -1,15 +1,12 @@
 export type TUnidadeEscolar = {
   _id: string;
   nome: string;
-  userAdmin: string;
+  userId: string[];
   inep: number;
   fone?: string;
   email: string;
+  coordinates: number[];
   endereco?: {
-    coordinates: {
-      coordinateX: number;
-      coordinateY: number;
-    };
     cep?: string;
     logradouro?: string;
     complemento?: string;

@@ -41,15 +41,64 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
+  const [coordinates, setCoordinates] = useState({
+    coordinateX: 0,
+    coordinateY: 0,
+  });
 
   const idUnidade = unidadeParams.get("id");
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
-    const formData = getValues(); // Obter os dados do formulário
-    console.log("Dados a serem enviados para o backend:", formData);
+    const { coordinateX, coordinateY } = coordinates;
+    const formData = getValues();
+    const token = localStorage.getItem("token");
+    const url = idUnidade
+      ? `${apiUrl}/v1/unidade/${idUnidade}`
+      : `${apiUrl}/v1/unidade`;
+    const method = idUnidade ? "PATCH" : "POST";
 
-    // Outras lógicas ou chamadas de API aqui
-    await onSubmit(formData);
+    const formDataWithCoordinates = {
+      ...formData,
+      endereco: {
+        ...formData.endereco,
+        coordinates: {
+          coordinateX,
+          coordinateY,
+        },
+      },
+    };
+
+    console.log(
+      "Dados a serem enviados para o backend:",
+      formDataWithCoordinates
+    );
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formDataWithCoordinates),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${idUnidade ? "update" : "submit"} data`);
+      }
+
+      console.log(
+        `Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso:`,
+        formDataWithCoordinates
+      );
+
+      await onSubmit(formDataWithCoordinates);
+    } catch (error) {
+      console.error(
+        `Erro ao ${idUnidade ? "atualizar" : "enviar"} os dados:`,
+        error
+      );
+    }
   };
 
   const fetchData = async (url: string, setData: Function) => {
@@ -101,7 +150,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           setUnidades([responseJson]);
 
           setValue("nome", responseJson.nome || "");
-          setValue("userAdmin", responseJson.userAdmin || "");
+          setValue("userId", responseJson.userId || "");
           setValue("inep", responseJson.inep || 0);
           setValue("fone", responseJson.fone || "");
           setValue("email", responseJson.email || "");
@@ -245,15 +294,15 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="userAdmin"
+                name="userId"
                 control={control}
                 render={({ field, fieldState }) => (
                   <>
-                    <InputLabel id="userAdmin">
+                    <InputLabel id="userId">
                       Administrador da Unidade de Ensino
                     </InputLabel>
                     <Select
-                      labelId="userAdmin"
+                      labelId="userId"
                       label="Administrador da Unidade de Ensino"
                       value={field.value || ""}
                       onChange={(e) => {
@@ -263,9 +312,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
                         if (userSelecionado) {
                           const idUserSelecionado = userSelecionado.id;
+                          field.onChange([idUserSelecionado]);
                         }
-
-                        field.onChange(e);
                       }}
                     >
                       {users &&
@@ -542,79 +590,77 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               display="flex"
               spacing={2}
             >
-              <Grid item xs={6}>
-                <Controller
-                  name="endereco.coordinates.coordinateX"
-                  control={control}
-                  defaultValue={0}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="number"
-                      label="Coordenada X"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                      sx={{
-                        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                          {
-                            display: "none",
-                          },
-                        "& input[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      }}
-                    />
-                  )}
-                />
+              <Grid
+                item
+                container
+                xs={mdDown ? 12 : 6}
+                display="flex"
+                spacing={2}
+              >
+                <Grid item xs={6}>
+                  <Controller
+                    name="coordinates.0"
+                    control={control}
+                    defaultValue={0}
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        type="number"
+                        label="Coordenada X"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(parseFloat(e.target.value));
+                          setCoordinates((prevCoordinates) => ({
+                            ...prevCoordinates,
+                            coordinateX: parseFloat(e.target.value),
+                          }));
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Controller
+                    name="coordinates.1"
+                    control={control}
+                    defaultValue={0}
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        type="number"
+                        label="Coordenada Y"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(parseFloat(e.target.value));
+                          setCoordinates((prevCoordinates) => ({
+                            ...prevCoordinates,
+                            coordinateY: parseFloat(e.target.value),
+                          }));
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <Controller
-                  name="endereco.coordinates.coordinateY"
-                  control={control}
-                  defaultValue={0}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="number"
-                      label="Coordenada Y"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                      sx={{
-                        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                          {
-                            display: "none",
-                          },
-                        "& input[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      }}
-                    />
-                  )}
-                />
+              <Grid
+                item
+                xs={12}
+                margin="24px 0"
+                alignItems="center"
+                display="flex"
+                flexDirection="column"
+              >
+                <Button
+                  startIcon={<CheckIcon />}
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                >
+                  SALVAR DADOS
+                </Button>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            margin="24px 0"
-            alignItems="center"
-            display="flex"
-            flexDirection="column"
-          >
-            <Button
-              startIcon={<CheckIcon />}
-              size="large"
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
-              SALVAR DADOS
-            </Button>
           </Grid>
         </form>
         <Backdrop
