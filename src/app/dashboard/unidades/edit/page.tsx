@@ -31,7 +31,8 @@ interface Props {
 
 const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const { user } = useUserContext();
-  const { control, handleSubmit, setValue, watch } = useForm<TUnidadeEscolar>();
+  const { control, handleSubmit, setValue, watch, getValues } =
+    useForm<TUnidadeEscolar>();
   const cep = watch("endereco.cep");
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
@@ -42,6 +43,14 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const unidadeParams = useSearchParams();
 
   const idUnidade = unidadeParams.get("id");
+
+  const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
+    const formData = getValues(); // Obter os dados do formulário
+    console.log("Dados a serem enviados para o backend:", formData);
+
+    // Outras lógicas ou chamadas de API aqui
+    await onSubmit(formData);
+  };
 
   const fetchData = async (url: string, setData: Function) => {
     setIsLoading(true);
@@ -88,6 +97,41 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           const responseJson = await response.json();
           setUnidades([responseJson]);
           fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+
+          setUnidades([responseJson]);
+
+          setValue("nome", responseJson.nome || "");
+          setValue("userAdmin", responseJson.userAdmin || "");
+          setValue("inep", responseJson.inep || 0);
+          setValue("fone", responseJson.fone || "");
+          setValue("email", responseJson.email || "");
+
+          setValue("endereco.cep", responseJson.endereco.cep || "");
+          setValue(
+            "endereco.logradouro",
+            responseJson.endereco.logradouro || ""
+          );
+          setValue(
+            "endereco.complemento",
+            responseJson.endereco.complemento || ""
+          );
+          setValue("endereco.quadra", responseJson.endereco.quadra || "");
+          setValue("endereco.lote", responseJson.endereco.lote || "");
+          setValue("endereco.bairro", responseJson.endereco.bairro || "");
+          setValue(
+            "endereco.localidade",
+            responseJson.endereco.localidade || ""
+          );
+          setValue("endereco.uf", responseJson.endereco.uf || "");
+
+          setValue(
+            "endereco.coordinates.coordinateX",
+            responseJson.endereco.coordinates.coordinateX || 0
+          );
+          setValue(
+            "endereco.coordinates.coordinateY",
+            responseJson.endereco.coordinates.coordinateY || 0
+          );
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -160,7 +204,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             ? `Editar Unidade de Ensino - ${unidades[0]?.nome || ""}`
             : "Cadastrar Unidade de Ensino"}
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
             <Grid item xs={12}>
               <Typography
