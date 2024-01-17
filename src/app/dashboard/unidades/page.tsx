@@ -147,7 +147,6 @@ export default function ListaUnidades() {
     id: string
   ) => {
     event.stopPropagation();
-    console.log(id);
     router.push(`/dashboard/unidades/edit?id=${id}`);
   };
 

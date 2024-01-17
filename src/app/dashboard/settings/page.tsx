@@ -136,16 +136,21 @@ export default function Settings() {
         justifySelf="center"
         justifyContent="center"
         justifyItems="center"
-        height="100%"
+        height="80%"
         minWidth={smDown ? "350px" : mdDown ? "450px" : "600px"}
         sx={{ backgroundColor: "#fff" }}
       >
-        <Grid container alignItems="center" flexDirection="column" gap={12}>
-          <Grid item alignContent="flex-start" margin={4}>
-            <Typography variant="h3" marginBottom="12x" textAlign="center">
-              Redefinição de senha de usuário
-            </Typography>
-          </Grid>
+        <Grid
+          container
+          alignItems="center"
+          flexDirection="column"
+          gap={6}
+          margin="auto 20px"
+        >
+          <Typography variant="h3" marginBottom="12x" textAlign="center">
+            Redefinição de senha de usuário
+          </Typography>
+
           {isLoading === false && (
             <Box marginTop={4}>
               <Autocomplete

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Unauthorized from "@/components/unauthorized";
-import { useUserContext } from "@/userContext";
+import { useSearchParams } from "next/navigation";
 import {
   Backdrop,
   Box,
@@ -19,10 +18,12 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
+
 import { apiUrl } from "@/utils/api";
-import { TUser } from "@/utils/types/user.types";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
-import { useSearchParams } from "next/navigation";
+import { TUser } from "@/utils/types/user.types";
+import { useUserContext } from "@/userContext";
+import Unauthorized from "@/components/unauthorized";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -68,11 +69,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   };
 
   useEffect(() => {
-    fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
-    fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
-  }, [user.id]);
-
-  useEffect(() => {
     const loadUnidadeData = async () => {
       if (idUnidade) {
         setIsLoading(true);
@@ -96,6 +92,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
         } finally {
           setIsLoading(false);
         }
+      } else {
+        fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
+        fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+        setIsLoading(false);
       }
     };
 
@@ -104,7 +104,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
   const handleBuscaCep = async () => {
     if (cep?.length !== 8 || !isValidCEP(cep)) {
-      alert("CEP inválido");
+      alert("CEP inválido, digite novamente!");
       return;
     }
 
@@ -180,7 +180,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       fullWidth
                       value={
                         idUnidade && unidades.length > 0
-                          ? unidades[0].nome
+                          ? unidades[0]?.nome
                           : field.value
                       }
                       onChange={(e) => {
@@ -246,7 +246,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     InputProps={{ readOnly: !!idUnidade }}
                     value={
                       idUnidade && unidades.length > 0
-                        ? unidades[0].inep
+                        ? unidades[0]?.inep
                         : field.value
                     }
                     onChange={(e) => {
@@ -314,7 +314,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     InputProps={{ readOnly: !!idUnidade }}
                     value={
                       idUnidade && unidades.length > 0
-                        ? unidades[0].email
+                        ? unidades[0]?.email
                         : field.value
                     }
                     onChange={(e) => {
