@@ -42,15 +42,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
   const idUnidade = unidadeParams.get("id");
 
-  const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = (data) => {
-    console.log("Dados do formulário enviados:", data);
-
-    onSubmit(data);
-  };
-
   const fetchData = async (url: string, setData: Function) => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
+
     try {
       const response = await fetch(url, {
         headers: {
@@ -74,17 +69,15 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
   useEffect(() => {
     fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
-  }, [user.id]);
-
-  useEffect(() => {
     fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
   }, [user.id]);
 
   useEffect(() => {
-    if (idUnidade) {
-      setIsLoading(true);
-      const token = localStorage.getItem("token");
-      const getUnidadeById = async () => {
+    const loadUnidadeData = async () => {
+      if (idUnidade) {
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
+
         try {
           const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
             headers: {
@@ -98,54 +91,56 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
           const responseJson = await response.json();
           setUnidades([responseJson]);
-          setIsLoading(false);
-          return response;
         } catch (error) {
           console.error("Error fetching data:", error);
+        } finally {
           setIsLoading(false);
         }
-      };
-      getUnidadeById();
-    } else {
-      fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
-    }
-  }, [idUnidade, user.id]);
-
-  useEffect(() => {
-    if (cep?.length !== 8) return;
-    const handleBuscaCep = async (cep: string) => {
-      if (!isValidCEP) {
-        alert("CEP inválido");
-        return;
-      }
-      try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const resJson = await response.json();
-
-        setValue("endereco.logradouro", resJson.logradouro);
-        setValue("endereco.bairro", resJson.bairro);
-        setValue("endereco.localidade", resJson.localidade);
-        setValue("endereco.uf", resJson.uf);
-      } catch (error) {
-        alert("Falha ao receber os dados do CEP");
       }
     };
-    isValidCEP(cep) ? handleBuscaCep(cep) : "";
-  }, [cep, setValue]);
+
+    loadUnidadeData();
+  }, [idUnidade, user.id]);
+
+  const handleBuscaCep = async () => {
+    if (cep?.length !== 8 || !isValidCEP(cep)) {
+      alert("CEP inválido");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const resJson = await response.json();
+
+      setValue("endereco.logradouro", resJson.logradouro?.toUpperCase() || "");
+      setValue("endereco.bairro", resJson.bairro?.toUpperCase() || "");
+      setValue("endereco.localidade", resJson.localidade?.toUpperCase() || "");
+      setValue("endereco.uf", resJson.uf?.toUpperCase() || "");
+    } catch (error) {
+      alert("Falha ao receber os dados do CEP");
+    }
+  };
 
   const isValidCEP = (cep: string) => /^[0-9]{8}$/.test(cep);
 
-  if (!user.role || user.role !== "admin") return <Unauthorized />;
+  useEffect(() => {
+    const handleAutoFetch = async () => {
+      if (cep?.length === 8 && isValidCEP(cep)) {
+        await handleBuscaCep();
+        const logradouroInput = document.getElementById("endereco.logradouro");
+        logradouroInput?.focus();
+      }
+    };
 
-  console.log(unidades);
+    handleAutoFetch();
+  }, [cep]);
+
+  if (!user.role || user.role !== "admin") return <Unauthorized />;
 
   return (
     <Box
       padding={smDown ? 2 : mdDown ? 3 : 4}
-      alignItems="center"
-      alignContent="center"
-      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px" }}
-      height="90vh"
+      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px", height: "90vh" }}
     >
       <Box padding={2} sx={{ backgroundColor: "#fff" }}>
         <Typography
@@ -160,11 +155,11 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             fontSize: "36px",
           }}
         >
-          {idUnidade
-            ? `Editar Unidade de Ensino - ${unidades[0].nome} `
+          {idUnidade && unidades.length > 0
+            ? `Editar Unidade de Ensino - ${unidades[0]?.nome || ""}`
             : "Cadastrar Unidade de Ensino"}
         </Typography>
-        <form onSubmit={handleSubmit(onSubmitHandler)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container padding={2} spacing={2} alignItems="center">
             <Grid item xs={12}>
               <Typography
@@ -180,31 +175,23 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 control={control}
                 render={({ field }) => (
                   <>
-                    <InputLabel id="nome">Nome da Unidade de Ensino</InputLabel>
-                    <Select
+                    <TextField
                       label="Nome da Unidade de Ensino"
-                      labelId="nome"
-                      value={field.value || ""}
+                      fullWidth
+                      value={
+                        idUnidade && unidades.length > 0
+                          ? unidades[0].nome
+                          : field.value
+                      }
                       onChange={(e) => {
-                        const unidadeSelecionada = unidades.find(
-                          (unidade) => unidade.nome === e.target.value
-                        );
-
-                        if (unidadeSelecionada) {
-                          setValue("inep", unidadeSelecionada.inep);
-                          setValue("email", unidadeSelecionada.email);
+                        if (!idUnidade) {
+                          field.onChange(e);
                         }
-
-                        field.onChange(e);
                       }}
-                    >
-                      {unidades &&
-                        unidades.map((unidade: TUnidadeEscolar) => (
-                          <MenuItem key={unidade.inep} value={unidade.nome}>
-                            {unidade.nome}
-                          </MenuItem>
-                        ))}
-                    </Select>
+                      InputProps={{
+                        readOnly: !!idUnidade,
+                      }}
+                    />
                   </>
                 )}
               />
@@ -246,7 +233,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={3.5}>
+            <Grid item xs={smDown ? 4 : 3}>
               <Controller
                 name="inep"
                 control={control}
@@ -256,7 +243,17 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     fullWidth
                     type="number"
                     label="INEP"
-                    InputProps={{ readOnly: true }}
+                    InputProps={{ readOnly: !!idUnidade }}
+                    value={
+                      idUnidade && unidades.length > 0
+                        ? unidades[0].inep
+                        : field.value
+                    }
+                    onChange={(e) => {
+                      if (!idUnidade) {
+                        field.onChange(e);
+                      }
+                    }}
                     sx={{
                       "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
                         {
@@ -266,7 +263,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                         MozAppearance: "textfield",
                       },
                     }}
-                    {...field}
                   />
                 )}
               />
@@ -305,7 +301,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 12 : 6}>
+            <Grid item xs={12}>
               <Controller
                 name="email"
                 control={control}
@@ -315,8 +311,17 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     type="email"
                     fullWidth
                     label="Email"
-                    InputProps={{ readOnly: true }}
-                    {...field}
+                    InputProps={{ readOnly: !!idUnidade }}
+                    value={
+                      idUnidade && unidades.length > 0
+                        ? unidades[0].email
+                        : field.value
+                    }
+                    onChange={(e) => {
+                      if (!idUnidade) {
+                        field.onChange(e);
+                      }
+                    }}
                   />
                 )}
               />
@@ -342,6 +347,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       maskChar=""
                       value={field.value}
                       onChange={field.onChange}
+                      onBlur={handleBuscaCep}
                     >
                       {
                         // @ts-ignore
