@@ -245,6 +245,7 @@ export default function ListaUnidades() {
                 getRowId={(row) => row.id}
                 rows={unidades}
                 columns={columns}
+                sortModel={sortModel}
                 onSortModelChange={handleSortModelChange}
                 initialState={{
                   pagination: {
