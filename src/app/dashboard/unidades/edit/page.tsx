@@ -86,11 +86,15 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           }
 
           const responseJson = await response.json();
-          setUnidades([responseJson]);
+          setTimeout(() => {
+            setUnidades([responseJson]);
+          }, 250);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 250);
         }
       } else {
         fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
@@ -140,7 +144,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Box
       padding={smDown ? 2 : mdDown ? 3 : 4}
-      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px", height: "90vh" }}
+      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px", height: "99vh" }}
     >
       <Box padding={2} sx={{ backgroundColor: "#fff" }}>
         <Typography
@@ -179,8 +183,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       label="Nome da Unidade de Ensino"
                       fullWidth
                       value={
-                        idUnidade && unidades.length > 0
-                          ? unidades[0]?.nome
+                        idUnidade
+                          ? unidades && unidades.length > 0
+                            ? unidades[0]?.nome || ""
+                            : ""
                           : field.value
                       }
                       onChange={(e) => {
@@ -555,7 +561,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           <Grid
             item
             xs={12}
-            marginTop="16px"
+            margin="24px 0"
             alignItems="center"
             display="flex"
             flexDirection="column"
