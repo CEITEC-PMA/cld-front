@@ -86,15 +86,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           }
 
           const responseJson = await response.json();
-          setTimeout(() => {
-            setUnidades([responseJson]);
-          }, 250);
+          setUnidades([responseJson]);
+          fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 250);
+          setIsLoading(false);
         }
       } else {
         fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
@@ -191,7 +188,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                       }
                       onChange={(e) => {
                         if (!idUnidade) {
-                          field.onChange(e);
+                          field.onChange(e.target.value.toUpperCase());
                         }
                       }}
                       InputProps={{
@@ -222,7 +219,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
                         if (userSelecionado) {
                           const idUserSelecionado = userSelecionado.id;
-                          console.log(idUserSelecionado);
                         }
 
                         field.onChange(e);
