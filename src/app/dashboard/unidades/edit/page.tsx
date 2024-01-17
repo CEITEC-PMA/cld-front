@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import Unauthorized from "@/components/unauthorized";
 import { useUserContext } from "@/userContext";
 import {
+  Backdrop,
   Box,
   Button,
+  CircularProgress,
   Grid,
   InputLabel,
   MenuItem,
@@ -38,9 +40,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
 
-  const unidade = unidadeParams.get("id");
-
-  console.log(unidade);
+  const idUnidade = unidadeParams.get("id");
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = (data) => {
     console.log("Dados do formulário enviados:", data);
@@ -48,117 +48,96 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     onSubmit(data);
   };
 
-  useEffect(() => {
+  const fetchData = async (url: string, setData: Function) => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
-    const getDados = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const responseJson = await response.json();
-        setUnidades(responseJson.results);
-        setIsLoading(false);
-        return response;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
       }
-    };
-    getDados();
+
+      const responseJson = await response.json();
+      setData(responseJson.results);
+      setIsLoading(false);
+      return response;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
   }, [user.id]);
 
   useEffect(() => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    const getDados = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const responseJson = await response.json();
-        setUsers(responseJson.results);
-        setIsLoading(false);
-        return response;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsLoading(false);
-      }
-    };
-    getDados();
+    fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
   }, [user.id]);
 
   useEffect(() => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    const getDados = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    if (idUnidade) {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+      const getUnidadeById = async () => {
+        try {
+          const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+
+          const responseJson = await response.json();
+          setUnidades([responseJson]);
+          setIsLoading(false);
+          return response;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setIsLoading(false);
         }
-
-        const responseJson = await response.json();
-        setUnidades(responseJson.results);
-        setIsLoading(false);
-        return response;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsLoading(false);
-      }
-    };
-    getDados();
-  }, [user.id]);
+      };
+      getUnidadeById();
+    } else {
+      fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
+    }
+  }, [idUnidade, user.id]);
 
   useEffect(() => {
     if (cep?.length !== 8) return;
-    isValidCEP(cep);
-    handleBuscaCep(cep);
-  }, [cep]);
+    const handleBuscaCep = async (cep: string) => {
+      if (!isValidCEP) {
+        alert("CEP inválido");
+        return;
+      }
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const resJson = await response.json();
 
-  const isValidCEP = (cep: string) => {
-    const cepRegex = /^[0-9]{8}$/;
-    return cepRegex.test(cep);
-  };
+        setValue("endereco.logradouro", resJson.logradouro);
+        setValue("endereco.bairro", resJson.bairro);
+        setValue("endereco.localidade", resJson.localidade);
+        setValue("endereco.uf", resJson.uf);
+      } catch (error) {
+        alert("Falha ao receber os dados do CEP");
+      }
+    };
+    isValidCEP(cep) ? handleBuscaCep(cep) : "";
+  }, [cep, setValue]);
 
-  const handleBuscaCep = async (cep: string) => {
-    if (!isValidCEP) {
-      alert("CEP inválido");
-      return;
-    }
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const resJson = await response.json();
-
-      setValue("endereco.logradouro", resJson.logradouro);
-      setValue("endereco.bairro", resJson.bairro);
-      setValue("endereco.localidade", resJson.localidade);
-      setValue("endereco.uf", resJson.uf);
-    } catch (error) {
-      alert("Falha ao receber os dados do CEP");
-    }
-  };
+  const isValidCEP = (cep: string) => /^[0-9]{8}$/.test(cep);
 
   if (!user.role || user.role !== "admin") return <Unauthorized />;
+
+  console.log(unidades);
 
   return (
     <Box
@@ -181,7 +160,9 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             fontSize: "36px",
           }}
         >
-          {unidade ? `Editar Unidade de Ensino` : "Cadastrar Unidade de Ensino"}
+          {idUnidade
+            ? `Editar Unidade de Ensino - ${unidades[0].nome} `
+            : "Cadastrar Unidade de Ensino"}
         </Typography>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
@@ -197,7 +178,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               <Controller
                 name="nome"
                 control={control}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <>
                     <InputLabel id="nome">Nome da Unidade de Ensino</InputLabel>
                     <Select
@@ -584,6 +565,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             </Button>
           </Grid>
         </form>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Box>
     </Box>
   );

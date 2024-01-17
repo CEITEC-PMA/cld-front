@@ -3,6 +3,7 @@ import {
   DataGrid,
   GridColDef,
   GridRenderCellParams,
+  GridSortModel,
   ptBR,
 } from "@mui/x-data-grid";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -21,7 +22,7 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
-import { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -39,6 +40,9 @@ export default function ListaUnidades() {
   const router = useRouter();
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+    { field: "nome", sort: "asc" },
+  ]);
 
   const columns: GridColDef[] = [
     {
@@ -147,6 +151,10 @@ export default function ListaUnidades() {
     router.push(`/dashboard/unidades/edit?id=${id}`);
   };
 
+  const handleCreate = () => {
+    router.push(`/dashboard/unidades/edit`);
+  };
+
   // const handleRecorrer = (
   //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   //   id: string
@@ -211,8 +219,8 @@ export default function ListaUnidades() {
     }
   }, [user.id]);
 
-  const handleCreate = () => {
-    console.log("criar unidade");
+  const handleSortModelChange = (model: GridSortModel) => {
+    setSortModel(model);
   };
 
   return (
@@ -223,7 +231,7 @@ export default function ListaUnidades() {
         </Typography>
 
         <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} md={8} lg={6}>
+          <Grid item xs={12} md={8} lg={7}>
             <Button
               variant="contained"
               onClick={handleCreate}
@@ -237,6 +245,12 @@ export default function ListaUnidades() {
                 getRowId={(row) => row.id}
                 rows={unidades}
                 columns={columns}
+                onSortModelChange={handleSortModelChange}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                  },
+                }}
                 pageSizeOptions={[5, 10]}
                 disableRowSelectionOnClick
               />
