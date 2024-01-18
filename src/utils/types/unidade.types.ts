@@ -5,7 +5,9 @@ export type TUnidadeEscolar = {
   inep: number;
   fone?: string;
   email: string;
-  coordinates: number[];
+  location: {
+    coordinates: string[];
+  };
   endereco?: {
     cep?: string;
     logradouro?: string;

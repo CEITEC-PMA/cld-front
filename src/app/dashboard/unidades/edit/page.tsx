@@ -90,8 +90,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       click: (e) => {
         const { lat, lng } = e.latlng;
         setMarkerCoordinates([lat, lng]);
-        setValue("coordinates.0", lat);
-        setValue("coordinates.1", lng);
+        setValue("location.coordinates.0", lat);
+        setValue("location.coordinates.1", lng);
       },
     });
 
@@ -211,8 +211,14 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           );
           setValue("endereco.uf", responseJson.endereco.uf || "");
 
-          setValue("coordinates.0", responseJson.coordinates[0] || 0);
-          setValue("coordinates.1", responseJson.coordinates[1] || 0);
+          setValue(
+            "location.coordinates.0",
+            responseJson.location.coordinates[0] || 0
+          );
+          setValue(
+            "location.coordinates.1",
+            responseJson.location.coordinates[1] || 0
+          );
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -271,7 +277,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Box
       padding={smDown ? 2 : mdDown ? 3 : 4}
-      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px", height: "99vh" }}
+      sx={{ backgroundColor: "#ebebeb", borderRadius: "10px" }}
     >
       <Box padding={2} sx={{ backgroundColor: "#fff" }}>
         <Typography
@@ -527,17 +533,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   render={({ field }) => (
                     <TextField
                       fullWidth
-                      type="number"
+                      type="text"
                       label="Quadra"
-                      sx={{
-                        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                          {
-                            display: "none",
-                          },
-                        "& input[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      }}
                       {...field}
                     />
                   )}
@@ -548,21 +545,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   name="endereco.lote"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="number"
-                      label="Lote"
-                      sx={{
-                        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                          {
-                            display: "none",
-                          },
-                        "& input[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      }}
-                      {...field}
-                    />
+                    <TextField fullWidth type="text" label="Lote" {...field} />
                   )}
                 />
               </Grid>
@@ -628,12 +611,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               <Grid item xs={6}>
                 <InputLabel id="userId">Coordenada X</InputLabel>
                 <Controller
-                  name="coordinates.0"
+                  name="location.coordinates.0"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       fullWidth
-                      type="number"
+                      type="string"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
@@ -645,12 +628,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               <Grid item xs={6}>
                 <InputLabel id="userId">Coordenada Y</InputLabel>
                 <Controller
-                  name="coordinates.1"
+                  name="location.coordinates.1"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       fullWidth
-                      type="number"
+                      type="string"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
@@ -681,7 +664,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             <Grid
               item
               xs={12}
-              margin="24px 0"
+              margin="0 4px"
               alignItems="center"
               justifyItems="center"
               display="flex"
