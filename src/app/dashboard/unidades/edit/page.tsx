@@ -30,7 +30,16 @@ import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import { TUser } from "@/utils/types/user.types";
 import { useUserContext } from "@/userContext";
 import Unauthorized from "@/components/unauthorized";
-import CloseIcon from "@mui/icons-material/Close";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
+import { LatLngTuple } from "leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -50,8 +59,19 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
   const router = useRouter();
-
+  const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
+  const [leaflet, setLeaflet] = useState<any>(null);
   const idUnidade = unidadeParams.get("id");
+
+  useEffect(() => {
+    import("leaflet").then((L) => {
+      setLeaflet(L);
+    });
+  }, []);
+
+  const initialCoordinates: LatLngTuple = [
+    -16.33034510894292, -48.94892561842292,
+  ];
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -61,6 +81,22 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       padding: theme.spacing(1),
     },
   }));
+
+  const MapEventWrapper = () => {
+    if (!leaflet) return null;
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const map = useMapEvents({
+      click: (e) => {
+        const { lat, lng } = e.latlng;
+        setMarkerCoordinates([lat, lng]);
+        setValue("coordinates.0", lat);
+        setValue("coordinates.1", lng);
+      },
+    });
+
+    return null;
+  };
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
     const formData = getValues();
@@ -590,6 +626,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               spacing={2}
             >
               <Grid item xs={6}>
+                <InputLabel id="userId">Coordenada X</InputLabel>
                 <Controller
                   name="coordinates.0"
                   control={control}
@@ -597,7 +634,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     <TextField
                       fullWidth
                       type="number"
-                      label="Coordenada X"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
@@ -607,6 +643,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 />
               </Grid>
               <Grid item xs={6}>
+                <InputLabel id="userId">Coordenada Y</InputLabel>
                 <Controller
                   name="coordinates.1"
                   control={control}
@@ -614,7 +651,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     <TextField
                       fullWidth
                       type="number"
-                      label="Coordenada Y"
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
@@ -623,6 +659,24 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
+            </Grid>
+            <Grid xs={12} padding="20px 16px">
+              <MapContainer
+                center={initialCoordinates}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+              >
+                <MapEventWrapper />
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {leaflet && (
+                  <Marker position={initialCoordinates}>
+                    <Popup>Localização inicial</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
             </Grid>
             <Grid
               item
