@@ -41,15 +41,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
-  const [coordinates, setCoordinates] = useState({
-    coordinateX: 0,
-    coordinateY: 0,
-  });
 
   const idUnidade = unidadeParams.get("id");
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
-    const { coordinateX, coordinateY } = coordinates;
     const formData = getValues();
     const token = localStorage.getItem("token");
     const url = idUnidade
@@ -57,21 +52,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       : `${apiUrl}/v1/unidade`;
     const method = idUnidade ? "PATCH" : "POST";
 
-    const formDataWithCoordinates = {
-      ...formData,
-      endereco: {
-        ...formData.endereco,
-        coordinates: {
-          coordinateX,
-          coordinateY,
-        },
-      },
-    };
-
-    console.log(
-      "Dados a serem enviados para o backend:",
-      formDataWithCoordinates
-    );
+    console.log("Dados a serem enviados para o backend:", formData);
 
     try {
       const response = await fetch(url, {
@@ -80,7 +61,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formDataWithCoordinates),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
@@ -89,10 +70,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
       console.log(
         `Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso:`,
-        formDataWithCoordinates
+        formData
       );
 
-      await onSubmit(formDataWithCoordinates);
+      await onSubmit(formData);
     } catch (error) {
       console.error(
         `Erro ao ${idUnidade ? "atualizar" : "enviar"} os dados:`,
@@ -173,14 +154,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           );
           setValue("endereco.uf", responseJson.endereco.uf || "");
 
-          setValue(
-            "endereco.coordinates.coordinateX",
-            responseJson.endereco.coordinates.coordinateX || 0
-          );
-          setValue(
-            "endereco.coordinates.coordinateY",
-            responseJson.endereco.coordinates.coordinateY || 0
-          );
+          setValue("coordinates.0", responseJson.coordinates[0] || 0);
+          setValue("coordinates.1", responseJson.coordinates[1] || 0);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -487,7 +462,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 <Controller
                   name="endereco.quadra"
                   control={control}
-                  defaultValue={0}
                   render={({ field }) => (
                     <TextField
                       fullWidth
@@ -511,7 +485,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 <Controller
                   name="endereco.lote"
                   control={control}
-                  defaultValue={0}
                   render={({ field }) => (
                     <TextField
                       fullWidth
@@ -590,57 +563,41 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               display="flex"
               spacing={2}
             >
-              <Grid
-                item
-                container
-                xs={mdDown ? 12 : 6}
-                display="flex"
-                spacing={2}
-              >
-                <Grid item xs={6}>
-                  <Controller
-                    name="coordinates.0"
-                    control={control}
-                    defaultValue={0}
-                    render={({ field }) => (
-                      <TextField
-                        fullWidth
-                        type="number"
-                        label="Coordenada X"
-                        value={field.value}
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value));
-                          setCoordinates((prevCoordinates) => ({
-                            ...prevCoordinates,
-                            coordinateX: parseFloat(e.target.value),
-                          }));
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <Controller
-                    name="coordinates.1"
-                    control={control}
-                    defaultValue={0}
-                    render={({ field }) => (
-                      <TextField
-                        fullWidth
-                        type="number"
-                        label="Coordenada Y"
-                        value={field.value}
-                        onChange={(e) => {
-                          field.onChange(parseFloat(e.target.value));
-                          setCoordinates((prevCoordinates) => ({
-                            ...prevCoordinates,
-                            coordinateY: parseFloat(e.target.value),
-                          }));
-                        }}
-                      />
-                    )}
-                  />
-                </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="coordinates.0"
+                  control={control}
+                  defaultValue={0}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label="Coordenada X"
+                      value={field.value}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="coordinates.1"
+                  control={control}
+                  defaultValue={0}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label="Coordenada Y"
+                      value={field.value}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  )}
+                />
               </Grid>
               <Grid
                 item
@@ -656,6 +613,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   type="submit"
                   variant="contained"
                   color="primary"
+                  onClick={handleSubmit(onSubmitHandler)}
                 >
                   SALVAR DADOS
                 </Button>
