@@ -1,17 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Backdrop,
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,6 +30,7 @@ import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import { TUser } from "@/utils/types/user.types";
 import { useUserContext } from "@/userContext";
 import Unauthorized from "@/components/unauthorized";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -38,11 +45,22 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
+  const router = useRouter();
 
   const idUnidade = unidadeParams.get("id");
+
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialogContent-root": {
+      padding: theme.spacing(2),
+    },
+    "& .MuiDialogActions-root": {
+      padding: theme.spacing(1),
+    },
+  }));
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
     const formData = getValues();
@@ -52,9 +70,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       : `${apiUrl}/v1/unidade`;
     const method = idUnidade ? "PATCH" : "POST";
 
-    console.log("Dados a serem enviados para o backend:", formData);
-
     try {
+      setIsLoading(true);
       const response = await fetch(url, {
         method,
         headers: {
@@ -65,6 +82,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       });
 
       if (!response.ok) {
+        setIsLoading(false);
         throw new Error(`Failed to ${idUnidade ? "update" : "submit"} data`);
       }
 
@@ -74,7 +92,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       );
 
       await onSubmit(formData);
+      setIsLoading(false);
+      setOpenModal(true);
     } catch (error) {
+      setIsLoading(false);
       console.error(
         `Erro ao ${idUnidade ? "atualizar" : "enviar"} os dados:`,
         error
@@ -203,6 +224,11 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
     handleAutoFetch();
   }, [cep]);
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    router.push("/dashboard/unidades");
+  };
 
   if (!user.role || user.role !== "admin") return <Unauthorized />;
 
@@ -619,6 +645,29 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 </Button>
               </Grid>
             </Grid>
+            <BootstrapDialog
+              onClose={handleCloseModal}
+              aria-labelledby="customized-dialog-title"
+              open={openModal}
+            >
+              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                Sucesso!
+              </DialogTitle>
+              <DialogContent dividers>
+                <Typography gutterBottom>
+                  Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso!
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  autoFocus
+                  onClick={handleCloseModal}
+                  variant="contained"
+                >
+                  OK
+                </Button>
+              </DialogActions>
+            </BootstrapDialog>
           </Grid>
         </form>
         <Backdrop
