@@ -90,10 +90,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
         `Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso:`,
         formData
       );
-
-      await onSubmit(formData);
       setIsLoading(false);
       setOpenModal(true);
+
+      await onSubmit(formData);
     } catch (error) {
       setIsLoading(false);
       console.error(
@@ -593,7 +593,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 <Controller
                   name="coordinates.0"
                   control={control}
-                  defaultValue={0}
                   render={({ field }) => (
                     <TextField
                       fullWidth
@@ -611,7 +610,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 <Controller
                   name="coordinates.1"
                   control={control}
-                  defaultValue={0}
                   render={({ field }) => (
                     <TextField
                       fullWidth
@@ -625,25 +623,26 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid
-                item
-                xs={12}
-                margin="24px 0"
-                alignItems="center"
-                display="flex"
-                flexDirection="column"
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              margin="24px 0"
+              alignItems="center"
+              justifyItems="center"
+              display="flex"
+              flexDirection="column"
+            >
+              <Button
+                startIcon={<CheckIcon />}
+                size="large"
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit(onSubmitHandler)}
               >
-                <Button
-                  startIcon={<CheckIcon />}
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit(onSubmitHandler)}
-                >
-                  SALVAR DADOS
-                </Button>
-              </Grid>
+                SALVAR DADOS
+              </Button>
             </Grid>
             <BootstrapDialog
               onClose={handleCloseModal}
@@ -653,9 +652,9 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                 Sucesso!
               </DialogTitle>
-              <DialogContent dividers>
+              <DialogContent>
                 <Typography gutterBottom>
-                  Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso!
+                  Dados {idUnidade ? "atualizados" : "enviados"} com sucesso!
                 </Typography>
               </DialogContent>
               <DialogActions>
