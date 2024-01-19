@@ -6,6 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LoginIcon from "@mui/icons-material/Login";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useRouter } from "next/navigation";
@@ -64,9 +65,11 @@ export default function LoginPage() {
   const handleClose = () => {
     setOpen(false);
     setOpenAlert(false);
+    setIsLoading(false);
   };
 
   const handleOpenAlert = () => {
+    setIsLoading(false);
     setOpenAlert(true);
   };
 
@@ -140,6 +143,8 @@ export default function LoginPage() {
       setOpen(true);
     }
 
+    setIsLoading(true);
+
     const response = await fetch(`${apiUrl}/v1/auth/login`, {
       method: "POST",
       headers: {
@@ -159,18 +164,22 @@ export default function LoginPage() {
             if (resJson.user.acesso === 0) {
               const tokenBackEnd = resJson.resetPasswordToken;
               localStorage.setItem("token", tokenBackEnd);
+              setIsLoading(false);
               handleOpenDialog();
             } else {
               const token = resJson.tokens.access.token;
               localStorage.setItem("token", token);
+              setIsLoading(false);
               router.push("/dashboard");
             }
           } else if (response.status === 401) {
+            setIsLoading(false);
             throw new Error("INEP/CPF ou senha inválidos");
           }
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         setErrorMessage(error.message);
         setOpen(true);
       });
@@ -243,8 +252,10 @@ export default function LoginPage() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            endIcon={<LoginIcon />}
+            disabled={isLoading}
           >
-            Enviar
+            {isLoading ? "Enviando..." : "Enviar Cadastro"}
           </Button>
 
           <Typography variant="subtitle2" align="center">

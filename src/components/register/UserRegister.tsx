@@ -2,6 +2,7 @@
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { apiUrl } from "@/utils/api";
 import {
+  Avatar,
   Box,
   Button,
   Dialog,
@@ -21,7 +22,8 @@ import { z } from "zod";
 import { cpf } from "cpf-cnpj-validator";
 import SimpleBackdrop from "../backdrop";
 import { useRouter } from "next/navigation";
-import { GridCloseIcon } from "@mui/x-data-grid";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import Link from "next/link";
 
 const schema = z.object({
   email: z.string().email({ message: "E-mail inválido" }),
@@ -117,7 +119,10 @@ export default function UserRegister() {
         minWidth={smDown ? "350px" : mdDown ? "450px" : "600px"}
         sx={{ backgroundColor: "#fff" }}
       >
-        <Typography align="center" variant="h3">
+        <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+          <HowToRegIcon />
+        </Avatar>
+        <Typography align="center" variant="h5">
           Registro de usuário
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -186,6 +191,19 @@ export default function UserRegister() {
             >
               {loading ? "Enviando..." : "Enviar Cadastro"}
             </Button>
+            <Typography variant="subtitle2" align="center">
+              Já tem uma conta?{" "}
+              <Link
+                href="/"
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                }}
+              >
+                Faça seu login
+              </Link>
+            </Typography>
           </Box>
         </form>
         <BootstrapDialog
