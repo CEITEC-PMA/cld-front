@@ -64,6 +64,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
   const [leaflet, setLeaflet] = useState<any>(null);
   const idUnidade = unidadeParams.get("id");
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
     import("leaflet").then((L) => {
@@ -73,7 +74,14 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
   const initialCoordinates: LatLngTuple = [
     -16.331728890115176, -48.94959155640654,
-  ];
+  ] as LatLngTuple;
+
+  const centerCoordinates = idUnidade
+    ? ([
+        parseFloat(getValues("location.coordinates.0")),
+        parseFloat(getValues("location.coordinates.1")),
+      ] as LatLngTuple)
+    : initialCoordinates;
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -240,6 +248,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             "location.coordinates.1",
             responseJson.location.coordinates[1] || 0
           );
+          setDataLoaded(true);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -667,9 +676,9 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             <Grid xs={12} padding="20px 16px">
               <MapContainer
                 center={
-                  !!idUnidade
-                    ? ([...markerCoordinates] as LatLngTuple)
-                    : (initialCoordinates as LatLngTuple)
+                  idUnidade
+                    ? (centerCoordinates as LatLngTuple)
+                    : initialCoordinates
                 }
                 zoom={!!idUnidade ? 16 : 12}
                 style={{ height: "400px", width: "100%" }}
@@ -679,8 +688,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                {leaflet && (
-                  <Marker position={[...markerCoordinates] as LatLngTuple}>
+                {leaflet && markerCoordinates[0] && markerCoordinates[1] && (
+                  <Marker position={markerCoordinates as LatLngTuple}>
                     <Popup>Marcador</Popup>
                   </Marker>
                 )}
