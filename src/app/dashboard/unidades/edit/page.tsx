@@ -666,8 +666,12 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             </Grid>
             <Grid xs={12} padding="20px 16px">
               <MapContainer
-                center={[...markerCoordinates] as LatLngTuple}
-                zoom={16}
+                center={
+                  !!idUnidade
+                    ? ([...markerCoordinates] as LatLngTuple)
+                    : (initialCoordinates as LatLngTuple)
+                }
+                zoom={!!idUnidade ? 16 : 12}
                 style={{ height: "400px", width: "100%" }}
               >
                 <MapEventWrapper />
