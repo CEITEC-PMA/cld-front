@@ -666,8 +666,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             </Grid>
             <Grid xs={12} padding="20px 16px">
               <MapContainer
-                center={initialCoordinates}
-                zoom={13}
+                center={[...markerCoordinates] as LatLngTuple}
+                zoom={16}
                 style={{ height: "400px", width: "100%" }}
               >
                 <MapEventWrapper />
@@ -676,8 +676,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
                 {leaflet && (
-                  <Marker position={markerCoordinates}>
-                    <Popup>Localização inicial</Popup>
+                  <Marker position={[...markerCoordinates] as LatLngTuple}>
+                    <Popup>Marcador</Popup>
                   </Marker>
                 )}
               </MapContainer>
