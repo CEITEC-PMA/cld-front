@@ -4,27 +4,49 @@ import { apiUrl } from "@/utils/api";
 import {
   Box,
   Button,
-  Input,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
   TextField,
   Typography,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { cpf } from "cpf-cnpj-validator";
-import { isEmail } from "validator";
 import LoginIcon from "@mui/icons-material/Login";
 import { useState } from "react";
+import { z } from "zod";
+import { cpf } from "cpf-cnpj-validator";
+import SimpleBackdrop from "../backdrop";
+import { useRouter } from "next/navigation";
+import { GridCloseIcon } from "@mui/x-data-grid";
 
-export type UserInputs = {
-  email: string;
-  username: string;
-  nome: string;
-};
+const schema = z.object({
+  email: z.string().email({ message: "E-mail inválido" }),
+  username: z.string().refine((value) => cpf.isValid(value), {
+    message: "CPF inválido",
+  }),
+  nome: z.string().min(8, { message: "Nome deve ter no mínimo 8 caracteres" }),
+});
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
+
+export type UserInputs = z.infer<typeof schema>;
 
 export default function UserRegister() {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
     setError,
   } = useForm<UserInputs>({ mode: "onBlur" });
@@ -32,43 +54,43 @@ export default function UserRegister() {
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const [loading, setLoading] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<UserInputs> = async (data) => {
     setLoading(true);
-    if (!cpf.isValid(data.username)) {
-      setError("username", {
-        type: "manual",
-        message: "CPF inválido",
+
+    try {
+      schema.parse(data);
+      console.log(schema.parse(data));
+
+      const response = await fetch(`${apiUrl}/v1/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
+      setLoading(false);
+      setOpenAlert(true);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((validationError) => {
+          const field = validationError.path[0] as keyof UserInputs;
+          setError(field, {
+            type: "manual",
+            message: validationError.message,
+          });
+        });
+        console.log("entrou no erro");
+      }
     }
 
-    if (data.nome.length < 8) {
-      setError("nome", {
-        type: "manual",
-        message: "Nome deve ter no mínimo 8 caracteres",
-      });
-    }
+    setLoading(false);
+  };
 
-    if (!isEmail(data.email)) {
-      setError("email", {
-        type: "manual",
-        message: "E-mail inválido",
-      });
-    }
-
-    console.log(errors.username);
-
-    if (!errors.username && !errors.nome && !errors.email) {
-      // const response = await fetch(`${apiUrl}/v1/auth/register`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(data),
-      // });
-      // console.log(response);
-      console.log(data);
-    }
+  const handleOk = () => {
+    router.push("/dashboard");
   };
 
   return (
@@ -115,15 +137,6 @@ export default function UserRegister() {
                     helperText={errors.username?.message}
                     value={field.value}
                     onChange={field.onChange}
-                    sx={{
-                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                        {
-                          display: "none",
-                        },
-                      "& input[type=number]": {
-                        MozAppearance: "textfield",
-                      },
-                    }}
                   />
                 )}
               />
@@ -169,11 +182,35 @@ export default function UserRegister() {
               type="submit"
               size="large"
               endIcon={<LoginIcon />}
+              disabled={loading}
             >
-              Enviar Cadastro
+              {loading ? "Enviando..." : "Enviar Cadastro"}
             </Button>
           </Box>
         </form>
+        <BootstrapDialog
+          aria-labelledby="customized-dialog-title"
+          open={openAlert}
+        >
+          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            Cadastro de usuário concluído!
+          </DialogTitle>
+          <DialogContent dividers>
+            <Typography gutterBottom>
+              O registro do seu usuário foi concluído com sucesso!
+            </Typography>
+            <Typography gutterBottom>Sua senha inicial é:</Typography>
+            <Typography align="center" sx={{ fontWeight: "bold" }} gutterBottom>
+              inep123456
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus variant="contained" onClick={handleOk}>
+              ENTENDI
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
+        <SimpleBackdrop open={loading} />
       </Box>
     </Box>
   );

@@ -8,7 +8,6 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { PatternFormat } from "react-number-format";
 import { useRouter } from "next/navigation";
 import { apiUrl } from "@/utils/api";
 import { useState } from "react";
@@ -22,16 +21,15 @@ import {
   Snackbar,
   Stack,
 } from "@mui/material";
-import type { DialogProps } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
+import SimpleBackdrop from "../backdrop";
 
 export default function LoginPage() {
   const [open, setOpen] = React.useState(false);
-  const [token, setToken] = useState("");
   const [openDialog, setOpenDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const router = useRouter();
@@ -41,11 +39,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(false);
-
-  React.useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (typeof token === "string") setToken(token);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -102,19 +96,26 @@ export default function LoginPage() {
   };
 
   const handleResetPassword = async () => {
+    const token = localStorage.getItem("token");
     await fetch(`${apiUrl}/v1/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ password, username }),
-    }).then(async (response) => {
-      const resJson = await response.json();
-      const tokenBackEnd = resJson.tokens.access.token;
-      localStorage.setItem("token", tokenBackEnd);
-      router.push("/dashboard");
-    });
+      body: JSON.stringify({ password }),
+    })
+      .then(async (response) => {
+        setIsLoading(true);
+        const resJson = await response.json();
+        const tokenBackEnd = resJson.tokens.access.token;
+        localStorage.setItem("token", tokenBackEnd);
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Não foi possível concluir a solicitação!");
+      });
   };
 
   const handleChangeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,7 +157,7 @@ export default function LoginPage() {
         } else {
           if (response.status === 200) {
             if (resJson.user.acesso === 0) {
-              const tokenBackEnd = resJson.tokens.access.token;
+              const tokenBackEnd = resJson.resetPasswordToken;
               localStorage.setItem("token", tokenBackEnd);
               handleOpenDialog();
             } else {
@@ -268,19 +269,6 @@ export default function LoginPage() {
                 pelo menos 8 caracteres, com pelo menos 1 letra e 1 número.
               </DialogContentText>
               <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="username"
-                label="INEP/CPF"
-                type="number"
-                id="username"
-                autoComplete="username"
-                value={username}
-                aria-readonly
-                disabled
-              />
-              <TextField
                 autoFocus
                 margin="dense"
                 id="password"
@@ -383,6 +371,7 @@ export default function LoginPage() {
               </Button>
             </DialogActions>
           </BootstrapDialog>
+          <SimpleBackdrop open={isLoading} />
         </Box>
       </Box>
     </Container>
