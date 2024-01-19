@@ -229,7 +229,7 @@ export default function ListaUnidades() {
           Lista de Unidades
         </Typography>
 
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center" marginTop="4px">
           <Grid item xs={12} md={8} lg={7}>
             <Button
               variant="contained"

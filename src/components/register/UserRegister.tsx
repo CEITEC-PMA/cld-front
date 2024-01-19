@@ -4,6 +4,8 @@ import { apiUrl } from "@/utils/api";
 import {
   Box,
   Button,
+  Input,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -52,27 +54,43 @@ export default function UserRegister() {
     >
       <Box
         borderRadius="15px"
-        padding={2}
+        padding={8}
         alignItems="center"
         display="flex"
         flexDirection="column"
         justifySelf="center"
-        justifyContent="center"
+        justifyContent="space-around"
         justifyItems="center"
         height="100%"
         minWidth={smDown ? "350px" : mdDown ? "450px" : "600px"}
         sx={{ backgroundColor: "#fff" }}
       >
-        <Typography>Registro de usuário</Typography>
+        <Typography align="center" variant="h3">
+          Registro de usuário
+        </Typography>
         <form>
-          <Box>
+          <Box display="flex" flexDirection="column" gap={3} width="300px">
+            <Box display="flex" flexDirection="column" gap={1}>
+              <TextField
+                fullWidth
+                required
+                id="outlined-required"
+                label="CPF"
+              />
+              <TextField
+                fullWidth
+                required
+                id="outlined-required"
+                label="Senha"
+              />
+            </Box>
             <Button
               variant="contained"
               type="submit"
               size="large"
               endIcon={<LoginIcon />}
             >
-              Login
+              Enviar Cadastro
             </Button>
           </Box>
         </form>
