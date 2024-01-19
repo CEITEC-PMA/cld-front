@@ -1,5 +1,5 @@
 "use client";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { apiUrl } from "@/utils/api";
 import {
   Box,
@@ -10,7 +10,10 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { cpf } from "cpf-cnpj-validator";
+import { isEmail } from "validator";
 import LoginIcon from "@mui/icons-material/Login";
+import { useState } from "react";
 
 export type UserInputs = {
   email: string;
@@ -23,22 +26,49 @@ export default function UserRegister() {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
+    setError,
   } = useForm<UserInputs>({ mode: "onBlur" });
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const [loading, setLoading] = useState(false);
 
   const onSubmit: SubmitHandler<UserInputs> = async (data) => {
-    console.log(data);
-    const response = await fetch(`${apiUrl}/v1/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    console.log(response);
+    setLoading(true);
+    if (!cpf.isValid(data.username)) {
+      setError("username", {
+        type: "manual",
+        message: "CPF inválido",
+      });
+    }
+
+    if (data.nome.length < 8) {
+      setError("nome", {
+        type: "manual",
+        message: "Nome deve ter no mínimo 8 caracteres",
+      });
+    }
+
+    if (!isEmail(data.email)) {
+      setError("email", {
+        type: "manual",
+        message: "E-mail inválido",
+      });
+    }
+
+    console.log(errors.username);
+
+    if (!errors.username && !errors.nome && !errors.email) {
+      // const response = await fetch(`${apiUrl}/v1/auth/register`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+      // console.log(response);
+      console.log(data);
+    }
   };
 
   return (
@@ -54,7 +84,7 @@ export default function UserRegister() {
     >
       <Box
         borderRadius="15px"
-        padding={8}
+        padding={10}
         alignItems="center"
         display="flex"
         flexDirection="column"
@@ -68,20 +98,70 @@ export default function UserRegister() {
         <Typography align="center" variant="h3">
           Registro de usuário
         </Typography>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column" gap={3} width="300px">
             <Box display="flex" flexDirection="column" gap={1}>
-              <TextField
-                fullWidth
-                required
-                id="outlined-required"
-                label="CPF"
+              <Controller
+                name="username"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    required
+                    fullWidth
+                    type="text"
+                    label="CPF"
+                    error={!!errors.username}
+                    helperText={errors.username?.message}
+                    value={field.value}
+                    onChange={field.onChange}
+                    sx={{
+                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                        {
+                          display: "none",
+                        },
+                      "& input[type=number]": {
+                        MozAppearance: "textfield",
+                      },
+                    }}
+                  />
+                )}
               />
-              <TextField
-                fullWidth
-                required
-                id="outlined-required"
-                label="Senha"
+
+              <Controller
+                name="nome"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    required
+                    fullWidth
+                    type="text"
+                    label="Nome completo"
+                    value={field.value.toUpperCase()}
+                    onChange={field.onChange}
+                    error={!!errors.nome}
+                    helperText={errors.nome?.message}
+                  />
+                )}
+              />
+
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    required
+                    fullWidth
+                    type="text"
+                    label="E-mail"
+                    value={field.value}
+                    error={!!errors.email}
+                    onChange={field.onChange}
+                    helperText={errors.email?.message}
+                  />
+                )}
               />
             </Box>
             <Button
