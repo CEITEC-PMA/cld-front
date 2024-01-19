@@ -90,8 +90,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
       click: (e) => {
         const { lat, lng } = e.latlng;
         setMarkerCoordinates([lat, lng]);
-        setValue("location.coordinates.0", lat);
-        setValue("location.coordinates.1", lng);
+        setValue("location.coordinates.0", lat.toString());
+        setValue("location.coordinates.1", lng.toString());
       },
     });
 
