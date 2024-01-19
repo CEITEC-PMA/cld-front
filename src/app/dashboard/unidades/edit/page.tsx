@@ -72,7 +72,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   }, []);
 
   const initialCoordinates: LatLngTuple = [
-    -16.33034510894292, -48.94892561842292,
+    -16.331728890115176, -48.94959155640654,
   ];
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
