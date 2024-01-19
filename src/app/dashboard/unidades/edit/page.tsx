@@ -38,8 +38,10 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
+import * as L from "leaflet";
+import "leaflet-defaulticon-compatibility";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -210,6 +212,25 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             responseJson.endereco.localidade || ""
           );
           setValue("endereco.uf", responseJson.endereco.uf || "");
+
+          const hasCoordinates =
+            responseJson.location?.coordinates?.[0] !== undefined &&
+            responseJson.location?.coordinates?.[1] !== undefined &&
+            !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
+            !isNaN(parseFloat(responseJson.location.coordinates[1]));
+
+          const initialCoordinates = hasCoordinates
+            ? [
+                parseFloat(
+                  responseJson.location.coordinates[0].replace(",", ".")
+                ),
+                parseFloat(
+                  responseJson.location.coordinates[1].replace(",", ".")
+                ),
+              ]
+            : [-16.33034510894292, -48.94892561842292];
+
+          setMarkerCoordinates(initialCoordinates);
 
           setValue(
             "location.coordinates.0",
@@ -655,7 +676,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
                 {leaflet && (
-                  <Marker position={initialCoordinates}>
+                  <Marker position={markerCoordinates}>
                     <Popup>Localização inicial</Popup>
                   </Marker>
                 )}
