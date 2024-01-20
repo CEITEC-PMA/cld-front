@@ -21,7 +21,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
+import SaveIcon from "@mui/icons-material/Check";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 
@@ -710,7 +710,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               flexDirection="column"
             >
               <Button
-                startIcon={<CheckIcon />}
+                endIcon={<SaveIcon />}
                 size="large"
                 type="submit"
                 variant="contained"

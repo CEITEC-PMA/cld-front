@@ -20,7 +20,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
+import SaveIcon from "@mui/icons-material/Save";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 
@@ -47,15 +47,14 @@ interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
 }
 
-const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
+const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
   const { user } = useUserContext();
   const router = useRouter();
   const { control, handleSubmit, setValue, watch, getValues } =
-    useForm<TUnidadeEscolar>();
+    useForm<TUnidadeEscolar>({ mode: "onBlur" });
   const { id: idUnidade } = params;
   const [leaflet, setLeaflet] = useState<any>(null);
   const cep = watch("endereco.cep");
-  const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
@@ -70,6 +69,13 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
     });
   }, []);
 
+  const [markerCoordinates, setMarkerCoordinates] = useState([
+    -16.331728890115176, -48.94959155640654,
+  ]);
+  const [centerCoordinates, setCenterCoordinates] = useState([
+    -16.331728890115176, -48.94959155640654,
+  ]);
+
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
       padding: theme.spacing(2),
@@ -78,11 +84,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
       padding: theme.spacing(1),
     },
   }));
-
-  const centerCoordinates = [
-    parseFloat(getValues("location.coordinates.0")),
-    parseFloat(getValues("location.coordinates.1")),
-  ] as LatLngTuple;
 
   useEffect(() => {
     const loadUnidadeData = async () => {
@@ -141,6 +142,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
           : [-16.33034510894292, -48.94892561842292];
 
         setMarkerCoordinates(initialCoordinates);
+        setCenterCoordinates(initialCoordinates);
 
         setValue(
           "location.coordinates.0",
@@ -681,7 +683,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
               flexDirection="column"
             >
               <Button
-                startIcon={<CheckIcon />}
+                endIcon={<SaveIcon />}
                 size="large"
                 type="submit"
                 variant="contained"
@@ -727,4 +729,4 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
   );
 };
 
-export default UnidadeRegistro;
+export default UnidadeEdit;
