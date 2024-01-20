@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Backdrop,
   Box,
@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -39,49 +38,37 @@ import {
 } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 
 interface Props {
+  params: { id: string };
   onSubmit: SubmitHandler<TUnidadeEscolar>;
 }
 
-const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
+const UnidadeRegistro: React.FC<Props> = ({ onSubmit, params }) => {
   const { user } = useUserContext();
+  const router = useRouter();
   const { control, handleSubmit, setValue, watch, getValues } =
     useForm<TUnidadeEscolar>();
+  const { id: idUnidade } = params;
+  const [leaflet, setLeaflet] = useState<any>(null);
   const cep = watch("endereco.cep");
-  const theme = useTheme();
-  const smDown = useMediaQuery(theme.breakpoints.down("sm"));
-  const mdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [users, setUsers] = useState<TUser[]>([]);
-  const unidadeParams = useSearchParams();
-  const router = useRouter();
-  const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
-  const [leaflet, setLeaflet] = useState<any>(null);
-  const idUnidade = unidadeParams.get("id");
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const theme = useTheme();
+  const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+  const mdDown = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     import("leaflet").then((L) => {
       setLeaflet(L);
     });
   }, []);
-
-  const initialCoordinates: LatLngTuple = [
-    -16.331728890115176, -48.94959155640654,
-  ] as LatLngTuple;
-
-  const centerCoordinates = idUnidade
-    ? ([
-        parseFloat(getValues("location.coordinates.0")),
-        parseFloat(getValues("location.coordinates.1")),
-      ] as LatLngTuple)
-    : (initialCoordinates as LatLngTuple);
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -92,6 +79,87 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     },
   }));
 
+  const centerCoordinates = [
+    parseFloat(getValues("location.coordinates.0")),
+    parseFloat(getValues("location.coordinates.1")),
+  ] as LatLngTuple;
+
+  useEffect(() => {
+    const loadUnidadeData = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseJson = await response.json();
+        setUnidades([responseJson]);
+        fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+
+        setUnidades([responseJson]);
+
+        setValue("nome", responseJson.nome || "");
+        setValue("userId", responseJson.userId || "");
+        setValue("inep", responseJson.inep || 0);
+        setValue("fone", responseJson.fone || "");
+        setValue("email", responseJson.email || "");
+        setValue("endereco.cep", responseJson.endereco.cep || "");
+        setValue("endereco.logradouro", responseJson.endereco.logradouro || "");
+        setValue(
+          "endereco.complemento",
+          responseJson.endereco.complemento || ""
+        );
+        setValue("endereco.quadra", responseJson.endereco.quadra || "");
+        setValue("endereco.lote", responseJson.endereco.lote || "");
+        setValue("endereco.bairro", responseJson.endereco.bairro || "");
+        setValue("endereco.localidade", responseJson.endereco.localidade || "");
+        setValue("endereco.uf", responseJson.endereco.uf || "");
+
+        const hasCoordinates =
+          responseJson.location?.coordinates?.[0] !== undefined &&
+          responseJson.location?.coordinates?.[1] !== undefined &&
+          !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
+          !isNaN(parseFloat(responseJson.location.coordinates[1]));
+
+        const initialCoordinates = hasCoordinates
+          ? [
+              parseFloat(
+                responseJson.location.coordinates[0].replace(",", ".")
+              ),
+              parseFloat(
+                responseJson.location.coordinates[1].replace(",", ".")
+              ),
+            ]
+          : [-16.33034510894292, -48.94892561842292];
+
+        setMarkerCoordinates(initialCoordinates);
+
+        setValue(
+          "location.coordinates.0",
+          responseJson.location.coordinates[0] || 0
+        );
+        setValue(
+          "location.coordinates.1",
+          responseJson.location.coordinates[1] || 0
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUnidadeData();
+  }, [idUnidade, user.id]);
+
   const MapEventWrapper = () => {
     if (!leaflet) return null;
 
@@ -99,12 +167,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     const map = useMapEvents({
       click: (e) => {
         const { lat, lng } = e.latlng;
-        console.log("Clique no mapa. Coordenadas:", lat, lng);
-        console.log("Antes de setMarkerCoordinates:", markerCoordinates);
-
         setMarkerCoordinates([lat, lng]);
-        console.log("Depois de setMarkerCoordinates:", markerCoordinates);
-
         setValue("location.coordinates.0", lat.toString());
         setValue("location.coordinates.1", lng.toString());
       },
@@ -116,10 +179,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
     const formData = getValues();
     const token = localStorage.getItem("token");
-    const url = idUnidade
-      ? `${apiUrl}/v1/unidade/${idUnidade}`
-      : `${apiUrl}/v1/unidade`;
-    const method = idUnidade ? "PATCH" : "POST";
+    const url = `${apiUrl}/v1/unidade/${idUnidade}`;
+    const method = "PATCH";
 
     try {
       setIsLoading(true);
@@ -137,20 +198,14 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
         throw new Error(`Failed to ${idUnidade ? "update" : "submit"} data`);
       }
 
-      console.log(
-        `Dados ${idUnidade ? "atualizados" : "enviados"} com sucesso:`,
-        formData
-      );
+      console.log(`Dados atualizados com sucesso`, formData);
       setIsLoading(false);
       setOpenModal(true);
 
       await onSubmit(formData);
     } catch (error) {
       setIsLoading(false);
-      console.error(
-        `Erro ao ${idUnidade ? "atualizar" : "enviar"} os dados:`,
-        error
-      );
+      console.error(`Erro ao atualizar os dados:`, error);
     }
   };
 
@@ -179,112 +234,28 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     }
   };
 
-  useEffect(() => {
-    const loadUnidadeData = async () => {
-      if (idUnidade) {
-        setIsLoading(true);
-        const token = localStorage.getItem("token");
-
-        try {
-          const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
-
-          const responseJson = await response.json();
-          setUnidades([responseJson]);
-          fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
-
-          setUnidades([responseJson]);
-
-          setValue("nome", responseJson.nome || "");
-          setValue("userId", responseJson.userId || "");
-          setValue("inep", responseJson.inep || 0);
-          setValue("fone", responseJson.fone || "");
-          setValue("email", responseJson.email || "");
-
-          setValue("endereco.cep", responseJson.endereco.cep || "");
-          setValue(
-            "endereco.logradouro",
-            responseJson.endereco.logradouro || ""
-          );
-          setValue(
-            "endereco.complemento",
-            responseJson.endereco.complemento || ""
-          );
-          setValue("endereco.quadra", responseJson.endereco.quadra || "");
-          setValue("endereco.lote", responseJson.endereco.lote || "");
-          setValue("endereco.bairro", responseJson.endereco.bairro || "");
-          setValue(
-            "endereco.localidade",
-            responseJson.endereco.localidade || ""
-          );
-          setValue("endereco.uf", responseJson.endereco.uf || "");
-
-          const hasCoordinates =
-            responseJson.location?.coordinates?.[0] !== undefined &&
-            responseJson.location?.coordinates?.[1] !== undefined &&
-            !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
-            !isNaN(parseFloat(responseJson.location.coordinates[1]));
-
-          const initialCoordinates = hasCoordinates
-            ? [
-                parseFloat(
-                  responseJson.location.coordinates[0].replace(",", ".")
-                ),
-                parseFloat(
-                  responseJson.location.coordinates[1].replace(",", ".")
-                ),
-              ]
-            : [-16.33034510894292, -48.94892561842292];
-
-          setMarkerCoordinates(initialCoordinates);
-
-          setValue(
-            "location.coordinates.0",
-            responseJson.location.coordinates[0] || 0
-          );
-          setValue(
-            "location.coordinates.1",
-            responseJson.location.coordinates[1] || 0
-          );
-          setDataLoaded(true);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
-        fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
-        setIsLoading(false);
-      }
-    };
-
-    loadUnidadeData();
-  }, [idUnidade, user.id]);
-
   const handleBuscaCep = async () => {
     if (cep?.length !== 8 || !isValidCEP(cep)) {
       alert("CEP inválido, digite novamente!");
       return;
-    }
 
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const resJson = await response.json();
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const resJson = await response.json();
 
-      setValue("endereco.logradouro", resJson.logradouro?.toUpperCase() || "");
-      setValue("endereco.bairro", resJson.bairro?.toUpperCase() || "");
-      setValue("endereco.localidade", resJson.localidade?.toUpperCase() || "");
-      setValue("endereco.uf", resJson.uf?.toUpperCase() || "");
-    } catch (error) {
-      alert("Falha ao receber os dados do CEP");
+        setValue(
+          "endereco.logradouro",
+          resJson.logradouro?.toUpperCase() || ""
+        );
+        setValue("endereco.bairro", resJson.bairro?.toUpperCase() || "");
+        setValue(
+          "endereco.localidade",
+          resJson.localidade?.toUpperCase() || ""
+        );
+        setValue("endereco.uf", resJson.uf?.toUpperCase() || "");
+      } catch (error) {
+        alert("Falha ao receber os dados do CEP");
+      }
     }
   };
 
@@ -327,9 +298,9 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             fontSize: "36px",
           }}
         >
-          {idUnidade && unidades.length > 0
-            ? `Editar Unidade de Ensino - ${unidades[0]?.nome || ""}`
-            : "Cadastrar Unidade de Ensino"}
+          {unidades.length > 0
+            ? `Editar Unidade de Ensino - ${unidades[0].nome}`
+            : "Carregando"}
         </Typography>
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
@@ -679,26 +650,26 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               </Grid>
             </Grid>
             <Grid xs={12} padding="20px 16px">
-              <MapContainer
-                center={
-                  idUnidade
-                    ? (centerCoordinates as LatLngTuple)
-                    : initialCoordinates
-                }
-                zoom={!!idUnidade ? 16 : 12}
-                style={{ height: "400px", width: "100%" }}
-              >
-                <MapEventWrapper />
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                {leaflet && markerCoordinates[0] && markerCoordinates[1] && (
-                  <Marker position={markerCoordinates as LatLngTuple}>
-                    <Popup>Marcador</Popup>
-                  </Marker>
-                )}
-              </MapContainer>
+              {unidades.length > 0 ? (
+                <MapContainer
+                  center={centerCoordinates as LatLngTuple}
+                  zoom={!!idUnidade ? 16 : 12}
+                  style={{ height: "400px", width: "100%" }}
+                >
+                  <MapEventWrapper />
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                  {leaflet && markerCoordinates[0] && markerCoordinates[1] && (
+                    <Marker position={markerCoordinates as LatLngTuple}>
+                      <Popup>Marcador</Popup>
+                    </Marker>
+                  )}
+                </MapContainer>
+              ) : (
+                <div>Carregando...</div>
+              )}
             </Grid>
             <Grid
               item
