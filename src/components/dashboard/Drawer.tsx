@@ -77,15 +77,7 @@ export default function DrawerComponent({
             }
           />
         ) : (
-          <ListItems
-            label="Turmas da unidade"
-            icon={<MapsHomeWorkIcon />}
-            to="/dashboard/turmas"
-            isActive={
-              pathname === "/dashboard/turmas" ||
-              pathname.startsWith("/dashboard/turmas")
-            }
-          />
+          
         )} */}
 
         {user.role === "admin" && (
@@ -108,6 +100,16 @@ export default function DrawerComponent({
             }
           />
         )}
+
+        <ListItems
+          label="Turmas da unidade"
+          icon={<MapsHomeWorkIcon />}
+          to="/dashboard/turmas"
+          isActive={
+            pathname === "/dashboard/turmas" ||
+            pathname.startsWith("/dashboard/turmas")
+          }
+        />
 
         {user.role === "admin" && (
           <ListItems

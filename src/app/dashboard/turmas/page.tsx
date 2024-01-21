@@ -77,6 +77,8 @@ export default function Turmas() {
     { field: "nomeTurma", sort: "asc" },
   ]);
 
+  console.log(user);
+
   const columns: GridColDef[] = [
     {
       field: "nomeTurma",
@@ -146,7 +148,7 @@ export default function Turmas() {
     const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/api/v1/turma`, {
+      const response = await fetch(`${apiUrl}/v1/turma`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -226,7 +228,7 @@ export default function Turmas() {
         }
       } else {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/api/v1/turma`, {
+        const response = await fetch(`${apiUrl}/v1/turma`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -281,16 +283,13 @@ export default function Turmas() {
     if (selectedItemId) {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${apiUrl}/api/v1/turma/${selectedItemId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${apiUrl}/v1/turma/${selectedItemId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (response.ok) {
           fetchTurmas();
@@ -373,7 +372,8 @@ export default function Turmas() {
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Selecione a turma e insira a quantidade de alunos
+              Selecione a Unidade de Ensino da turma e insira as quantidades de
+              alunos e professores
             </DialogContentText>
             <form onSubmit={handleSubmit(handleSave)}>
               <Box
@@ -386,6 +386,26 @@ export default function Turmas() {
                   gap: "4px",
                 }}
               >
+                <FormControl sx={{ mt: 6, minWidth: 120 }}>
+                  <InputLabel htmlFor="nomeTurma">Unidade de Ensino</InputLabel>
+                  <Controller
+                    name="selectedTurma"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: "Por favor, selecione uma turma." }}
+                    render={({ field }) => (
+                      <Select {...field} disabled={isEditMode}>
+                        <MenuItem value="Infantil I">Infantil I</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.selectedTurma && (
+                    <Typography variant="caption" color="error">
+                      {errors.selectedTurma.message}
+                    </Typography>
+                  )}
+                </FormControl>
+
                 <FormControl sx={{ mt: 6, minWidth: 120 }}>
                   <InputLabel htmlFor="nomeTurma">Turma</InputLabel>
                   <Controller
