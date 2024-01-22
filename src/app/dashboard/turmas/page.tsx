@@ -149,8 +149,7 @@ export default function Turmas() {
 
   useEffect(() => {
     fetchUnidades();
-    fetchTurmas();
-  }, [selectedUnidadeId]);
+  }, []);
 
   const fetchUnidades = async () => {
     const token = localStorage.getItem("token");
@@ -174,6 +173,7 @@ export default function Turmas() {
 
   const fetchTurmas = async () => {
     const token = localStorage.getItem("token");
+
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -199,6 +199,41 @@ export default function Turmas() {
       console.error("Erro durante a busca de turmas:", error);
       setRows([]);
     }
+  };
+
+  const fetchTurmasId = async (unidadeId: string) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `${apiUrl}/v1/turma?unidadeId=${unidadeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setRows(data.results);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+        console.error("Erro ao obter dados do backend.");
+        setRows([]);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Erro durante a busca de turmas:", error);
+      setRows([]);
+    }
+  };
+
+  const handleUnidadeChange = (unidadeId: string) => {
+    setSelectedUnidadeId(unidadeId);
+    fetchTurmasId(unidadeId);
   };
 
   const handleSortModelChange = (model: GridSortModel) => {
@@ -257,7 +292,6 @@ export default function Turmas() {
           console.error("Erro ao editar a turma.");
         }
       } else {
-        console.log(selectedUnidadeId);
         const token = localStorage.getItem("token");
         const response = await fetch(`${apiUrl}/v1/turma`, {
           method: "POST",
@@ -300,7 +334,7 @@ export default function Turmas() {
     setIsEditMode(true);
 
     const selectedRow = rows.find((row) => row._id === id);
-
+    console.log(selectedRow);
     if (selectedRow) {
       setValue("selectedTurma", selectedRow.nomeTurma);
       setValue("qtdeAlunos", selectedRow.qtdeAlunos);
@@ -309,38 +343,41 @@ export default function Turmas() {
   };
 
   const handleDeletar = async (id: string) => {
-    setSelectedItemId(id);
+    const selectedRow = rows.find((row) => row._id === id);
+
+    console.log(selectedRow);
+    // setSelectedItemId(selectedRow);
+    console.log(selectedItemId);
     setOpenConfirm(true);
   };
 
-  const handleConfirmDelete = async () => {
-    if (selectedItemId) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/v1/turma/${selectedItemId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            deletado: true,
-          }),
-        });
+  const handleConfirmDelete = async (id: string) => {
+    console.log("entrou");
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}/v1/turma/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          deletado: true,
+        }),
+      });
 
-        if (response.ok) {
-          fetchTurmas();
-        } else {
-          console.error(`Erro ao excluir turma`);
-          alert(`Erro ao excluir turma`);
-        }
-      } catch (error) {
-        console.error("Erro durante a exclusão:", error);
-        alert("Erro durante a exclusão");
-      } finally {
-        setSelectedItemId(null);
-        setOpenConfirm(false);
+      if (response.ok) {
+        fetchTurmas();
+      } else {
+        console.error(`Erro ao excluir turma`);
+        alert(`Erro ao excluir turma`);
       }
+    } catch (error) {
+      console.error("Erro durante a exclusão:", error);
+      alert("Erro durante a exclusão");
+    } finally {
+      setSelectedItemId(null);
+      setOpenConfirm(false);
     }
   };
 
@@ -370,8 +407,8 @@ export default function Turmas() {
                 </InputLabel>
                 <Select
                   id="selectUnidade"
-                  value={selectedUnidadeId} // Use um estado para armazenar a unidade selecionada
-                  onChange={(e) => setSelectedUnidadeId(e.target.value)}
+                  value={selectedUnidadeId}
+                  onChange={(e) => handleUnidadeChange(e.target.value)}
                 >
                   {unidades.map((unidade, i) => (
                     <MenuItem key={i} value={unidade.id}>
