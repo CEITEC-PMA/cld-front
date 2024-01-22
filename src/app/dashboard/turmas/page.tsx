@@ -47,6 +47,8 @@ type FormData = {
 
 type Turma = {
   _id: string;
+  deletado: boolean;
+  unidadeId: string[];
   nomeTurma: string;
   qtdeAlunos: number | null;
   qtdeProf: number | null;
@@ -86,7 +88,7 @@ export default function Turmas() {
 
   const columns: GridColDef[] = [
     {
-      field: "nomeTurma",
+      field: "nameTurma",
       headerName: "TURMA",
       flex: 1,
       align: "center",
@@ -174,23 +176,28 @@ export default function Turmas() {
     const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/v1/turma`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${apiUrl}/v1/turma?id=${selectedUnidadeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        setRows(data);
+        setRows(data.results);
         setIsLoading(false);
       } else {
         setIsLoading(false);
         console.error("Erro ao obter dados do backend.");
+        setRows([]);
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Erro durante a busca de turmas:", error);
+      setRows([]);
     }
   };
 
@@ -250,6 +257,7 @@ export default function Turmas() {
           console.error("Erro ao editar a turma.");
         }
       } else {
+        console.log(selectedUnidadeId);
         const token = localStorage.getItem("token");
         const response = await fetch(`${apiUrl}/v1/turma`, {
           method: "POST",
@@ -259,7 +267,7 @@ export default function Turmas() {
           },
           body: JSON.stringify({
             unidadeId: selectedUnidadeId,
-            nomeTurma: selectedTurma,
+            nameTurma: selectedTurma,
             qtdeAlunos: qtdeAlunos,
             qtdeProf: qtdeProf,
           }),
@@ -310,11 +318,14 @@ export default function Turmas() {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${apiUrl}/v1/turma/${selectedItemId}`, {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            deletado: true,
+          }),
         });
 
         if (response.ok) {
@@ -391,8 +402,8 @@ export default function Turmas() {
               >
                 <ThemeProvider theme={theme}>
                   <DataGrid
-                    getRowId={(row) => row._id}
-                    rows={rows}
+                    getRowId={(row) => row.id}
+                    rows={rows || []}
                     columns={columns}
                     sortModel={sortModel}
                     onSortModelChange={handleSortModelChange}
