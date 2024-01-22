@@ -150,7 +150,7 @@ export default function Turmas() {
   useEffect(() => {
     fetchUnidades();
     fetchTurmas();
-  }, []);
+  }, [selectedUnidadeId]);
 
   const fetchUnidades = async () => {
     const token = localStorage.getItem("token");
@@ -177,7 +177,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${apiUrl}/v1/turma?id=${selectedUnidadeId}`,
+        `${apiUrl}/v1/turma?unidadeId=${selectedUnidadeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
