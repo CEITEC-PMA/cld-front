@@ -12,21 +12,15 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useState, ChangeEvent } from "react";
-import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import { useRouter } from "next/navigation";
 import { apiUrl } from "@/utils/api";
 import CustomModal from "@/components/modal";
 import { useUserContext } from "@/userContext";
 import Unauthorized from "@/components/unauthorized";
 import SearchIcon from "@mui/icons-material/Search";
+import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 
-interface Zona {
-  inep: string;
-  nome: string;
-  _id: string;
-}
-
-export default function Busca() {
+export default function BuscaTurmas() {
   const router = useRouter();
   const [token, setToken] = useState("" as string | null);
   const [textFieldValue, setTextFieldValue] = useState<string>("");
@@ -34,9 +28,11 @@ export default function Busca() {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
-  const [zonas, setZonas] = useState<Zona[]>([]);
+  const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<Zona | null>(null);
+  const [selectedOption, setSelectedOption] = useState<TUnidadeEscolar | null>(
+    null
+  );
   const [inputValue, setInputValue] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,7 +44,7 @@ export default function Busca() {
     if (user.id) {
       const getDados = async () => {
         try {
-          const response = await fetch(`${apiUrl}/api/v1/zona`, {
+          const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -59,7 +55,8 @@ export default function Busca() {
           }
 
           const responseJson = await response.json();
-          setZonas(responseJson.zona);
+          console.log("entrou aq");
+          setUnidades(responseJson);
           setIsLoading(false);
           return response;
         } catch (error) {
@@ -83,7 +80,7 @@ export default function Busca() {
 
   const handleOptionChange = (
     event: React.ChangeEvent<{}>,
-    value: Zona | null
+    value: TUnidadeEscolar | null
   ) => {
     setSelectedOption(value);
   };
@@ -113,7 +110,7 @@ export default function Busca() {
           {isLoading === false && (
             <Box marginTop={4}>
               <Autocomplete
-                options={zonas}
+                options={unidades}
                 getOptionLabel={(option) => option.nome}
                 renderInput={(params) => (
                   <TextField

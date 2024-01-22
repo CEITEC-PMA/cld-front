@@ -240,24 +240,18 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
     if (cep?.length !== 8 || !isValidCEP(cep)) {
       alert("CEP inválido, digite novamente!");
       return;
+    }
 
-      try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const resJson = await response.json();
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const resJson = await response.json();
 
-        setValue(
-          "endereco.logradouro",
-          resJson.logradouro?.toUpperCase() || ""
-        );
-        setValue("endereco.bairro", resJson.bairro?.toUpperCase() || "");
-        setValue(
-          "endereco.localidade",
-          resJson.localidade?.toUpperCase() || ""
-        );
-        setValue("endereco.uf", resJson.uf?.toUpperCase() || "");
-      } catch (error) {
-        alert("Falha ao receber os dados do CEP");
-      }
+      setValue("endereco.logradouro", resJson.logradouro?.toUpperCase() || "");
+      setValue("endereco.bairro", resJson.bairro?.toUpperCase() || "");
+      setValue("endereco.localidade", resJson.localidade?.toUpperCase() || "");
+      setValue("endereco.uf", resJson.uf?.toUpperCase() || "");
+    } catch (error) {
+      alert("Falha ao receber os dados do CEP");
     }
   };
 

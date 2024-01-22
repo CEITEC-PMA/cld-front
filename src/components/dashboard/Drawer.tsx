@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import SearchIcon from "@mui/icons-material/Search";
+import SchoolIcon from "@mui/icons-material/School";
 
 interface DrawerProps {
   open: boolean;
@@ -89,7 +90,17 @@ export default function DrawerComponent({
           />
         )}
 
-        {user.role?.includes("super-adm") && (
+        <ListItems
+          label="Turmas da unidade"
+          icon={<SchoolIcon />}
+          to="/dashboard/turmas"
+          isActive={
+            pathname === "/dashboard/turmas" ||
+            pathname.startsWith("/dashboard/turmas")
+          }
+        />
+
+        {user.role === "admin" && (
           <ListItems
             label="Detalhar unidade"
             icon={<SearchIcon />}
@@ -100,16 +111,6 @@ export default function DrawerComponent({
             }
           />
         )}
-
-        <ListItems
-          label="Turmas da unidade"
-          icon={<MapsHomeWorkIcon />}
-          to="/dashboard/turmas"
-          isActive={
-            pathname === "/dashboard/turmas" ||
-            pathname.startsWith("/dashboard/turmas")
-          }
-        />
 
         {user.role === "admin" && (
           <ListItems
