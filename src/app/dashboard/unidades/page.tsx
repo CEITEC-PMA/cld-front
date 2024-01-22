@@ -31,7 +31,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import CustomModal from "@/components/modal";
 import CreateIcon from "@mui/icons-material/Create";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
-import AddIcon from "@mui/icons-material/Add";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { ptBR as corePtBR } from "@mui/material/locale";
 
 export default function ListaUnidades() {
@@ -234,7 +234,7 @@ export default function ListaUnidades() {
             <Button
               variant="contained"
               onClick={handleCreate}
-              startIcon={<AddIcon />}
+              startIcon={<AddCircleIcon />}
             >
               Adicionar unidade
             </Button>

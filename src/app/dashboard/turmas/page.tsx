@@ -52,6 +52,11 @@ type Turma = {
   qtdeProf: number | null;
 };
 
+type UnidadeTurmas = {
+  id: string;
+  nome: string;
+};
+
 export default function Turmas() {
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState<DialogProps["maxWidth"]>("sm");
@@ -73,11 +78,11 @@ export default function Turmas() {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [unidades, setUnidades] = useState<UnidadeTurmas[]>([] || undefined);
+  const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
   const [sortModel, setSortModel] = React.useState<GridSortModel>([
     { field: "nomeTurma", sort: "asc" },
   ]);
-
-  console.log(user);
 
   const columns: GridColDef[] = [
     {
@@ -141,8 +146,29 @@ export default function Turmas() {
   );
 
   useEffect(() => {
+    fetchUnidades();
     fetchTurmas();
   }, []);
+
+  const fetchUnidades = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${apiUrl}/v1/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUnidades(data.unidadeId);
+      } else {
+        console.error("Erro ao obter dados das unidades do backend.");
+      }
+    } catch (error) {
+      console.error("Erro durante a busca de unidades:", error);
+    }
+  };
 
   const fetchTurmas = async () => {
     const token = localStorage.getItem("token");
@@ -199,20 +225,17 @@ export default function Turmas() {
         handleClose();
       } else if (isEditMode) {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${apiUrl}/api/v1/turma/${selectedItemId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              qtdeAlunos: qtdeAlunos,
-              qtdeProf: qtdeProf,
-            }),
-          }
-        );
+        const response = await fetch(`${apiUrl}/v1/turma/${selectedItemId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            qtdeAlunos: qtdeAlunos,
+            qtdeProf: qtdeProf,
+          }),
+        });
 
         if (response.ok) {
           console.log(data);
@@ -235,10 +258,10 @@ export default function Turmas() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
+            unidadeId: selectedUnidadeId,
             nomeTurma: selectedTurma,
             qtdeAlunos: qtdeAlunos,
             qtdeProf: qtdeProf,
-            zona: user.id,
           }),
         });
 
@@ -254,7 +277,10 @@ export default function Turmas() {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error("Por favor, preencha todos os campos antes de salvar.");
+      console.error(
+        "Por favor, preencha todos os campos antes de salvar.",
+        error
+      );
       alert("Por favor, preencha todos os campos antes de salvar.");
     }
   };
@@ -310,19 +336,44 @@ export default function Turmas() {
   return (
     <Box margin="24px">
       <Container>
-        {isLoading ? (
-          <Typography variant="h3" marginBottom="12px" textAlign="center">
-            Carregando
-          </Typography>
-        ) : (
-          <>
-            <Typography variant="h3" marginBottom="8px" textAlign="center">
-              Lista de Turmas
-            </Typography>
+        <Typography variant="h3" marginBottom="8px" textAlign="center">
+          Lista de Turmas
+        </Typography>
+        <Box
+          marginTop="8px"
+          width="100%"
+          maxWidth="800px"
+          marginX="auto"
+          gap={2}
+        >
+          <Box
+            maxWidth="550px"
+            marginBottom="16px"
+            sx={{ backgroundColor: "#fff" }}
+            alignContent="center"
+          >
             <Typography variant="h5" marginBottom="6px" textAlign="center">
-              {user.nome}
+              <FormControl fullWidth>
+                <InputLabel htmlFor="selectUnidade">
+                  Selecione a Unidade
+                </InputLabel>
+                <Select
+                  id="selectUnidade"
+                  value={selectedUnidadeId} // Use um estado para armazenar a unidade selecionada
+                  onChange={(e) => setSelectedUnidadeId(e.target.value)}
+                >
+                  {unidades.map((unidade, i) => (
+                    <MenuItem key={i} value={unidade.id}>
+                      {unidade.nome}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Typography>
-            <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
+          </Box>
+
+          {selectedUnidadeId && (
+            <>
               <Button
                 startIcon={<AddCircleIcon />}
                 size="large"
@@ -331,12 +382,12 @@ export default function Turmas() {
               >
                 Adicionar turma
               </Button>
-
               <Box
                 marginTop="16px"
                 width="100%"
                 maxWidth="800px"
                 marginX="auto"
+                sx={{ backgroundColor: "#fff" }}
               >
                 <ThemeProvider theme={theme}>
                   <DataGrid
@@ -358,9 +409,9 @@ export default function Turmas() {
                   />
                 </ThemeProvider>
               </Box>
-            </Box>{" "}
-          </>
-        )}
+            </>
+          )}
+        </Box>{" "}
         <Dialog
           fullWidth={fullWidth}
           maxWidth={maxWidth}
@@ -386,26 +437,6 @@ export default function Turmas() {
                   gap: "4px",
                 }}
               >
-                <FormControl sx={{ mt: 6, minWidth: 120 }}>
-                  <InputLabel htmlFor="nomeTurma">Unidade de Ensino</InputLabel>
-                  <Controller
-                    name="selectedTurma"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: "Por favor, selecione uma turma." }}
-                    render={({ field }) => (
-                      <Select {...field} disabled={isEditMode}>
-                        <MenuItem value="Infantil I">Infantil I</MenuItem>
-                      </Select>
-                    )}
-                  />
-                  {errors.selectedTurma && (
-                    <Typography variant="caption" color="error">
-                      {errors.selectedTurma.message}
-                    </Typography>
-                  )}
-                </FormControl>
-
                 <FormControl sx={{ mt: 6, minWidth: 120 }}>
                   <InputLabel htmlFor="nomeTurma">Turma</InputLabel>
                   <Controller
