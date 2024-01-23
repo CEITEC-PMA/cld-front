@@ -272,6 +272,8 @@ export default function Turmas() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
+            unidadeId: selectedUnidadeId,
+            nameTurma: selectedTurma,
             qtdeAlunos: qtdeAlunos,
             qtdeProf: qtdeProf,
           }),

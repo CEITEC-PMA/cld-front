@@ -6,9 +6,9 @@ import ListItems from "./listItems";
 import { useUserContext } from "@/userContext";
 import { usePathname } from "next/navigation";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import SearchIcon from "@mui/icons-material/Search";
 import SchoolIcon from "@mui/icons-material/School";
+import InsertChartIcon from "@mui/icons-material/InsertChart";
 
 interface DrawerProps {
   open: boolean;
@@ -99,6 +99,18 @@ export default function DrawerComponent({
             pathname.startsWith("/dashboard/turmas")
           }
         />
+
+        {user.role === "admin" && (
+          <ListItems
+            label="Números totais"
+            icon={<InsertChartIcon />}
+            to="/dashboard/gerenciamento"
+            isActive={
+              pathname === "/dashboard/gerenciamento" ||
+              pathname.startsWith("/dashboard/gerenciamento")
+            }
+          />
+        )}
 
         {user.role === "admin" && (
           <ListItems
