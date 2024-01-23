@@ -154,8 +154,6 @@ export default function TurmasTotais() {
     return aggregatedRows;
   };
 
-  console.log(rows);
-
   const handleSortModelChange = (model: GridSortModel) => {
     setSortModel(model);
   };
