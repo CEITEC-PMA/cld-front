@@ -214,7 +214,7 @@ export default function LoginPage() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Entrar
+          Login
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -255,7 +255,7 @@ export default function LoginPage() {
             endIcon={<LoginIcon />}
             disabled={isLoading}
           >
-            {isLoading ? "Enviando..." : "Enviar Cadastro"}
+            {isLoading ? "Enviando..." : "Entrar"}
           </Button>
 
           <Typography variant="subtitle2" align="center">

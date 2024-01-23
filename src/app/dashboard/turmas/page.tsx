@@ -46,10 +46,10 @@ type FormData = {
 };
 
 type Turma = {
-  _id: string;
+  id: string;
   deletado: boolean;
   unidadeId: string[];
-  nomeTurma: string;
+  nameTurma: string;
   qtdeAlunos: number | null;
   qtdeProf: number | null;
 };
@@ -72,17 +72,15 @@ export default function Turmas() {
 
   const { user } = useUserContext();
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedItemId, setSelectedItemId] = React.useState<string | null>(
-    null
-  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState("");
   const [rows, setRows] = useState<readonly Turma[]>([]);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<UnidadeTurmas[]>([] || undefined);
   const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
-  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+  const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: "nomeTurma", sort: "asc" },
   ]);
 
@@ -119,7 +117,7 @@ export default function Turmas() {
         <div>
           <IconButton
             color="primary"
-            onClick={() => handleEditar(params.row._id)}
+            onClick={() => handleEditar(params.row.id)}
             title="Editar"
           >
             <EditIcon />
@@ -127,7 +125,7 @@ export default function Turmas() {
 
           <IconButton
             color="error"
-            onClick={() => handleDeletar(params.row._id)}
+            onClick={() => handleDeletar(params.row.id)}
             title="Remover"
           >
             <DeleteIcon />
@@ -246,7 +244,7 @@ export default function Turmas() {
 
   const handleClose = () => {
     reset({ selectedTurma: "", qtdeAlunos: null, qtdeProf: null });
-    setSelectedItemId(null);
+    setSelectedItemId("");
     setIsModalOpen(false);
     setOpenConfirm(false);
     setIsEditMode(false);
@@ -256,7 +254,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const { selectedTurma, qtdeAlunos, qtdeProf } = data;
-      const turmaExists = rows.some((row) => row.nomeTurma === selectedTurma);
+      const turmaExists = rows.some((row) => row.nameTurma === selectedTurma);
 
       if (turmaExists && !isEditMode) {
         console.error(
@@ -328,31 +326,25 @@ export default function Turmas() {
   };
 
   const handleEditar = (id: string) => {
-    console.log(id);
     setSelectedItemId(id);
     setIsModalOpen(true);
     setIsEditMode(true);
 
-    const selectedRow = rows.find((row) => row._id === id);
-    console.log(selectedRow);
+    const selectedRow = rows.find((row) => row.id === id);
+
     if (selectedRow) {
-      setValue("selectedTurma", selectedRow.nomeTurma);
+      setValue("selectedTurma", selectedRow.nameTurma);
       setValue("qtdeAlunos", selectedRow.qtdeAlunos);
       setValue("qtdeProf", selectedRow.qtdeProf);
     }
   };
 
   const handleDeletar = async (id: string) => {
-    const selectedRow = rows.find((row) => row._id === id);
-
-    console.log(selectedRow);
-    // setSelectedItemId(selectedRow);
-    console.log(selectedItemId);
+    setSelectedItemId(id);
     setOpenConfirm(true);
   };
 
   const handleConfirmDelete = async (id: string) => {
-    console.log("entrou");
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl}/v1/turma/${id}`, {
@@ -376,7 +368,7 @@ export default function Turmas() {
       console.error("Erro durante a exclusão:", error);
       alert("Erro durante a exclusão");
     } finally {
-      setSelectedItemId(null);
+      setSelectedItemId("");
       setOpenConfirm(false);
     }
   };
@@ -395,29 +387,29 @@ export default function Turmas() {
           gap={2}
         >
           <Box
-            maxWidth="550px"
             marginBottom="16px"
-            sx={{ backgroundColor: "#fff" }}
             alignContent="center"
+            alignItems="center"
+            display="flex"
+            flexDirection="column"
           >
-            <Typography variant="h5" marginBottom="6px" textAlign="center">
-              <FormControl fullWidth>
-                <InputLabel htmlFor="selectUnidade">
-                  Selecione a Unidade
-                </InputLabel>
-                <Select
-                  id="selectUnidade"
-                  value={selectedUnidadeId}
-                  onChange={(e) => handleUnidadeChange(e.target.value)}
-                >
-                  {unidades.map((unidade, i) => (
-                    <MenuItem key={i} value={unidade.id}>
-                      {unidade.nome}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Typography>
+            <FormControl sx={{ backgroundColor: "#fff", minWidth: "200px" }}>
+              <InputLabel htmlFor="selectUnidade">
+                Selecione a Unidade
+              </InputLabel>
+              <Select
+                id="selectUnidade"
+                value={selectedUnidadeId}
+                onChange={(e) => handleUnidadeChange(e.target.value)}
+                fullWidth
+              >
+                {unidades.map((unidade, i) => (
+                  <MenuItem key={i} value={unidade.id}>
+                    {unidade.nome}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
           {selectedUnidadeId && (
@@ -494,20 +486,20 @@ export default function Turmas() {
                     rules={{ required: "Por favor, selecione uma turma." }}
                     render={({ field }) => (
                       <Select {...field} disabled={isEditMode}>
-                        <MenuItem value="Infantil I">Infantil I</MenuItem>
-                        <MenuItem value="Infantil II">Infantil II</MenuItem>
-                        <MenuItem value="Infantil III">Infantil III</MenuItem>
-                        <MenuItem value="Infantil IV">Infantil IV</MenuItem>
-                        <MenuItem value="Infantil V">Infantil V</MenuItem>
-                        <MenuItem value="1º Ano">1º Ano</MenuItem>
-                        <MenuItem value="2º Ano">2º Ano</MenuItem>
-                        <MenuItem value="3º Ano">3º Ano</MenuItem>
-                        <MenuItem value="4º Ano">4º Ano</MenuItem>
-                        <MenuItem value="5º Ano">5º Ano</MenuItem>
-                        <MenuItem value="6º Ano">6º Ano</MenuItem>
-                        <MenuItem value="7º Ano">7º Ano</MenuItem>
-                        <MenuItem value="8º Ano">8º Ano</MenuItem>
-                        <MenuItem value="9º Ano">9º Ano</MenuItem>
+                        <MenuItem value="INFANTIL I">INFANTIL I</MenuItem>
+                        <MenuItem value="INFANTIL II">INFANTIL II</MenuItem>
+                        <MenuItem value="INFANTIL III">INFANTIL III</MenuItem>
+                        <MenuItem value="INFANTIL IV">INFANTIL IV</MenuItem>
+                        <MenuItem value="INFANTIL V">INFANTIL V</MenuItem>
+                        <MenuItem value="1º ANO">1º ANO</MenuItem>
+                        <MenuItem value="2º ANO">2º ANO</MenuItem>
+                        <MenuItem value="3º ANO">3º ANO</MenuItem>
+                        <MenuItem value="4º ANO">4º ANO</MenuItem>
+                        <MenuItem value="5º ANO">5º ANO</MenuItem>
+                        <MenuItem value="6º ANO">6º ANO</MenuItem>
+                        <MenuItem value="7º ANO">7º ANO</MenuItem>
+                        <MenuItem value="8º ANO">8º ANO</MenuItem>
+                        <MenuItem value="9º ANO">9º ANO</MenuItem>
                       </Select>
                     )}
                   />
@@ -614,7 +606,7 @@ export default function Turmas() {
               startIcon={<CheckIcon />}
               variant="contained"
               color="success"
-              onClick={handleConfirmDelete}
+              onClick={() => handleConfirmDelete(selectedItemId)}
             >
               Excluir
             </Button>

@@ -55,7 +55,7 @@ export default function DashboardPage() {
           </Box>
         </Box>
 
-        <Box marginX={1} paddingY={3} display="flex" alignItems="center">
+        <Box marginX={1} paddingY={3} alignItems="center">
           <Typography
             textAlign="center"
             mt={mdDown ? "1" : "3"}
