@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Autocomplete,
   Backdrop,
   Box,
   Button,
@@ -341,34 +342,29 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
               <Controller
                 name="userId"
                 control={control}
-                render={({ field, fieldState }) => (
-                  <>
-                    <InputLabel id="userId">
-                      Administrador da Unidade de Ensino
-                    </InputLabel>
-                    <Select
-                      labelId="userId"
-                      label="Administrador da Unidade de Ensino"
-                      value={field.value || ""}
-                      onChange={(e) => {
-                        const userSelecionado = users.find(
-                          (user: TUser) => user.nome === e.target.value
-                        );
-
-                        if (userSelecionado) {
-                          const idUserSelecionado = userSelecionado.id;
-                          field.onChange([idUserSelecionado]);
-                        }
-                      }}
-                    >
-                      {users &&
-                        users.map((user: TUser, i) => (
-                          <MenuItem key={i} value={user.nome}>
-                            {user.nome}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </>
+                render={({ field }) => (
+                  <Autocomplete
+                    id="userId"
+                    options={users}
+                    getOptionLabel={(user) => user.nome}
+                    value={
+                      users.find((user) =>
+                        Array.isArray(field.value)
+                          ? field.value.includes(user.id)
+                          : user.id === field.value
+                      ) || null
+                    }
+                    onChange={(_, newValue) => {
+                      field.onChange(newValue ? newValue.id : "");
+                    }}
+                    sx={{ width: "65%" }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Administrador da Unidade de Ensino"
+                      />
+                    )}
+                  />
                 )}
               />
             </Grid>

@@ -348,14 +348,11 @@ export default function Turmas() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl}/v1/turma/${id}`, {
-        method: "PATCH",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          deletado: true,
-        }),
       });
 
       if (response.ok) {

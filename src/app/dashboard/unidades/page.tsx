@@ -6,11 +6,8 @@ import {
   GridSortModel,
   ptBR,
 } from "@mui/x-data-grid";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import IconButton from "@mui/material/IconButton";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import {
   Backdrop,
   Box,
@@ -26,9 +23,6 @@ import React, { MouseEvent, useEffect, useState } from "react";
 import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
 import { useRouter } from "next/navigation";
-import ThreePIcon from "@mui/icons-material/ThreeP";
-import ArticleIcon from "@mui/icons-material/Article";
-import CustomModal from "@/components/modal";
 import CreateIcon from "@mui/icons-material/Create";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -40,7 +34,7 @@ export default function ListaUnidades() {
   const router = useRouter();
   const [unidades, setUnidades] = useState<TUnidadeEscolar[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+  const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: "nome", sort: "asc" },
   ]);
 
@@ -68,7 +62,6 @@ export default function ListaUnidades() {
       align: "center",
       headerAlign: "center",
       renderCell: (params: GridRenderCellParams) => {
-        // const aprovado = params.row.aprovado;
         return (
           <div>
             <IconButton
@@ -78,46 +71,6 @@ export default function ListaUnidades() {
             >
               <CreateIcon />
             </IconButton>
-
-            {/* <IconButton
-              color="primary"
-              onClick={(event) => handleDeletar(event, params.row._id)}
-              title="Remover"
-            >
-              <DeleteIcon />
-            </IconButton> */}
-
-            {/* {aprovado === "Indeferida" && (
-              <IconButton
-                color="error"
-                onClick={(event) => handleRecorrer(event, params.row._id)}
-                title="Recurso do candidato"
-              >
-                <ThreePIcon />
-              </IconButton>
-            )}
-
-            {aprovado === "Indeferida" && (
-              <IconButton
-                color="warning"
-                onClick={(event) =>
-                  handleRespostaComissao(event, params.row.respostaComissao2)
-                }
-                title="Resposta da Comissão Eleitoral Municipal ao recurso"
-              >
-                <ArticleIcon />
-              </IconButton>
-            )} */}
-
-            {/* {user.role?.includes("super-adm") && (
-              <IconButton
-                color="primary"
-                onClick={(event) => handleValidar(event, params.row._id)}
-                title="Analisar"
-              >
-                <CheckCircleIcon />
-              </IconButton>
-            )} */}
           </div>
         );
       },
@@ -134,14 +87,6 @@ export default function ListaUnidades() {
     corePtBR
   );
 
-  const handleDetalhar = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-    id: string
-  ) => {
-    event.stopPropagation();
-    router.push(`/dashboard/candidato/register/${id}`);
-  };
-
   const handleEditar = (
     event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
     id: string
@@ -153,52 +98,6 @@ export default function ListaUnidades() {
   const handleCreate = () => {
     router.push(`/dashboard/unidades/edit`);
   };
-
-  // const handleRecorrer = (
-  //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-  //   id: string
-  // ) => {
-  //   event.stopPropagation();
-  //   console.log(id);
-  //   router.push(`/dashboard/candidato/recurso/${id}`);
-  // };
-
-  // const handleDeletar = async (
-  //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-  //   id: string
-  // ) => {
-  //   event.stopPropagation();
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const response = await fetch(`${apiUrl}/api/v1/candidato/${id}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const updatedCandidatos = candidatos.filter(
-  //         (candidato) => candidato._id !== id
-  //       );
-  //       console.log("deletado");
-  //       setCandidatos(updatedCandidatos);
-  //     } else {
-  //       console.error("Erro ao excluir candidato. Else!!!!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Erro ao excluir candidato:", error);
-  //   }
-  // };
-
-  // const handleValidar = (
-  //   event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-  //   id: string
-  // ) => {
-  //   event.stopPropagation();
-  //   router.push(`/dashboard/candidato/checklist/${id}`);
-  // };
 
   useEffect(() => {
     setIsLoading(true);
