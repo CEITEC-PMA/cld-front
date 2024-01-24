@@ -29,6 +29,7 @@
     "jspdf-autotable": "^3.7.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
+    "mui-datatables": "^4.3.0",
     "next": "^14.0.4",
     "next-auth": "^4.24.5",
     "react": "^18.2.0",
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.8",
+    "@types/mui-datatables": "^4.3.12",
     "@types/pdfmake": "^0.2.7",
     "@types/react-input-mask": "^3.0.5",
     "@types/validator": "^13.11.8"
