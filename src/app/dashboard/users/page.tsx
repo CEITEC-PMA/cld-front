@@ -20,6 +20,7 @@ import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import { MouseEventHandler, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import CustomModal from "@/components/modal";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -34,6 +35,8 @@ export default function App() {
   const [viewColumnBtn, setViewColumnBtn] = useState(true);
   const [filterBtn, setFilterBtn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
   const [data, setData] = useState([]);
   const { user } = useUserContext();
 
@@ -174,12 +177,17 @@ export default function App() {
 
   const handleResetarSenha = (id: string) => {
     console.log("Resetar Senha do Usuário com ID:", id);
-    // Implemente a lógica de resetar a senha do usuário
+    setSelectedId(id);
+    setIsResetModalOpen(true);
   };
 
   const handleDeleteUsuario = (id: string) => {
     console.log("Excluir Usuário com ID:", id);
     // Implemente a lógica de exclusão do usuário
+  };
+
+  const closeModal = () => {
+    setIsResetModalOpen(false);
   };
 
   useEffect(() => {
@@ -223,9 +231,6 @@ export default function App() {
     }
   }, [user.id]);
 
-  console.log(data);
-  console.log(typeof data);
-
   return (
     <Box margin="24px">
       <Container>
@@ -249,6 +254,16 @@ export default function App() {
               </ThemeProvider>
             </CacheProvider>
           )}
+          <CustomModal
+            open={isResetModalOpen}
+            title="Atenção!"
+            description={`Confirma o reset de senha do usuário selecionado?`}
+            onClose={closeModal}
+            yesButtonLabel="Sim"
+            noButtonLabel="Não"
+            onYesButtonClick={() => handleReset(textFieldValue)}
+            onNoButtonClick={closeModal}
+          />
         </Grid>
       </Container>
     </Box>
