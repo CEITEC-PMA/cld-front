@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import MUIDataTable from "mui-datatables";
+import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import { MouseEventHandler, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
@@ -45,10 +45,14 @@ export default function App() {
         textAlign: "center",
       },
     },
-    { name: "NOME", options: { filterOptions: { fullWidth: true } } },
+    {
+      name: "NOME",
+      options: { textAlign: "center", filterOptions: { fullWidth: true } },
+    },
     {
       name: "ATIVO",
       options: {
+        textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
           const options = ["ATIVO", "INATIVO"];
 
@@ -67,6 +71,7 @@ export default function App() {
     {
       name: "PERFIL DO USUÁRIO",
       options: {
+        textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
           const options = ["ADMIN", "USER"];
 
@@ -85,6 +90,7 @@ export default function App() {
     {
       name: "AÇÕES",
       options: {
+        textAlign: "center",
         customBodyRender: (value, tableMeta) => {
           const rowData = data[tableMeta.rowIndex];
           const userId = rowData[6];
@@ -113,18 +119,17 @@ export default function App() {
           );
         },
       },
-      textAlign: "center",
     },
   ];
 
-  const options = {
+  const options: MUIDataTableOptions = {
     search: searchBtn,
     download: false,
     print: false,
     viewColumns: viewColumnBtn,
     filter: filterBtn,
     filterType: "dropdown",
-    responsive,
+    responsive: "simple",
     tableBodyHeight,
     tableBodyMaxHeight,
     // onTableChange: (action, state) => {
@@ -132,6 +137,39 @@ export default function App() {
     //   console.dir(state);
     // },
     selectableRows: "none",
+    textLabels: {
+      body: {
+        noMatch: "Desculpe, nenhum registro encontrado",
+        toolTip: "Classificar",
+      },
+      pagination: {
+        next: "Próxima Página",
+        previous: "Página Anterior",
+        rowsPerPage: "Linhas por página:",
+        displayRows: "de",
+      },
+      toolbar: {
+        search: "Pesquisar",
+        downloadCsv: "Download CSV",
+        print: "Imprimir",
+        viewColumns: "Ver Colunas",
+        filterTable: "Filtrar Tabela",
+      },
+      filter: {
+        all: "Todos",
+        title: "FILTROS",
+        reset: "REDEFINIR",
+      },
+      viewColumns: {
+        title: "Mostrar Colunas",
+        titleAria: "Mostrar/Esconder Colunas da Tabela",
+      },
+      selectedRows: {
+        text: "linha(s) selecionada(s)",
+        delete: "Excluir",
+        deleteAria: "Excluir linhas selecionadas",
+      },
+    },
   };
 
   const handleResetarSenha = (id: string) => {
