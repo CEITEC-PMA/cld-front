@@ -9,6 +9,7 @@ import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import SearchIcon from "@mui/icons-material/Search";
 import SchoolIcon from "@mui/icons-material/School";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
+import PeopleIcon from "@mui/icons-material/People";
 
 interface DrawerProps {
   open: boolean;
@@ -126,10 +127,10 @@ export default function DrawerComponent({
 
         {user.role === "admin" && (
           <ListItems
-            label="Redefinição de senha"
-            icon={<RotateLeftIcon />}
-            to="/dashboard/settings"
-            isActive={pathname === "/dashboard/settings"}
+            label="Controle de usuários"
+            icon={<PeopleIcon />}
+            to="/dashboard/users"
+            isActive={pathname === "/dashboard/users"}
           />
         )}
       </List>
