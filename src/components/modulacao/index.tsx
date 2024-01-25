@@ -24,6 +24,8 @@ import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 
 type TUsuarioModulacao = {
   user: TUser;
+  open: boolean;
+  onClose: () => void;
 };
 
 type TUnidades = {
@@ -36,9 +38,12 @@ const muiCache = createCache({
   prepend: true,
 });
 
-export default function UsuarioModulacao({ user }: TUsuarioModulacao) {
+export default function UsuarioModulacao({
+  user,
+  open,
+  onClose,
+}: TUsuarioModulacao) {
   const userSelecionado = user;
-  const [open, setOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<TUnidades[]>([] || undefined);
   const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
@@ -62,7 +67,7 @@ export default function UsuarioModulacao({ user }: TUsuarioModulacao) {
         customBodyRender: (value, tableMeta) => {
           const rowData = unidadesFiltradas[tableMeta.rowIndex];
           return (
-            <div style={{ display: "flex", marginRight: "14px", gap: "6px" }}>
+            <div style={{ display: "flex", gap: "6px" }}>
               <Tooltip title="Remover modulação">
                 <IconButton
                   aria-label="delete"
@@ -130,16 +135,14 @@ export default function UsuarioModulacao({ user }: TUsuarioModulacao) {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   const unidadesId = userSelecionado.unidadeId;
-  console.log(unidadesId);
 
   const unidadesFiltradas = unidades.filter((unidade) =>
     unidadesId.includes(unidade.id)
   );
-  console.log(unidadesFiltradas);
 
   useEffect(() => {
     fetchUnidades();
@@ -169,8 +172,9 @@ export default function UsuarioModulacao({ user }: TUsuarioModulacao) {
     }
   };
 
-  const handleUnidadeChange = (unidadeId: string) => {
+  const handleUnidadeAdd = (unidadeId: string) => {
     setSelectedUnidadeId(unidadeId);
+    console.log(unidadeId);
   };
 
   const handleRemoveUnidadeId = (rowData: TUnidadeEscolar) => {
@@ -216,7 +220,7 @@ export default function UsuarioModulacao({ user }: TUsuarioModulacao) {
               minWidth: "65%",
             }}
             getOptionLabel={(option) => option.nome}
-            onChange={(_, newValue) => handleUnidadeChange(newValue?.id || "")}
+            onChange={(_, newValue) => handleUnidadeAdd(newValue?.id || "")}
             renderInput={(params) => (
               <TextField
                 {...params}

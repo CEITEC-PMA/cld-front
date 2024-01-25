@@ -299,7 +299,13 @@ export default function App() {
               </ThemeProvider>
             </CacheProvider>
           )}
-          {showUsuarioModulacao && <UsuarioModulacao user={selectedUser} />}
+          {showUsuarioModulacao && (
+            <UsuarioModulacao
+              user={selectedUser}
+              open={showUsuarioModulacao}
+              onClose={() => setShowUsuarioModulacao(false)}
+            />
+          )}
           <CustomModal
             open={isResetModalOpen}
             title="Atenção!"
