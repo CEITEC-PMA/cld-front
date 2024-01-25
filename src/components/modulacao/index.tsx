@@ -175,10 +175,11 @@ export default function UsuarioModulacao({
   const handleUnidadeAdd = (unidadeId: string) => {
     setSelectedUnidadeId(unidadeId);
     console.log(unidadeId);
+    //add o fetch para o endpoint de adicionar a unidade ao array de unidades do usuário
   };
 
   const handleRemoveUnidadeId = (rowData: TUnidadeEscolar) => {
-    //add o fetch para o endpoint de remover a unidade do array do usuário
+    //add o fetch para o endpoint de remover a unidade ao array de unidades do usuário
     console.log("clicou", rowData.email);
   };
 

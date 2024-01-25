@@ -67,7 +67,11 @@ export default function App() {
           const options = ["ATIVO", "INATIVO"];
 
           return (
-            <Select value={value} onChange={(e) => updateValue(e.target.value)}>
+            <Select
+              value={value}
+              onChange={(e) => updateValue(e.target.value)}
+              style={{ fontSize: "12px" }}
+            >
               {options.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
@@ -87,7 +91,11 @@ export default function App() {
           const options = ["ADMIN", "USER"];
 
           return (
-            <Select value={value} onChange={(e) => updateValue(e.target.value)}>
+            <Select
+              value={value}
+              onChange={(e) => updateValue(e.target.value)}
+              style={{ fontSize: "12px" }}
+            >
               {options.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
