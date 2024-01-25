@@ -20,7 +20,9 @@ import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import { MouseEventHandler, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 import CustomModal from "@/components/modal";
+import { useRouter } from "next/navigation";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -28,7 +30,6 @@ const muiCache = createCache({
 });
 
 export default function App() {
-  const [responsive, setResponsive] = useState("vertical");
   const [tableBodyHeight, setTableBodyHeight] = useState("400px");
   const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
   const [searchBtn, setSearchBtn] = useState(true);
@@ -36,24 +37,28 @@ export default function App() {
   const [filterBtn, setFilterBtn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
-  const [data, setData] = useState([]);
+  const [selectedUser, setSelectedUser] = useState<TUser>();
+  const [data, setData] = useState<TUser[]>([]);
   const { user } = useUserContext();
+  const router = useRouter();
 
   const columns = [
     {
-      name: "CPF/INEP",
+      name: "username",
+      label: "CPF/INEP",
       options: {
         align: "center",
         textAlign: "center",
       },
     },
     {
-      name: "NOME",
+      name: "nome",
+      label: "NOME",
       options: { textAlign: "center", filterOptions: { fullWidth: true } },
     },
     {
-      name: "ATIVO",
+      name: "ativo",
+      label: "ATIVO",
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
@@ -72,7 +77,8 @@ export default function App() {
       },
     },
     {
-      name: "PERFIL DO USUÁRIO",
+      name: "role",
+      label: "PERFIL DO USUÁRIO",
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
@@ -91,19 +97,29 @@ export default function App() {
       },
     },
     {
-      name: "AÇÕES",
+      name: "acoes",
+      label: "AÇÕES",
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta) => {
           const rowData = data[tableMeta.rowIndex];
-          const userId = rowData[6];
           return (
             <div style={{ display: "flex", marginRight: "14px", gap: "6px" }}>
+              <Tooltip title="Modulação do usuário">
+                <IconButton
+                  aria-label=""
+                  color="primary"
+                  onClick={() => handleDetalharUnidades(rowData)}
+                >
+                  <ApartmentIcon />
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title="Resetar senha do usuário">
                 <IconButton
-                  aria-label="delete"
+                  aria-label="reset"
                   color="warning"
-                  onClick={() => handleResetarSenha(userId)}
+                  onClick={() => handleResetarSenha(rowData)}
                 >
                   <RotateLeftIcon />
                 </IconButton>
@@ -113,7 +129,7 @@ export default function App() {
                 <IconButton
                   aria-label="delete"
                   color="error"
-                  onClick={() => handleDeleteUsuario(userId)}
+                  onClick={() => handleDeleteUsuario(rowData)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -175,14 +191,20 @@ export default function App() {
     },
   };
 
-  const handleResetarSenha = (id: string) => {
-    console.log("Resetar Senha do Usuário com ID:", id);
-    setSelectedId(id);
+  const handleResetarSenha = (rowData: TUser) => {
+    const userId = rowData.id;
+    console.log("Resetar Senha do Usuário com ID:", userId);
+    setSelectedUser(rowData);
     setIsResetModalOpen(true);
   };
 
-  const handleDeleteUsuario = (id: string) => {
-    console.log("Excluir Usuário com ID:", id);
+  const handleDeleteUsuario = (rowData: TUser) => {
+    console.log("Excluir Usuário com ID:", rowData.id);
+    // Implemente a lógica de exclusão do usuário
+  };
+
+  const handleDetalharUnidades = (rowData: TUser) => {
+    console.log("Excluir Usuário com ID:", rowData.id);
     // Implemente a lógica de exclusão do usuário
   };
 
@@ -190,45 +212,65 @@ export default function App() {
     setIsResetModalOpen(false);
   };
 
+  const handleReset = async (rowData: TUser) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${apiUrl}/v1/users/${rowData?.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ acesso: 0 }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        alert(`Senha do usuário ${rowData.nome} redefinida com sucesso!`);
+        router.push("/dashboard");
+      } else {
+        alert("Não foi possível redefinir a senha!");
+      }
+    } catch (error) {
+      console.error("Ocorreu um erro na solicitação:", error);
+      alert("Ocorreu um erro na solicitação");
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
-    if (user.id) {
-      const getDados = async () => {
-        try {
-          const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
+    const getDados = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-          const responseJson = await response.json();
-
-          const updatedData = responseJson.results.map((user: TUser) => [
-            user.username,
-            user.nome,
-            user.ativo ? "ATIVO" : "INATIVO",
-            (user.role = user.role.toUpperCase()),
-            user.acesso,
-            user.deletado,
-            user.id,
-          ]);
-
-          setData(updatedData);
-          setIsLoading(false);
-          return response;
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setIsLoading(false);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
         }
-      };
 
-      getDados();
-    }
+        const responseJson = await response.json();
+
+        const updatedData = responseJson.results.map((user: any) => ({
+          ...user,
+          ativo: user.ativo ? "ATIVO" : "INATIVO",
+          role: user.role.toUpperCase(),
+        }));
+
+        setData(updatedData);
+        setIsLoading(false);
+
+        return response;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    getDados();
   }, [user.id]);
 
   return (
@@ -257,11 +299,11 @@ export default function App() {
           <CustomModal
             open={isResetModalOpen}
             title="Atenção!"
-            description={`Confirma o reset de senha do usuário selecionado?`}
+            description={`Confirma o reset de senha do usuário ${selectedUser?.nome}?`}
             onClose={closeModal}
             yesButtonLabel="Sim"
             noButtonLabel="Não"
-            onYesButtonClick={() => handleReset(textFieldValue)}
+            onYesButtonClick={() => handleReset(selectedUser)}
             onNoButtonClick={closeModal}
           />
         </Grid>

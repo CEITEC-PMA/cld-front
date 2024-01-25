@@ -1,6 +1,5 @@
 export type TUser = {
-  id: string;
-  unidadeId: any[];
+  unidadeId: string[];
   role: string;
   acesso: number;
   isEmailVerified: boolean;
@@ -9,4 +8,5 @@ export type TUser = {
   email: string;
   username: string;
   nome: string;
+  id: string;
 };
