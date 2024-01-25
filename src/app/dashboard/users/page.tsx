@@ -23,6 +23,7 @@ import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import CustomModal from "@/components/modal";
 import { useRouter } from "next/navigation";
+import UsuarioModulacao from "@/components/modulacao";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -37,6 +38,7 @@ export default function App() {
   const [filterBtn, setFilterBtn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [showUsuarioModulacao, setShowUsuarioModulacao] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TUser>();
   const [data, setData] = useState<TUser[]>([]);
   const { user } = useUserContext();
@@ -191,6 +193,12 @@ export default function App() {
     },
   };
 
+  const handleDetalharUnidades = (rowData: TUser) => {
+    // console.log("Detalhar Unidades do Usuário com ID:", rowData.id);
+    setSelectedUser(rowData);
+    setShowUsuarioModulacao(true);
+  };
+
   const handleResetarSenha = (rowData: TUser) => {
     const userId = rowData.id;
     console.log("Resetar Senha do Usuário com ID:", userId);
@@ -199,11 +207,6 @@ export default function App() {
   };
 
   const handleDeleteUsuario = (rowData: TUser) => {
-    console.log("Excluir Usuário com ID:", rowData.id);
-    // Implemente a lógica de exclusão do usuário
-  };
-
-  const handleDetalharUnidades = (rowData: TUser) => {
     console.log("Excluir Usuário com ID:", rowData.id);
     // Implemente a lógica de exclusão do usuário
   };
@@ -296,6 +299,7 @@ export default function App() {
               </ThemeProvider>
             </CacheProvider>
           )}
+          {showUsuarioModulacao && <UsuarioModulacao user={selectedUser} />}
           <CustomModal
             open={isResetModalOpen}
             title="Atenção!"
