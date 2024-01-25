@@ -87,7 +87,10 @@ export default function DrawerComponent({
             label="Listar unidades"
             icon={<MapsHomeWorkIcon />}
             to="/dashboard/unidades"
-            isActive={pathname === "/dashboard/unidades"}
+            isActive={
+              pathname === "/dashboard/unidades" ||
+              pathname.startsWith("/dashboard/unidades/edit")
+            }
           />
         )}
 
