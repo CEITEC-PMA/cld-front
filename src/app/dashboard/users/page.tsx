@@ -69,7 +69,10 @@ export default function App() {
           return (
             <Select
               value={value}
-              onChange={(e) => updateValue(e.target.value)}
+              onChange={(e) => {
+                updateValue(e.target.value);
+                handleChangeAtivo(e.target.value, data[tableMeta.rowIndex].id);
+              }}
               style={{ fontSize: "12px" }}
             >
               {options.map((option) => (
@@ -93,7 +96,10 @@ export default function App() {
           return (
             <Select
               value={value}
-              onChange={(e) => updateValue(e.target.value)}
+              onChange={(e) => {
+                updateValue(e.target.value);
+                handleChangeRole(e.target.value, data[tableMeta.rowIndex].id);
+              }}
               style={{ fontSize: "12px" }}
             >
               {options.map((option) => (
@@ -199,6 +205,60 @@ export default function App() {
         deleteAria: "Excluir linhas selecionadas",
       },
     },
+  };
+
+  const handleChangeAtivo = async (value: string, userId: string) => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    console.log("entrou no handleChangeAtivo");
+
+    try {
+      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ ativo: value === "ATIVO" ? true : false }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Lógica adicional se necessário
+        console.log(`Status do usuário ${userId} alterado para ${value}`);
+        setIsLoading(false);
+      } else {
+        console.error("Falha ao alterar o status do usuário");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Erro ao realizar a solicitação:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleChangeRole = async (value: string, userId: string) => {
+    const token = localStorage.getItem("token");
+    console.log("entrou no handleChangeRole");
+
+    try {
+      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ role: value.toLowerCase() }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Lógica adicional se necessário
+        console.log(`Perfil do usuário ${userId} alterado para ${value}`);
+      } else {
+        console.error("Falha ao alterar o perfil do usuário");
+      }
+    } catch (error) {
+      console.error("Erro ao realizar a solicitação:", error);
+    }
   };
 
   const handleDetalharUnidades = (rowData: TUser) => {
