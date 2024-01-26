@@ -52,6 +52,10 @@ export default function UsuarioModulacao({
   const [searchBtn, setSearchBtn] = useState(true);
   const [viewColumnBtn, setViewColumnBtn] = useState(true);
   const [filterBtn, setFilterBtn] = useState(true);
+  const [userUnidadesId, setUserUnidadesId] = useState<string[]>([]);
+  const [autocompleteValue, setAutocompleteValue] = useState<TUnidades | null>(
+    null
+  );
 
   const columns = [
     {
@@ -138,10 +142,19 @@ export default function UsuarioModulacao({
     onClose();
   };
 
-  const unidadesId = userSelecionado.unidadeId;
+  useEffect(() => {
+    if (userSelecionado.unidadeId) {
+      setUserUnidadesId(userSelecionado.unidadeId);
+    }
+    fetchUnidades();
+  }, [userSelecionado.unidadeId]);
+
+  useEffect(() => {
+    setAutocompleteValue(null);
+  }, [userUnidadesId]);
 
   const unidadesFiltradas = unidades.filter((unidade) =>
-    unidadesId.includes(unidade.id)
+    userUnidadesId.includes(unidade.id)
   );
 
   useEffect(() => {
@@ -172,15 +185,63 @@ export default function UsuarioModulacao({
     }
   };
 
-  const handleUnidadeAdd = (unidadeId: string) => {
+  const handleUnidadeAdd = async (unidadeId: string) => {
     setSelectedUnidadeId(unidadeId);
-    console.log(unidadeId);
-    //add o fetch para o endpoint de adicionar a unidade ao array de unidades do usuário
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
+        method: "POST",
+        body: JSON.stringify({ unidadeId: unidadeId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Atualizar o estado local userUnidadesId com o novo array
+        setUserUnidadesId([...userUnidadesId, unidadeId]);
+        console.log(`Usuário ${user.nome} modulado com sucesso!`);
+
+        // Limpar a seleção do Autocomplete
+        setAutocompleteValue(null);
+      } else {
+        console.error("Falha ao alterar o status do usuário");
+      }
+    } catch (error) {
+      console.error("A solicitação não foi concluída, erro no envio dos dados");
+    }
+    setIsLoading(false);
   };
 
-  const handleRemoveUnidadeId = (rowData: TUnidadeEscolar) => {
-    //add o fetch para o endpoint de remover a unidade ao array de unidades do usuário
-    console.log("clicou", rowData.email);
+  const handleRemoveUnidadeId = async (rowData: TUnidadeEscolar) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ unidadeId: rowData.id }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Atualizar o estado local userUnidadesId com o novo array
+        console.log(
+          `Usuário ${user.nome} desmodulado da unidade ${rowData.nome} com sucesso!`
+        );
+
+        // Limpar a seleção do Autocomplete
+        setAutocompleteValue(null);
+      } else {
+        console.error("Falha ao alterar o status do usuário");
+      }
+    } catch (error) {
+      console.error("A solicitação não foi concluída, erro no envio dos dados");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -210,10 +271,7 @@ export default function UsuarioModulacao({
           <Autocomplete
             id="selectUnidade"
             options={unidades}
-            value={
-              unidades.find((unidade) => unidade.id === selectedUnidadeId) ||
-              null
-            }
+            value={autocompleteValue}
             sx={{
               margin: "16px 0",
               textAlign: "center",
@@ -221,7 +279,10 @@ export default function UsuarioModulacao({
               minWidth: "65%",
             }}
             getOptionLabel={(option) => option.nome}
-            onChange={(_, newValue) => handleUnidadeAdd(newValue?.id || "")}
+            onChange={(_, newValue) => {
+              setAutocompleteValue(newValue);
+              handleUnidadeAdd(newValue?.id || "");
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}

@@ -1,5 +1,5 @@
 export type TUnidadeEscolar = {
-  _id: string;
+  id: string;
   nome: string;
   userId: string[];
   inep: number;

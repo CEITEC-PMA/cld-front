@@ -24,7 +24,7 @@ import { apiUrl } from "@/utils/api";
 import Unauthorized from "@/components/unauthorized";
 
 type Turma = {
-  _id: string;
+  id: string;
   nomeTurma: string;
   qtdeAlunos: number | null;
   qtdeProf: number | null;
@@ -33,7 +33,7 @@ type Turma = {
 interface Zona {
   inep: string;
   nome: string;
-  _id: string;
+  id: string;
 }
 
 export default function TurmaDetalhe({ params }: { params: { id: string } }) {
@@ -161,7 +161,7 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
               >
                 <ThemeProvider theme={theme}>
                   <DataGrid
-                    getRowId={(row) => row._id}
+                    getRowId={(row) => row.id}
                     rows={rows}
                     columns={columns}
                     sortModel={sortModel}

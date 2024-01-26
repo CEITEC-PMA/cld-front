@@ -28,6 +28,7 @@ import Link from "next/link";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
 import SimpleBackdrop from "../backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LoginPage() {
   const [open, setOpen] = React.useState(false);
@@ -255,7 +256,7 @@ export default function LoginPage() {
             endIcon={<LoginIcon />}
             disabled={isLoading}
           >
-            {isLoading ? "Enviando..." : "Entrar"}
+            {isLoading ? <CircularProgress /> : "Entrar"}
           </Button>
 
           <Typography variant="subtitle2" align="center">

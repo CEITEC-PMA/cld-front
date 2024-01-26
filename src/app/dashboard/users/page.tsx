@@ -24,6 +24,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import CustomModal from "@/components/modal";
 import { useRouter } from "next/navigation";
 import UsuarioModulacao from "@/components/modulacao";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -354,7 +355,7 @@ export default function App() {
 
         <Grid container spacing={2} justifyContent="center" marginTop="4px">
           {isLoading ? (
-            "Carregando"
+            <CircularProgress />
           ) : (
             <CacheProvider value={muiCache}>
               <ThemeProvider theme={createTheme()}>
