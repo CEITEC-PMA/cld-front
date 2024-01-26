@@ -43,7 +43,7 @@ export default function UsuarioModulacao({
   open,
   onClose,
 }: TUsuarioModulacao) {
-  const userSelecionado = user;
+  const userId = user.id;
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<TUnidades[]>([] || undefined);
   const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
@@ -52,6 +52,7 @@ export default function UsuarioModulacao({
   const [searchBtn, setSearchBtn] = useState(true);
   const [viewColumnBtn, setViewColumnBtn] = useState(true);
   const [filterBtn, setFilterBtn] = useState(true);
+  const [unidadeExibicao, setUnidadeExibicao] = useState<TUnidades[]>([]);
   const [userUnidadesId, setUserUnidadesId] = useState<string[]>([]);
   const [autocompleteValue, setAutocompleteValue] = useState<TUnidades | null>(
     null
@@ -68,15 +69,15 @@ export default function UsuarioModulacao({
       label: "AÇÕES",
       options: {
         textAlign: "center",
-        customBodyRender: (value, tableMeta) => {
-          const rowData = unidadesFiltradas[tableMeta.rowIndex];
+        customBodyRender: (_value: string, tableMeta: any) => {
+          const unidade = unidadeExibicao[tableMeta.rowIndex];
           return (
-            <div style={{ display: "flex", gap: "6px" }}>
+            <div style={{ display: "flex" }}>
               <Tooltip title="Remover modulação">
                 <IconButton
                   aria-label="delete"
                   color="error"
-                  onClick={() => handleRemoveUnidadeId(rowData)}
+                  onClick={() => handleRemoveUnidadeId(unidade)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -138,73 +139,94 @@ export default function UsuarioModulacao({
     },
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
     onClose();
   };
 
   useEffect(() => {
-    if (userSelecionado.unidadeId) {
-      setUserUnidadesId(userSelecionado.unidadeId);
-    }
-    fetchUnidades();
-  }, [userSelecionado.unidadeId]);
+    setIsLoading(true);
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          const unidadeId = userData.unidadeId;
+
+          const unidadeNomeId = unidadeId.map((unidade: TUnidadeEscolar) => ({
+            id: unidade.id,
+            nome: unidade.nome,
+          }));
+
+          setUnidadeExibicao(unidadeNomeId);
+
+          setIsLoading(false);
+        } else {
+          console.error("Erro ao obter dados do usuário");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Erro durante a busca de dados do usuário:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   useEffect(() => {
     setAutocompleteValue(null);
   }, [userUnidadesId]);
 
-  const unidadesFiltradas = unidades.filter((unidade) =>
-    userUnidadesId.includes(unidade.id)
-  );
-
   useEffect(() => {
+    const fetchUnidades = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUnidades(data.results);
+          setIsLoading(false);
+        } else {
+          console.error("Erro ao obter dados das unidades do backend.");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Erro durante a busca de unidades:", error);
+        setIsLoading(false);
+      }
+    };
     fetchUnidades();
   }, []);
 
-  const fetchUnidades = async () => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUnidades(data.results);
-        setIsLoading(false);
-      } else {
-        console.error("Erro ao obter dados das unidades do backend.");
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Erro durante a busca de unidades:", error);
-      setIsLoading(false);
-    }
-  };
-
-  const handleUnidadeAdd = async (unidadeId: string) => {
-    setSelectedUnidadeId(unidadeId);
-
+  const handleUnidadeAdd = async (unidade: TUnidadeEscolar) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
         method: "POST",
-        body: JSON.stringify({ unidadeId: unidadeId }),
+        body: JSON.stringify({ unidadeId: unidade.id }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+      const resJson = await response.json();
 
       if (response.status === 200) {
-        // Atualizar o estado local userUnidadesId com o novo array
-        setUserUnidadesId([...userUnidadesId, unidadeId]);
-        console.log(`Usuário ${user.nome} modulado com sucesso!`);
-
-        // Limpar a seleção do Autocomplete
+        const responseUnidade = resJson.unidadeId;
+        setUnidadeExibicao(responseUnidade);
         setAutocompleteValue(null);
       } else {
         console.error("Falha ao alterar o status do usuário");
@@ -215,31 +237,28 @@ export default function UsuarioModulacao({
     setIsLoading(false);
   };
 
-  const handleRemoveUnidadeId = async (rowData: TUnidadeEscolar) => {
+  const handleRemoveUnidadeId = async (unidade: TUnidades) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
         method: "DELETE",
-        body: JSON.stringify({ unidadeId: rowData.id }),
+        body: JSON.stringify({ unidadeId: unidade.id }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+      const resJson = await response.json();
 
       if (response.status === 200) {
-        // Atualizar o estado local userUnidadesId com o novo array
-        console.log(
-          `Usuário ${user.nome} desmodulado da unidade ${rowData.nome} com sucesso!`
-        );
-
-        // Limpar a seleção do Autocomplete
+        const responseUnidade = resJson.unidadeId;
+        setUnidadeExibicao(responseUnidade);
         setAutocompleteValue(null);
       } else {
-        console.error("Falha ao alterar o status do usuário");
+        alert("Falha ao alterar o status do usuário");
       }
     } catch (error) {
-      console.error("A solicitação não foi concluída, erro no envio dos dados");
+      alert("A solicitação não foi concluída, erro no envio dos dados");
     }
     setIsLoading(false);
   };
@@ -280,8 +299,10 @@ export default function UsuarioModulacao({
             }}
             getOptionLabel={(option) => option.nome}
             onChange={(_, newValue) => {
-              setAutocompleteValue(newValue);
-              handleUnidadeAdd(newValue?.id || "");
+              if (newValue) {
+                setAutocompleteValue(newValue);
+                handleUnidadeAdd(newValue as TUnidadeEscolar);
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -299,7 +320,7 @@ export default function UsuarioModulacao({
               <ThemeProvider theme={createTheme()}>
                 <MUIDataTable
                   title="Unidades de Ensino onde o usuário está modulado"
-                  data={unidadesFiltradas}
+                  data={unidadeExibicao}
                   columns={columns}
                   options={options}
                 />
