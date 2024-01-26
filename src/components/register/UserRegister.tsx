@@ -92,7 +92,7 @@ export default function UserRegister() {
   };
 
   const handleOk = () => {
-    router.push("/dashboard");
+    router.push("/");
   };
 
   return (
