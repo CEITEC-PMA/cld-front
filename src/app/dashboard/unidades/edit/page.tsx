@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import SaveIcon from "@mui/icons-material/Check";
 import {
   Autocomplete,
   Backdrop,
@@ -11,38 +10,35 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
-  IconButton,
   InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Check";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import Grid from "@mui/material/Unstable_Grid2";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import InputMask from "react-input-mask";
 
+import Unauthorized from "@/components/unauthorized";
+import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import { TUser } from "@/utils/types/user.types";
-import { useUserContext } from "@/userContext";
-import Unauthorized from "@/components/unauthorized";
+import { LatLngTuple } from "leaflet";
+import "leaflet-defaulticon-compatibility";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
+import "leaflet/dist/leaflet.css";
 import {
   MapContainer,
-  TileLayer,
   Marker,
   Popup,
+  TileLayer,
   useMapEvents,
 } from "react-leaflet";
-import { LatLngTuple } from "leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
-import * as L from "leaflet";
-import "leaflet-defaulticon-compatibility";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -65,7 +61,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
   const [leaflet, setLeaflet] = useState<any>(null);
   const idUnidade = unidadeParams.get("id");
-  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
     import("leaflet").then((L) => {
@@ -332,9 +327,10 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             ? `Editar Unidade de Ensino - ${unidades[0]?.nome || ""}`
             : "Cadastrar Unidade de Ensino"}
         </Typography>
+
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <Grid container padding={2} spacing={2} alignItems="center">
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Typography
                 variant={smDown ? "h6" : "h5"}
                 sx={{ backgroundColor: "#" }}
@@ -342,7 +338,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 Dados Gerais
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name="nome"
                 control={control}
@@ -371,7 +367,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={smDown ? 12 : 10}>
               <Controller
                 name="userId"
                 control={control}
@@ -390,7 +386,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                     onChange={(_, newValue) => {
                       field.onChange(newValue ? newValue.id : "");
                     }}
-                    sx={{ width: "65%" }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -401,7 +396,16 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={smDown ? 4 : 3}>
+            <Grid xs={smDown ? 12 : 2}>
+              <Button
+                onClick={() => router.push("/register/user")}
+                variant="contained"
+              >
+                Adicionar Usuário
+              </Button>
+            </Grid>
+
+            <Grid xs={smDown ? 12 : 3}>
               <Controller
                 name="inep"
                 control={control}
@@ -435,7 +439,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={mdDown ? 6 : 2.5}>
+            <Grid xs={mdDown ? 12 : 2.5}>
               <Controller
                 name="fone"
                 control={control}
@@ -469,7 +473,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name="email"
                 control={control}
@@ -495,7 +499,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               />
             </Grid>
             <Grid
-              item
               xs={12}
               justifyItems="center"
               alignItems="center"
@@ -503,8 +506,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             >
               <Typography variant={smDown ? "h6" : "h5"}>Endereço</Typography>
             </Grid>
-            <Grid item container xs={12} display="flex" spacing={2}>
-              <Grid item xs={smDown ? 4.2 : mdDown ? 3 : 1.9}>
+            <Grid container xs={12} display="flex" spacing={2}>
+              <Grid xs={smDown ? 12 : mdDown ? 3 : 1.9}>
                 <Controller
                   name="endereco.cep"
                   control={control}
@@ -525,7 +528,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={smDown ? 12 : mdDown ? 12 : 5}>
+              <Grid xs={smDown ? 12 : mdDown ? 12 : 5}>
                 <Controller
                   name="endereco.logradouro"
                   control={control}
@@ -541,7 +544,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={smDown ? 12 : mdDown ? 6 : 3}>
+              <Grid xs={smDown ? 12 : mdDown ? 6 : 3}>
                 <Controller
                   name="endereco.complemento"
                   control={control}
@@ -557,7 +560,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 3 : 1.05}>
+              <Grid xs={mdDown ? 12 : 1.05}>
                 <Controller
                   name="endereco.quadra"
                   control={control}
@@ -571,7 +574,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 3 : 1.05}>
+              <Grid xs={mdDown ? 12 : 1.05}>
                 <Controller
                   name="endereco.lote"
                   control={control}
@@ -580,7 +583,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 12 : 3}>
+              <Grid xs={mdDown ? 12 : 3}>
                 <Controller
                   name="endereco.bairro"
                   control={control}
@@ -597,7 +600,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 12 : 4}>
+              <Grid xs={mdDown ? 12 : 4}>
                 <Controller
                   name="endereco.localidade"
                   control={control}
@@ -614,7 +617,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={mdDown ? 3 : 1}>
+              <Grid xs={mdDown ? 6 : 1}>
                 <Controller
                   name="endereco.uf"
                   control={control}
@@ -632,47 +635,35 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 />
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={mdDown ? 12 : 6}
-              display="flex"
-              spacing={2}
-            >
-              <Grid item xs={6}>
-                <InputLabel id="userId">Coordenada X</InputLabel>
-                <Controller
-                  name="location.coordinates.0"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputLabel id="userId">Coordenada Y</InputLabel>
-                <Controller
-                  name="location.coordinates.1"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  )}
-                />
-              </Grid>
+            <Grid xs={mdDown ? 12 : 6}>
+              <InputLabel id="userId">Coordenada X</InputLabel>
+              <Controller
+                name="location.coordinates.0"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid xs={mdDown ? 12 : 6}>
+              <InputLabel id="userId">Coordenada Y</InputLabel>
+              <Controller
+                name="location.coordinates.1"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                  />
+                )}
+              />
             </Grid>
             <Grid xs={12} padding="20px 16px">
               <MapContainer
@@ -697,7 +688,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
               </MapContainer>
             </Grid>
             <Grid
-              item
               xs={12}
               margin="0 4px"
               alignItems="center"
