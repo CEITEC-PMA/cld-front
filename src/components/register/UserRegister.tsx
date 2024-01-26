@@ -1,6 +1,7 @@
 "use client";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { apiUrl } from "@/utils/api";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import LoginIcon from "@mui/icons-material/Login";
 import {
   Avatar,
   Box,
@@ -9,27 +10,24 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   TextField,
   Typography,
   styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import LoginIcon from "@mui/icons-material/Login";
-import { useState } from "react";
-import { z } from "zod";
-import { cpf } from "cpf-cnpj-validator";
-import SimpleBackdrop from "../backdrop";
-import { useRouter } from "next/navigation";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import SimpleBackdrop from "../backdrop";
 
 const schema = z.object({
   email: z.string().email({ message: "E-mail inválido" }),
-  username: z.string().refine((value) => cpf.isValid(value), {
-    message: "CPF inválido",
-  }),
+  username: z
+    .string()
+    .min(8, { message: "CPF ou INEP deve ter no mínimo 8 caracteres" }),
   nome: z.string().min(8, { message: "Nome deve ter no mínimo 8 caracteres" }),
 });
 
@@ -137,7 +135,7 @@ export default function UserRegister() {
                     required
                     fullWidth
                     type="text"
-                    label="CPF"
+                    label="CPF / INEP"
                     error={!!errors.username}
                     helperText={errors.username?.message}
                     value={field.value}
