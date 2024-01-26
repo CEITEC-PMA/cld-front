@@ -2,10 +2,8 @@ import { apiUrl } from "@/utils/api";
 import { TUser } from "@/utils/types/user.types";
 import {
   Autocomplete,
-  Box,
-  Button,
+  Backdrop,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -46,7 +44,6 @@ export default function UsuarioModulacao({
   const userId = user.id;
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<TUnidades[]>([] || undefined);
-  const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
   const [tableBodyHeight, setTableBodyHeight] = useState("400px");
   const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
   const [searchBtn, setSearchBtn] = useState(true);
@@ -314,7 +311,7 @@ export default function UsuarioModulacao({
             )}
           />
           {isLoading ? (
-            "Carregando"
+            <Backdrop open={isLoading} />
           ) : (
             <CacheProvider value={muiCache}>
               <ThemeProvider theme={createTheme()}>

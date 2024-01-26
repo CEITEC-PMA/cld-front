@@ -12,6 +12,7 @@ import {
   IconButton,
   MenuItem,
   Select,
+  ToggleButton,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -25,6 +26,7 @@ import CustomModal from "@/components/modal";
 import { useRouter } from "next/navigation";
 import UsuarioModulacao from "@/components/modulacao";
 import CircularProgress from "@mui/material/CircularProgress";
+import CheckIcon from "@mui/icons-material/Check";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -42,7 +44,9 @@ export default function App() {
   const [showUsuarioModulacao, setShowUsuarioModulacao] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TUser>();
   const [data, setData] = useState<TUser[]>([]);
+  const [reloadData, setReloadData] = useState(false);
   const { user } = useUserContext();
+  const [deletadoToggles, setDeletadoToggles] = useState<boolean[]>([]);
   const router = useRouter();
 
   const columns = [
@@ -65,23 +69,23 @@ export default function App() {
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
-          const options = ["ATIVO", "INATIVO"];
+          const isActive = value === "ATIVO";
+          const backgroundColor = isActive ? "#4caf50" : "#f44336";
 
           return (
-            <Select
-              value={value}
-              onChange={(e) => {
-                updateValue(e.target.value);
-                handleChangeAtivo(e.target.value, data[tableMeta.rowIndex].id);
+            <div
+              style={{
+                fontSize: "12px",
+                backgroundColor,
+                color: "#fff",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "default",
+                textAlign: "center",
               }}
-              style={{ fontSize: "12px" }}
             >
-              {options.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
+              {value}
+            </div>
           );
         },
       },
@@ -126,7 +130,7 @@ export default function App() {
                 <IconButton
                   aria-label=""
                   color="primary"
-                  onClick={() => handleDetalharUnidades(rowData)}
+                  onClick={() => handleDetalharUnidadesModulado(rowData)}
                 >
                   <ApartmentIcon />
                 </IconButton>
@@ -142,7 +146,7 @@ export default function App() {
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="Excluir usuário">
+              {/* <Tooltip title="Excluir usuário">
                 <IconButton
                   aria-label="delete"
                   color="error"
@@ -150,8 +154,29 @@ export default function App() {
                 >
                   <DeleteIcon />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
             </div>
+          );
+        },
+      },
+    },
+    {
+      name: "deletado",
+      label: "DISPONÍVEL",
+      options: {
+        align: "center",
+        textAlign: "center",
+        customBodyRender: (value, tableMeta) => {
+          const rowIndex = tableMeta.rowIndex;
+
+          return (
+            <ToggleButton
+              value="check"
+              selected={deletadoToggles[rowIndex] || false}
+              onChange={() => handleToggle(rowIndex)}
+            >
+              {value}
+            </ToggleButton>
           );
         },
       },
@@ -208,39 +233,82 @@ export default function App() {
     },
   };
 
-  const handleChangeAtivo = async (value: string, userId: string) => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    console.log("entrou no handleChangeAtivo");
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
 
-    try {
-      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ ativo: value === "ATIVO" ? true : false }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (response.status === 200) {
-        // Lógica adicional se necessário
-        console.log(`Status do usuário ${userId} alterado para ${value}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseJson = await response.json();
+
+        const updatedData = responseJson.results.map((user: any) => ({
+          ...user,
+          ativo: user.ativo ? "ATIVO" : "INATIVO",
+          role: user.role.toUpperCase(),
+          deletado: user.deletado ? "NÃO" : "SIM",
+        }));
+
+        setData(updatedData);
+
+        const initialToggleState = updatedData.map(
+          (user) => user.deletado === "SIM"
+        );
+        setDeletadoToggles(initialToggleState);
+
         setIsLoading(false);
-      } else {
-        console.error("Falha ao alterar o status do usuário");
+      } catch (error) {
+        console.error("Error fetching data:", error);
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Erro ao realizar a solicitação:", error);
-      setIsLoading(false);
+    };
+
+    fetchData();
+    if (!showUsuarioModulacao) {
+      fetchData();
     }
-  };
+  }, [user.id, reloadData, showUsuarioModulacao]);
+
+  // const handleChangeAtivo = async (value: string, userId: string) => {
+  //   setIsLoading(true);
+  //   const token = localStorage.getItem("token");
+  //   console.log("entrou no handleChangeAtivo");
+
+  //   try {
+  //     const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+  //       method: "PATCH",
+  //       body: JSON.stringify({ ativo: value === "ATIVO" ? true : false }),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     if (response.status === 200) {
+  //       // Lógica adicional se necessário
+  //       console.log(`Status do usuário ${userId} alterado para ${value}`);
+  //       setIsLoading(false);
+  //     } else {
+  //       console.error("Falha ao alterar o status do usuário");
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao realizar a solicitação:", error);
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleChangeRole = async (value: string, userId: string) => {
     const token = localStorage.getItem("token");
-    console.log("entrou no handleChangeRole");
-
     try {
       const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
         method: "PATCH",
@@ -262,22 +330,15 @@ export default function App() {
     }
   };
 
-  const handleDetalharUnidades = (rowData: TUser) => {
-    // console.log("Detalhar Unidades do Usuário com ID:", rowData.id);
+  const handleDetalharUnidadesModulado = (rowData: TUser) => {
     setSelectedUser(rowData);
     setShowUsuarioModulacao(true);
   };
 
   const handleResetarSenha = (rowData: TUser) => {
     const userId = rowData.id;
-    console.log("Resetar Senha do Usuário com ID:", userId);
     setSelectedUser(rowData);
     setIsResetModalOpen(true);
-  };
-
-  const handleDeleteUsuario = (rowData: TUser) => {
-    console.log("Excluir Usuário com ID:", rowData.id);
-    // Implemente a lógica de exclusão do usuário
   };
 
   const closeModal = () => {
@@ -298,7 +359,7 @@ export default function App() {
 
       if (response.status === 200) {
         alert(`Senha do usuário ${rowData.nome} redefinida com sucesso!`);
-        router.push("/dashboard");
+        closeModal();
       } else {
         alert("Não foi possível redefinir a senha!");
       }
@@ -308,42 +369,42 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    setIsLoading(true);
+  const handleToggle = (rowIndex) => {
+    // Atualiza o estado do ToggleButton com base no índice da linha
+    const newToggleState = [...deletadoToggles];
+    newToggleState[rowIndex] = !newToggleState[rowIndex];
+    setDeletadoToggles(newToggleState);
+
+    const userId = data[rowIndex].id;
+    const newValue = newToggleState[rowIndex] ? "NÃO" : "SIM";
+    updateDeletado(userId, newValue);
+  };
+
+  const updateDeletado = async (userId, newValue) => {
     const token = localStorage.getItem("token");
 
-    const getDados = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    try {
+      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ deletado: newValue === "NÃO" ? false : true }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const responseJson = await response.json();
-
-        const updatedData = responseJson.results.map((user: any) => ({
-          ...user,
-          ativo: user.ativo ? "ATIVO" : "INATIVO",
-          role: user.role.toUpperCase(),
-        }));
-
-        setData(updatedData);
-        setIsLoading(false);
-
-        return response;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsLoading(false);
+      if (response.status === 200) {
+        // Lógica adicional se necessário
+        console.log(
+          `Status de deletado do usuário ${userId} alterado para ${newValue}`
+        );
+      } else {
+        console.error("Falha ao alterar o status de deletado do usuário");
       }
-    };
-
-    getDados();
-  }, [user.id]);
+    } catch (error) {
+      console.error("Erro ao realizar a solicitação:", error);
+    }
+  };
 
   return (
     <Box margin="24px">
@@ -368,23 +429,27 @@ export default function App() {
               </ThemeProvider>
             </CacheProvider>
           )}
-          {showUsuarioModulacao && (
+          {showUsuarioModulacao && selectedUser && (
             <UsuarioModulacao
               user={selectedUser}
               open={showUsuarioModulacao}
-              onClose={() => setShowUsuarioModulacao(false)}
+              onClose={() => {
+                setShowUsuarioModulacao(false);
+              }}
             />
           )}
-          <CustomModal
-            open={isResetModalOpen}
-            title="Atenção!"
-            description={`Confirma o reset de senha do usuário ${selectedUser?.nome}?`}
-            onClose={closeModal}
-            yesButtonLabel="Sim"
-            noButtonLabel="Não"
-            onYesButtonClick={() => handleReset(selectedUser)}
-            onNoButtonClick={closeModal}
-          />
+          {selectedUser && (
+            <CustomModal
+              open={isResetModalOpen}
+              title="Atenção!"
+              description={`Confirma o reset de senha do usuário ${selectedUser?.nome}?`}
+              onClose={closeModal}
+              yesButtonLabel="Sim"
+              noButtonLabel="Não"
+              onYesButtonClick={() => handleReset(selectedUser)}
+              onNoButtonClick={closeModal}
+            />
+          )}
         </Grid>
       </Container>
     </Box>
