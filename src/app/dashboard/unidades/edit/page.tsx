@@ -28,17 +28,17 @@ import { useUserContext } from "@/userContext";
 import { apiUrl } from "@/utils/api";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import { TUser } from "@/utils/types/user.types";
-import { LatLngTuple } from "leaflet";
-import "leaflet-defaulticon-compatibility";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
-import "leaflet/dist/leaflet.css";
-import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMapEvents,
-} from "react-leaflet";
+// import { LatLngTuple } from "leaflet";
+// import "leaflet-defaulticon-compatibility";
+// import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
+// import "leaflet/dist/leaflet.css";
+// import {
+//   MapContainer,
+//   Marker,
+//   Popup,
+//   TileLayer,
+//   useMapEvents,
+// } from "react-leaflet";
 
 interface Props {
   onSubmit: SubmitHandler<TUnidadeEscolar>;
@@ -58,26 +58,26 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
   const [users, setUsers] = useState<TUser[]>([]);
   const unidadeParams = useSearchParams();
   const router = useRouter();
-  const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
-  const [leaflet, setLeaflet] = useState<any>(null);
+  // const [markerCoordinates, setMarkerCoordinates] = useState([0, 0]);
+  // const [leaflet, setLeaflet] = useState<any>(null);
   const idUnidade = unidadeParams.get("id");
 
-  useEffect(() => {
-    import("leaflet").then((L) => {
-      setLeaflet(L);
-    });
-  }, []);
+  // useEffect(() => {
+  //   import("leaflet").then((L) => {
+  //     setLeaflet(L);
+  //   });
+  // }, []);
 
-  const initialCoordinates: LatLngTuple = [
-    -16.331728890115176, -48.94959155640654,
-  ] as LatLngTuple;
+  // const initialCoordinates: LatLngTuple = [
+  //   -16.331728890115176, -48.94959155640654,
+  // ] as LatLngTuple;
 
-  const centerCoordinates = idUnidade
-    ? ([
-        parseFloat(getValues("location.coordinates.0")),
-        parseFloat(getValues("location.coordinates.1")),
-      ] as LatLngTuple)
-    : (initialCoordinates as LatLngTuple);
+  // const centerCoordinates = idUnidade
+  //   ? ([
+  //       parseFloat(getValues("location.coordinates.0")),
+  //       parseFloat(getValues("location.coordinates.1")),
+  //     ] as LatLngTuple)
+  //   : (initialCoordinates as LatLngTuple);
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -88,26 +88,26 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     },
   }));
 
-  const MapEventWrapper = () => {
-    if (!leaflet) return null;
+  // const MapEventWrapper = () => {
+  //   if (!leaflet) return null;
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const map = useMapEvents({
-      click: (e) => {
-        const { lat, lng } = e.latlng;
-        console.log("Clique no mapa. Coordenadas:", lat, lng);
-        console.log("Antes de setMarkerCoordinates:", markerCoordinates);
+  //   // eslint-disable-next-line react-hooks/rules-of-hooks
+  //   const map = useMapEvents({
+  //     click: (e) => {
+  //       const { lat, lng } = e.latlng;
+  //       console.log("Clique no mapa. Coordenadas:", lat, lng);
+  //       console.log("Antes de setMarkerCoordinates:", markerCoordinates);
 
-        setMarkerCoordinates([lat, lng]);
-        console.log("Depois de setMarkerCoordinates:", markerCoordinates);
+  //       setMarkerCoordinates([lat, lng]);
+  //       console.log("Depois de setMarkerCoordinates:", markerCoordinates);
 
-        setValue("location.coordinates.0", lat.toString());
-        setValue("location.coordinates.1", lng.toString());
-      },
-    });
+  //       setValue("location.coordinates.0", lat.toString());
+  //       setValue("location.coordinates.1", lng.toString());
+  //     },
+  //   });
 
-    return null;
-  };
+  //   return null;
+  // };
 
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
     const formData = getValues();
@@ -222,33 +222,33 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           );
           setValue("endereco.uf", responseJson.endereco.uf || "");
 
-          const hasCoordinates =
-            responseJson.location?.coordinates?.[0] !== undefined &&
-            responseJson.location?.coordinates?.[1] !== undefined &&
-            !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
-            !isNaN(parseFloat(responseJson.location.coordinates[1]));
+          // const hasCoordinates =
+          //   responseJson.location?.coordinates?.[0] !== undefined &&
+          //   responseJson.location?.coordinates?.[1] !== undefined &&
+          //   !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
+          //   !isNaN(parseFloat(responseJson.location.coordinates[1]));
 
-          const initialCoordinates = hasCoordinates
-            ? [
-                parseFloat(
-                  responseJson.location.coordinates[0].replace(",", ".")
-                ),
-                parseFloat(
-                  responseJson.location.coordinates[1].replace(",", ".")
-                ),
-              ]
-            : [-16.33034510894292, -48.94892561842292];
+          // const initialCoordinates = hasCoordinates
+          //   ? [
+          //       parseFloat(
+          //         responseJson.location.coordinates[0].replace(",", ".")
+          //       ),
+          //       parseFloat(
+          //         responseJson.location.coordinates[1].replace(",", ".")
+          //       ),
+          //     ]
+          //   : [-16.33034510894292, -48.94892561842292];
 
-          setMarkerCoordinates(initialCoordinates);
+          // setMarkerCoordinates(initialCoordinates);
 
-          setValue(
-            "location.coordinates.0",
-            responseJson.location.coordinates[0] || 0
-          );
-          setValue(
-            "location.coordinates.1",
-            responseJson.location.coordinates[1] || 0
-          );
+          // setValue(
+          //   "location.coordinates.0",
+          //   responseJson.location.coordinates[0] || 0
+          // );
+          // setValue(
+          //   "location.coordinates.1",
+          //   responseJson.location.coordinates[1] || 0
+          // );
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -664,7 +664,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
             </Grid>
-            <Grid xs={12} padding="20px 16px">
+            {/* <Grid xs={12} padding="20px 16px">
               <MapContainer
                 center={
                   idUnidade
@@ -685,7 +685,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
                   </Marker>
                 )}
               </MapContainer>
-            </Grid>
+            </Grid> */}
             <Grid
               xs={12}
               margin="0 4px"
