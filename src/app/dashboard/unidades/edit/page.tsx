@@ -249,7 +249,6 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
             "location.coordinates.1",
             responseJson.location.coordinates[1] || 0
           );
-          setDataLoaded(true);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
