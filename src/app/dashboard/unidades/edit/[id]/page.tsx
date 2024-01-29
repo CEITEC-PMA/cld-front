@@ -63,6 +63,7 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     import("leaflet").then((L) => {
@@ -71,9 +72,11 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
   }, []);
 
   const [markerCoordinates, setMarkerCoordinates] = useState([
+    // 0, 0,
     -16.331728890115176, -48.94959155640654,
   ]);
   const [centerCoordinates, setCenterCoordinates] = useState([
+    // 0, 0,
     -16.331728890115176, -48.94959155640654,
   ]);
 
@@ -99,7 +102,7 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Falha ao buscar dados");
         }
 
         const responseJson = await response.json();
@@ -125,34 +128,23 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
         setValue("endereco.localidade", responseJson.endereco.localidade || "");
         setValue("endereco.uf", responseJson.endereco.uf || "");
 
-        const hasCoordinates =
-          responseJson.location?.coordinates?.[0] !== undefined &&
-          responseJson.location?.coordinates?.[1] !== undefined &&
-          !isNaN(parseFloat(responseJson.location.coordinates[0])) &&
-          !isNaN(parseFloat(responseJson.location.coordinates[1]));
-
-        const initialCoordinates = hasCoordinates
-          ? [
-              parseFloat(
-                responseJson.location.coordinates[0].replace(",", ".")
-              ),
-              parseFloat(
-                responseJson.location.coordinates[1].replace(",", ".")
-              ),
-            ]
-          : [-16.33034510894292, -48.94892561842292];
-
-        setMarkerCoordinates(initialCoordinates);
-        setCenterCoordinates(initialCoordinates);
-
         setValue(
           "location.coordinates.0",
-          responseJson.location.coordinates[0] || 0
+          responseJson.location.coordinates[0].toString()
         );
         setValue(
           "location.coordinates.1",
-          responseJson.location.coordinates[1] || 0
+          responseJson.location.coordinates[1].toString()
         );
+
+        setMarkerCoordinates([
+          parseFloat(responseJson.location.coordinates[0]),
+          parseFloat(responseJson.location.coordinates[1]),
+        ]);
+        setCenterCoordinates([
+          parseFloat(responseJson.location.coordinates[0]),
+          parseFloat(responseJson.location.coordinates[1]),
+        ]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -198,7 +190,9 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
 
       if (!response.ok) {
         setIsLoading(false);
-        throw new Error(`Failed to ${idUnidade ? "update" : "submit"} data`);
+        setIsError(true);
+        setOpenModal(true);
+        throw new Error(`Failed to update data`);
       }
 
       console.log(`Dados atualizados com sucesso`, formData);
@@ -208,6 +202,8 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
       await onSubmit(formData);
     } catch (error) {
       setIsLoading(false);
+      setIsError(true);
+      setOpenModal(true);
       console.error(`Erro ao atualizar os dados:`, error);
     }
   };
@@ -689,11 +685,13 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
               open={openModal}
             >
               <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                Sucesso!
+                {!isError ? "Erro" : "Sucesso!"}
               </DialogTitle>
               <DialogContent>
                 <Typography gutterBottom>
-                  Dados {idUnidade ? "atualizados" : "enviados"} com sucesso!
+                  {!isError
+                    ? "Não foi possível concluir a solicitação"
+                    : "Dados atualizados com sucesso!"}
                 </Typography>
               </DialogContent>
               <DialogActions>
