@@ -104,7 +104,7 @@ export default function ListaUnidades() {
     const token = localStorage.getItem("token");
     if (user.id) {
       const getDadosUnidades = async () => {
-        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+        const response = await fetch(`${apiUrl}/unidade?limit=200`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

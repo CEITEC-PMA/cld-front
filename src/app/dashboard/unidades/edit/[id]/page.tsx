@@ -95,7 +95,7 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
+        const response = await fetch(`${apiUrl}/unidade/${idUnidade}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -107,7 +107,7 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
 
         const responseJson = await response.json();
         setUnidades([responseJson]);
-        fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+        fetchData(`${apiUrl}/users?limit=200`, setUsers);
 
         setUnidades([responseJson]);
 
@@ -174,7 +174,7 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
   const onSubmitHandler: SubmitHandler<TUnidadeEscolar> = async () => {
     const formData = getValues();
     const token = localStorage.getItem("token");
-    const url = `${apiUrl}/v1/unidade/${idUnidade}`;
+    const url = `${apiUrl}/unidade/${idUnidade}`;
     const method = "PATCH";
 
     try {

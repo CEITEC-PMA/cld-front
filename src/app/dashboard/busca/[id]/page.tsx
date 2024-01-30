@@ -84,38 +84,15 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
     corePtBR
   );
 
-  useEffect(() => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    const getDadosZona = async () => {
-      const response = await fetch(`${apiUrl}/api/v1/zona/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const responseJson = await response.json();
-      setZona(responseJson.zona);
-      setIsLoading(false);
-    };
-    getDadosZona();
-  }, [id]);
-
-  useEffect(() => {
-    fetchTurmas();
-  }, []);
-
   const fetchTurmas = async () => {
     const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${apiUrl}/api/v1/turma/gerenciamento/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/turma/gerenciamento/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();

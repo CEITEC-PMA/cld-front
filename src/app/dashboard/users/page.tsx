@@ -239,7 +239,7 @@ export default function App() {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
+        const response = await fetch(`${apiUrl}/users?limit=200`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -284,7 +284,7 @@ export default function App() {
   //   console.log("entrou no handleChangeAtivo");
 
   //   try {
-  //     const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+  //     const response = await fetch(`${apiUrl}/users/${userId}`, {
   //       method: "PATCH",
   //       body: JSON.stringify({ ativo: value === "ATIVO" ? true : false }),
   //       headers: {
@@ -310,7 +310,7 @@ export default function App() {
   const handleChangeRole = async (value: string, userId: string) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+      const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "PATCH",
         body: JSON.stringify({ role: value.toLowerCase() }),
         headers: {
@@ -348,7 +348,7 @@ export default function App() {
   const handleReset = async (rowData: TUser) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/v1/users/${rowData?.id}`, {
+      const response = await fetch(`${apiUrl}/users/${rowData?.id}`, {
         method: "PATCH",
         body: JSON.stringify({ acesso: 0 }),
         headers: {
@@ -384,7 +384,7 @@ export default function App() {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+      const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "DELETE",
         body: JSON.stringify({ deletado: newValue === "NÃO" ? false : true }),
         headers: {

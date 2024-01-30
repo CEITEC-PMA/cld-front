@@ -110,7 +110,7 @@ export default function TurmasTotais() {
     const token = localStorage.getItem("token");
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/v1/turma?limit=10000`, {
+      const response = await fetch(`${apiUrl}/turma?limit=10000`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

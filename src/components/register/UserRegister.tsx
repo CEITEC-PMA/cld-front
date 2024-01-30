@@ -64,7 +64,7 @@ export default function UserRegister() {
       schema.parse(data);
       console.log(schema.parse(data));
 
-      const response = await fetch(`${apiUrl}/v1/auth/register`, {
+      const response = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

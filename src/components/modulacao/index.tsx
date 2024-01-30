@@ -146,7 +146,7 @@ export default function UsuarioModulacao({
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(`${apiUrl}/v1/users/${userId}`, {
+        const response = await fetch(`${apiUrl}/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -186,7 +186,7 @@ export default function UsuarioModulacao({
       setIsLoading(true);
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+        const response = await fetch(`${apiUrl}/unidade?limit=200`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -211,7 +211,7 @@ export default function UsuarioModulacao({
   const handleUnidadeAdd = async (unidade: TUnidadeEscolar) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
+      const response = await fetch(`${apiUrl}/users/modular/${user.id}`, {
         method: "POST",
         body: JSON.stringify({ unidadeId: unidade.id }),
         headers: {
@@ -237,7 +237,7 @@ export default function UsuarioModulacao({
   const handleRemoveUnidadeId = async (unidade: TUnidades) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/v1/users/modular/${user.id}`, {
+      const response = await fetch(`${apiUrl}/users/modular/${user.id}`, {
         method: "DELETE",
         body: JSON.stringify({ unidadeId: unidade.id }),
         headers: {

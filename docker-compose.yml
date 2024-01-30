@@ -5,20 +5,18 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    container_name: frontend
+    container_name: controle-livros-frontend
     restart: always
     networks:
       - host
     environment:
-      - NEXTAUTH_URL="http://localhost:3030"
+      - NEXTAUTH_URL="https://api-controle-livros.anapolis.go.gov.br/"
       - NEXTAUTH_SECRET="cyytdoNtqxVc151S+vLNHSOZ6IgT3c2wp6HwLnVtHO0="
-      - GITHUB_ID="ffc6d9c7da6226f956cc"
-      - GITHUB_SECRET="4a39edf619e81dae7209ae402111b7d72cfb8e51"
 
   nginx:
     build: ./nginx
     ports:
-      - 3030:80
+      - 3055:80
     restart: always
     depends_on:
       - frontend

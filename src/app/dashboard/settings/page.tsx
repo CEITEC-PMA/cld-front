@@ -43,7 +43,7 @@ export default function Settings() {
     if (user.id) {
       const getDados = async () => {
         try {
-          const response = await fetch(`${apiUrl}/v1/users?limit=200`, {
+          const response = await fetch(`${apiUrl}/users?limit=200`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -82,7 +82,7 @@ export default function Settings() {
 
   const handleReset = async (inep: string) => {
     try {
-      const response = await fetch(`${apiUrl}/v1/users/${selectedOption?.id}`, {
+      const response = await fetch(`${apiUrl}/users/${selectedOption?.id}`, {
         method: "PATCH",
         body: JSON.stringify({ acesso: 0 }),
         headers: {

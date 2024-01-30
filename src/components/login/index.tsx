@@ -101,7 +101,7 @@ export default function LoginPage() {
 
   const handleResetPassword = async () => {
     const token = localStorage.getItem("token");
-    await fetch(`${apiUrl}/v1/auth/reset-password`, {
+    await fetch(`${apiUrl}/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +146,7 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    const response = await fetch(`${apiUrl}/v1/auth/login`, {
+    const response = await fetch(`${apiUrl}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

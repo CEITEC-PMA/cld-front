@@ -152,7 +152,7 @@ export default function Turmas() {
   const fetchUnidades = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/v1/users/me`, {
+      const response = await fetch(`${apiUrl}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -175,7 +175,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${apiUrl}/v1/turma?unidadeId=${selectedUnidadeId}`,
+        `${apiUrl}/turma?unidadeId=${selectedUnidadeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -204,14 +204,11 @@ export default function Turmas() {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${apiUrl}/v1/turma?unidadeId=${unidadeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/turma?unidadeId=${unidadeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -265,7 +262,7 @@ export default function Turmas() {
         handleClose();
       } else if (isEditMode) {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/v1/turma/${selectedItemId}`, {
+        const response = await fetch(`${apiUrl}/turma/${selectedItemId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -293,7 +290,7 @@ export default function Turmas() {
         }
       } else {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/v1/turma`, {
+        const response = await fetch(`${apiUrl}/turma`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -349,7 +346,7 @@ export default function Turmas() {
   const handleConfirmDelete = async (id: string) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/v1/turma/${id}`, {
+      const response = await fetch(`${apiUrl}/turma/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

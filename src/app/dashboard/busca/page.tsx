@@ -126,7 +126,7 @@ export default function Turmas() {
   const fetchUnidades = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/v1/unidade?limit=200`, {
+      const response = await fetch(`${apiUrl}/unidade?limit=200`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -149,7 +149,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${apiUrl}/v1/turma?unidadeId=${selectedUnidadeId}`,
+        `${apiUrl}/turma?unidadeId=${selectedUnidadeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -178,14 +178,11 @@ export default function Turmas() {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${apiUrl}/v1/turma?unidadeId=${unidadeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/turma?unidadeId=${unidadeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();

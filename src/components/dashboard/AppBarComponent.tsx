@@ -37,7 +37,7 @@ export default function AppBarComponent({
     } else {
       //fetch
       const getDadosUser = async () => {
-        const response = await fetch(`${apiUrl}/v1/users/me`, {
+        const response = await fetch(`${apiUrl}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

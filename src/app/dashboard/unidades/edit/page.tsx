@@ -113,8 +113,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
     const formData = getValues();
     const token = localStorage.getItem("token");
     const url = idUnidade
-      ? `${apiUrl}/v1/unidade/${idUnidade}`
-      : `${apiUrl}/v1/unidade`;
+      ? `${apiUrl}/unidade/${idUnidade}`
+      : `${apiUrl}/unidade`;
     const method = idUnidade ? "PATCH" : "POST";
 
     try {
@@ -182,7 +182,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
         const token = localStorage.getItem("token");
 
         try {
-          const response = await fetch(`${apiUrl}/v1/unidade/${idUnidade}`, {
+          const response = await fetch(`${apiUrl}/unidade/${idUnidade}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -194,7 +194,7 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
 
           const responseJson = await response.json();
           setUnidades([responseJson]);
-          fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+          fetchData(`${apiUrl}/users?limit=200`, setUsers);
 
           setUnidades([responseJson]);
 
@@ -255,8 +255,8 @@ const UnidadeRegistro: React.FC<Props> = ({ onSubmit }) => {
           setIsLoading(false);
         }
       } else {
-        fetchData(`${apiUrl}/v1/unidade?limit=200`, setUnidades);
-        fetchData(`${apiUrl}/v1/users?limit=200`, setUsers);
+        fetchData(`${apiUrl}/unidade?limit=200`, setUnidades);
+        fetchData(`${apiUrl}/users?limit=200`, setUsers);
         setIsLoading(false);
       }
     };
