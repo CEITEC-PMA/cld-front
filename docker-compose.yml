@@ -10,7 +10,7 @@ services:
     networks:
       - host
     environment:
-      - NEXTAUTH_URL="https://api-controle-livros.anapolis.go.gov.br/"
+      - NEXTAUTH_URL="https://api-controle-livros.anapolis.go.gov.br"
       - NEXTAUTH_SECRET="cyytdoNtqxVc151S+vLNHSOZ6IgT3c2wp6HwLnVtHO0="
 
   nginx:
