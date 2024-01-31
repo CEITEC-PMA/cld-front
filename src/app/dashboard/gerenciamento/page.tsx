@@ -6,34 +6,13 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogProps,
-  DialogTitle,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
-import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel,
-  ptBR,
-} from "@mui/x-data-grid";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
+import { DataGrid, GridColDef, GridSortModel, ptBR } from "@mui/x-data-grid";
+
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
@@ -174,7 +153,7 @@ export default function TurmasTotais() {
         ) : (
           <>
             <Typography variant="h3" marginBottom="8px" textAlign="center">
-              Gerenciamento
+              Relatório Geral
             </Typography>
             <Typography variant="h5" marginBottom="6px" textAlign="center">
               Quantidades Totais
@@ -195,25 +174,31 @@ export default function TurmasTotais() {
                 marginX="auto"
                 sx={{ backgroundColor: "#fff" }}
               >
-                <ThemeProvider theme={theme}>
-                  <DataGrid
-                    getRowId={(row) => row.id}
-                    rows={rows}
-                    columns={columns}
-                    sortModel={sortModel}
-                    onSortModelChange={handleSortModelChange}
-                    initialState={{
-                      pagination: {
-                        paginationModel: { page: 0, pageSize: 10 },
-                      },
-                    }}
-                    pageSizeOptions={[5, 10, 25]}
-                    localeText={
-                      ptBR?.components?.MuiDataGrid?.defaultProps.localeText
-                    }
-                    disableRowSelectionOnClick
-                  />
-                </ThemeProvider>
+                {rows.length > 0 ? (
+                  <ThemeProvider theme={theme}>
+                    <DataGrid
+                      getRowId={(row) => row.id}
+                      rows={rows}
+                      columns={columns}
+                      sortModel={sortModel}
+                      onSortModelChange={handleSortModelChange}
+                      initialState={{
+                        pagination: {
+                          paginationModel: { page: 0, pageSize: 10 },
+                        },
+                      }}
+                      pageSizeOptions={[5, 10, 25]}
+                      localeText={
+                        ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                      }
+                      disableRowSelectionOnClick
+                    />
+                  </ThemeProvider>
+                ) : (
+                  <Typography variant="h6" textAlign="center">
+                    Não há turmas cadastradas
+                  </Typography>
+                )}
               </Box>
             </Box>{" "}
           </>

@@ -106,24 +106,24 @@ export default function DrawerComponent({
 
         {user.role === "admin" && (
           <ListItems
-            label="Números totais"
-            icon={<InsertChartIcon />}
-            to="/dashboard/gerenciamento"
-            isActive={
-              pathname === "/dashboard/gerenciamento" ||
-              pathname.startsWith("/dashboard/gerenciamento")
-            }
-          />
-        )}
-
-        {user.role === "admin" && (
-          <ListItems
             label="Detalhar unidade"
             icon={<SearchIcon />}
             to="/dashboard/busca"
             isActive={
               pathname === "/dashboard/busca" ||
               pathname.startsWith("/dashboard/busca")
+            }
+          />
+        )}
+
+        {user.role === "admin" && (
+          <ListItems
+            label="Relatório Geral"
+            icon={<InsertChartIcon />}
+            to="/dashboard/gerenciamento"
+            isActive={
+              pathname === "/dashboard/gerenciamento" ||
+              pathname.startsWith("/dashboard/gerenciamento")
             }
           />
         )}
