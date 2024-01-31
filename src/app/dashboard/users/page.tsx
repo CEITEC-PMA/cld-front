@@ -96,7 +96,7 @@ export default function App() {
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
-          const options = ["ADMIN", "USER"];
+          const options = ["admin", "user", "adminUnidade"];
 
           return (
             <Select
@@ -254,7 +254,7 @@ export default function App() {
         const updatedData = responseJson.results.map((user: any) => ({
           ...user,
           ativo: user.ativo ? "ATIVO" : "INATIVO",
-          role: user.role.toUpperCase(),
+          role: user.role,
           deletado: user.deletado ? "NÃO" : "SIM",
         }));
 
