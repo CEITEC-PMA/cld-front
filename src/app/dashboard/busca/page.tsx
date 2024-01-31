@@ -266,23 +266,29 @@ export default function Turmas() {
               sx={{ backgroundColor: "#fff" }}
             >
               <ThemeProvider theme={theme}>
-                <DataGrid
-                  getRowId={(row) => row.id}
-                  rows={rows || []}
-                  columns={columns}
-                  sortModel={sortModel}
-                  onSortModelChange={handleSortModelChange}
-                  initialState={{
-                    pagination: {
-                      paginationModel: { page: 0, pageSize: 10 },
-                    },
-                  }}
-                  pageSizeOptions={[5, 10, 25]}
-                  localeText={
-                    ptBR?.components?.MuiDataGrid?.defaultProps.localeText
-                  }
-                  disableRowSelectionOnClick
-                />
+                {rows.length > 0 ? (
+                  <DataGrid
+                    getRowId={(row) => row.id}
+                    rows={rows || []}
+                    columns={columns}
+                    sortModel={sortModel}
+                    onSortModelChange={handleSortModelChange}
+                    initialState={{
+                      pagination: {
+                        paginationModel: { page: 0, pageSize: 10 },
+                      },
+                    }}
+                    pageSizeOptions={[5, 10, 25]}
+                    localeText={
+                      ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                    }
+                    disableRowSelectionOnClick
+                  />
+                ) : (
+                  <Typography variant="h6" textAlign="center">
+                    Não há turmas cadastradas na Unidade de Ensino
+                  </Typography>
+                )}
               </ThemeProvider>
             </Box>
           )}

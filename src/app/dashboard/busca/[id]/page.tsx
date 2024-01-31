@@ -137,23 +137,27 @@ export default function TurmaDetalhe({ params }: { params: { id: string } }) {
                 marginX="auto"
               >
                 <ThemeProvider theme={theme}>
-                  <DataGrid
-                    getRowId={(row) => row.id}
-                    rows={rows}
-                    columns={columns}
-                    sortModel={sortModel}
-                    onSortModelChange={handleSortModelChange}
-                    initialState={{
-                      pagination: {
-                        paginationModel: { page: 0, pageSize: 10 },
-                      },
-                    }}
-                    pageSizeOptions={[5, 10, 25]}
-                    localeText={
-                      ptBR?.components?.MuiDataGrid?.defaultProps.localeText
-                    }
-                    disableRowSelectionOnClick
-                  />
+                  {rows.length > 0 ? (
+                    <DataGrid
+                      getRowId={(row) => row.id}
+                      rows={rows}
+                      columns={columns}
+                      sortModel={sortModel}
+                      onSortModelChange={handleSortModelChange}
+                      initialState={{
+                        pagination: {
+                          paginationModel: { page: 0, pageSize: 10 },
+                        },
+                      }}
+                      pageSizeOptions={[5, 10, 25]}
+                      localeText={
+                        ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                      }
+                      disableRowSelectionOnClick
+                    />
+                  ) : (
+                    <Typography>Não há turmas cadastradas</Typography>
+                  )}
                 </ThemeProvider>
               </Box>
             </Box>{" "}
