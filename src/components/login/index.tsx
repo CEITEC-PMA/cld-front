@@ -23,11 +23,9 @@ import {
   Stack,
 } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
-import SimpleBackdrop from "../backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function LoginPage() {
@@ -383,7 +381,6 @@ export default function LoginPage() {
               </Button>
             </DialogActions>
           </BootstrapDialog>
-          <SimpleBackdrop open={isLoading} />
         </Box>
       </Box>
     </Container>

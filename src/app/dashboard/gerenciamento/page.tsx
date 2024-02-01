@@ -19,6 +19,7 @@ import { ptBR as corePtBR } from "@mui/material/locale";
 import { apiUrl } from "@/utils/api";
 import Unauthorized from "@/components/unauthorized";
 import SearchIcon from "@mui/icons-material/Search";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useRouter } from "next/navigation";
 
 type FormData = {
@@ -141,6 +142,10 @@ export default function TurmasTotais() {
     router.push("/dashboard/busca");
   };
 
+  const exportTabela = () => {
+    console.log("clicou");
+  };
+
   if (user.role !== "admin") return <Unauthorized />;
 
   return (
@@ -155,18 +160,26 @@ export default function TurmasTotais() {
             <Typography variant="h3" marginBottom="8px" textAlign="center">
               Relatório Geral
             </Typography>
-            <Typography variant="h5" marginBottom="6px" textAlign="center">
-              Quantidades Totais
-            </Typography>
             <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
-              <Button
-                size="large"
-                startIcon={<SearchIcon />}
-                variant="contained"
-                onClick={handleSearch}
-              >
-                Detalhar unidade
-              </Button>
+              <Box display="flex" justifyContent="space-between">
+                <Button
+                  size="large"
+                  startIcon={<SearchIcon />}
+                  variant="contained"
+                  onClick={handleSearch}
+                >
+                  Detalhar unidade
+                </Button>
+                <Button
+                  startIcon={<PictureAsPdfIcon />}
+                  size="large"
+                  color="success"
+                  variant="contained"
+                  onClick={exportTabela}
+                >
+                  Exportar tabela
+                </Button>
+              </Box>
               <Box
                 marginTop="16px"
                 width="100%"
@@ -174,6 +187,9 @@ export default function TurmasTotais() {
                 marginX="auto"
                 sx={{ backgroundColor: "#fff" }}
               >
+                <Typography variant="h5" marginBottom="6px" textAlign="center">
+                  Quantidades Totais
+                </Typography>
                 {rows.length > 0 ? (
                   <ThemeProvider theme={theme}>
                     <DataGrid

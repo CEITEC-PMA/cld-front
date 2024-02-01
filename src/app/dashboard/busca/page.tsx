@@ -7,17 +7,7 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogProps,
-  DialogTitle,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   ThemeProvider,
   Typography,
@@ -30,15 +20,12 @@ import {
   GridSortModel,
   ptBR,
 } from "@mui/x-data-grid";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
 import { apiUrl } from "@/utils/api";
+import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 
 type FormData = {
   selectedTurma: string;
@@ -80,9 +67,12 @@ export default function Turmas() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [unidades, setUnidades] = useState<UnidadeTurmas[]>([] || undefined);
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState<
+    TUnidadeEscolar | undefined
+  >();
   const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
   const [sortModel, setSortModel] = useState<GridSortModel>([
-    { field: "nomeTurma", sort: "asc" },
+    { field: "nameTurma", sort: "asc" },
   ]);
 
   const columns: GridColDef[] = [
@@ -143,33 +133,28 @@ export default function Turmas() {
     }
   };
 
-  const fetchTurmas = async () => {
+  const getDadosUnidade = async (unidadeId: string) => {
     const token = localStorage.getItem("token");
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${apiUrl}/turma?unidadeId=${selectedUnidadeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/unidade/${unidadeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        setRows(data.results);
+        setUnidadeSelecionada(data);
         setIsLoading(false);
       } else {
         setIsLoading(false);
         console.error("Erro ao obter dados do backend.");
-        setRows([]);
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Erro durante a busca de turmas:", error);
-      setRows([]);
     }
   };
 
@@ -203,11 +188,18 @@ export default function Turmas() {
   const handleUnidadeChange = (unidadeId: string) => {
     setSelectedUnidadeId(unidadeId);
     fetchTurmasId(unidadeId);
+    getDadosUnidade(unidadeId);
   };
 
   const handleSortModelChange = (model: GridSortModel) => {
     setSortModel(model);
   };
+
+  const exportTabela = () => {
+    console.log("clicou");
+  };
+
+  console.log(unidadeSelecionada);
 
   return (
     <Box margin="24px">
@@ -265,6 +257,22 @@ export default function Turmas() {
               marginX="auto"
               sx={{ backgroundColor: "#fff" }}
             >
+              <Box>
+                <Button
+                  startIcon={<PictureAsPdfIcon />}
+                  size="large"
+                  color="success"
+                  variant="contained"
+                  onClick={exportTabela}
+                >
+                  Exportar tabela
+                </Button>
+
+                <Typography margin="8px" variant="h5" textAlign="center">
+                  {unidadeSelecionada?.nome} - Quantitativo de alunos e
+                  professores por turma
+                </Typography>
+              </Box>
               <ThemeProvider theme={theme}>
                 {rows.length > 0 ? (
                   <DataGrid

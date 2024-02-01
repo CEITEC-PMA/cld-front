@@ -38,6 +38,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
 import { apiUrl } from "@/utils/api";
+import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 
 type FormData = {
   selectedTurma: string;
@@ -81,7 +82,7 @@ export default function Turmas() {
   const [unidades, setUnidades] = useState<UnidadeTurmas[]>([] || undefined);
   const [selectedUnidadeId, setSelectedUnidadeId] = useState("");
   const [sortModel, setSortModel] = useState<GridSortModel>([
-    { field: "nomeTurma", sort: "asc" },
+    { field: "nameTurma", sort: "asc" },
   ]);
 
   const columns: GridColDef[] = [
@@ -175,7 +176,7 @@ export default function Turmas() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${apiUrl}/turma?unidadeId=${selectedUnidadeId}`,
+        `${apiUrl}/turma?unidadeId=${selectedUnidadeId}&&limit=15`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -204,11 +205,14 @@ export default function Turmas() {
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/turma?unidadeId=${unidadeId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${apiUrl}/turma?unidadeId=${unidadeId}&&limit=15`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -418,6 +422,9 @@ export default function Turmas() {
               >
                 Adicionar turma
               </Button>
+              <Typography marginTop="8px" variant="h5" textAlign="center">
+                Quantitativo de alunos e professores por turma
+              </Typography>
               <Box
                 marginTop="16px"
                 width="100%"
