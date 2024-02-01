@@ -162,23 +162,27 @@ export default function TurmasTotais() {
             </Typography>
             <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
               <Box display="flex" justifyContent="space-between">
-                <Button
-                  size="large"
-                  startIcon={<SearchIcon />}
-                  variant="contained"
-                  onClick={handleSearch}
-                >
-                  Detalhar unidade
-                </Button>
-                <Button
-                  startIcon={<PictureAsPdfIcon />}
-                  size="large"
-                  color="success"
-                  variant="contained"
-                  onClick={exportTabela}
-                >
-                  Exportar tabela
-                </Button>
+                {rows.length > 0 && (
+                  <>
+                    <Button
+                      size="large"
+                      startIcon={<SearchIcon />}
+                      variant="contained"
+                      onClick={handleSearch}
+                    >
+                      Detalhar unidade
+                    </Button>
+                    <Button
+                      startIcon={<PictureAsPdfIcon />}
+                      size="large"
+                      color="success"
+                      variant="contained"
+                      onClick={exportTabela}
+                    >
+                      Exportar tabela
+                    </Button>
+                  </>
+                )}
               </Box>
               <Box
                 marginTop="16px"
@@ -187,29 +191,35 @@ export default function TurmasTotais() {
                 marginX="auto"
                 sx={{ backgroundColor: "#fff" }}
               >
-                <Typography variant="h5" marginBottom="6px" textAlign="center">
-                  Quantidades Totais
-                </Typography>
                 {rows.length > 0 ? (
-                  <ThemeProvider theme={theme}>
-                    <DataGrid
-                      getRowId={(row) => row.id}
-                      rows={rows}
-                      columns={columns}
-                      sortModel={sortModel}
-                      onSortModelChange={handleSortModelChange}
-                      initialState={{
-                        pagination: {
-                          paginationModel: { page: 0, pageSize: 10 },
-                        },
-                      }}
-                      pageSizeOptions={[5, 10, 25]}
-                      localeText={
-                        ptBR?.components?.MuiDataGrid?.defaultProps.localeText
-                      }
-                      disableRowSelectionOnClick
-                    />
-                  </ThemeProvider>
+                  <>
+                    <Typography
+                      variant="h5"
+                      marginBottom="6px"
+                      textAlign="center"
+                    >
+                      Quantidades Totais
+                    </Typography>
+                    <ThemeProvider theme={theme}>
+                      <DataGrid
+                        getRowId={(row) => row.id}
+                        rows={rows}
+                        columns={columns}
+                        sortModel={sortModel}
+                        onSortModelChange={handleSortModelChange}
+                        initialState={{
+                          pagination: {
+                            paginationModel: { page: 0, pageSize: 10 },
+                          },
+                        }}
+                        pageSizeOptions={[5, 10, 25]}
+                        localeText={
+                          ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                        }
+                        disableRowSelectionOnClick
+                      />
+                    </ThemeProvider>
+                  </>
                 ) : (
                   <Typography variant="h6" textAlign="center">
                     Não há turmas cadastradas

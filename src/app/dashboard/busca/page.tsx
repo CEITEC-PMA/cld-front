@@ -199,8 +199,6 @@ export default function Turmas() {
     console.log("clicou");
   };
 
-  console.log(unidadeSelecionada);
-
   return (
     <Box margin="24px">
       <Container>
@@ -269,12 +267,14 @@ export default function Turmas() {
                 </Button>
 
                 <Typography margin="8px" variant="h5" textAlign="center">
-                  {unidadeSelecionada?.nome} - Quantitativo de alunos e
-                  professores por turma
+                  {unidadeSelecionada?.nome} -{" "}
+                  {rows.length > 0
+                    ? "Quantitativo de alunos e professores por turma"
+                    : "Não há turmas cadastradas na Unidade de Ensino"}
                 </Typography>
               </Box>
               <ThemeProvider theme={theme}>
-                {rows.length > 0 ? (
+                {rows.length > 0 && (
                   <DataGrid
                     getRowId={(row) => row.id}
                     rows={rows || []}
@@ -292,10 +292,6 @@ export default function Turmas() {
                     }
                     disableRowSelectionOnClick
                   />
-                ) : (
-                  <Typography variant="h6" textAlign="center">
-                    Não há turmas cadastradas na Unidade de Ensino
-                  </Typography>
                 )}
               </ThemeProvider>
             </Box>

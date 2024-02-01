@@ -422,38 +422,40 @@ export default function Turmas() {
               >
                 Adicionar turma
               </Button>
-              <Typography marginTop="8px" variant="h5" textAlign="center">
-                Quantitativo de alunos e professores por turma
-              </Typography>
-              <Box
-                marginTop="16px"
-                width="100%"
-                maxWidth="800px"
-                marginX="auto"
-                sx={{ backgroundColor: "#fff" }}
-              >
-                {rows.length > 0 && (
-                  <ThemeProvider theme={theme}>
-                    <DataGrid
-                      getRowId={(row) => row.id}
-                      rows={rows || []}
-                      columns={columns}
-                      sortModel={sortModel}
-                      onSortModelChange={handleSortModelChange}
-                      initialState={{
-                        pagination: {
-                          paginationModel: { page: 0, pageSize: 10 },
-                        },
-                      }}
-                      pageSizeOptions={[5, 10, 25]}
-                      localeText={
-                        ptBR?.components?.MuiDataGrid?.defaultProps.localeText
-                      }
-                      disableRowSelectionOnClick
-                    />
-                  </ThemeProvider>
-                )}
-              </Box>
+              {rows.length > 0 && (
+                <>
+                  <Typography marginTop="8px" variant="h5" textAlign="center">
+                    Quantitativo de alunos e professores por turma
+                  </Typography>
+                  <Box
+                    marginTop="16px"
+                    width="100%"
+                    maxWidth="800px"
+                    marginX="auto"
+                    sx={{ backgroundColor: "#fff" }}
+                  >
+                    <ThemeProvider theme={theme}>
+                      <DataGrid
+                        getRowId={(row) => row.id}
+                        rows={rows || []}
+                        columns={columns}
+                        sortModel={sortModel}
+                        onSortModelChange={handleSortModelChange}
+                        initialState={{
+                          pagination: {
+                            paginationModel: { page: 0, pageSize: 10 },
+                          },
+                        }}
+                        pageSizeOptions={[5, 10, 25]}
+                        localeText={
+                          ptBR?.components?.MuiDataGrid?.defaultProps.localeText
+                        }
+                        disableRowSelectionOnClick
+                      />
+                    </ThemeProvider>
+                  </Box>
+                </>
+              )}
             </>
           )}
         </Box>{" "}

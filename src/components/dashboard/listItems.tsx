@@ -26,6 +26,8 @@ export default function ListItems({
         style={{
           textDecoration: "none",
           backgroundColor: isActive ? "#ccc" : "",
+          borderRight: isActive ? "3px solid #0F4C81" : "",
+          transition: "border-right 0.3s, background-color 0.3s",
         }}
       >
         <ListItemIcon>
