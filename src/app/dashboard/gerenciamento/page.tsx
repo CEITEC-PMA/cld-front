@@ -1,6 +1,4 @@
 "use client";
-import React, { MouseEvent, useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Backdrop,
   Box,
@@ -12,14 +10,17 @@ import {
   createTheme,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridSortModel, ptBR } from "@mui/x-data-grid";
+import React, { useEffect, useState } from "react";
 
-import CircularProgress from "@mui/material/CircularProgress";
-import { useUserContext } from "@/userContext";
-import { ptBR as corePtBR } from "@mui/material/locale";
-import { apiUrl } from "@/utils/api";
 import Unauthorized from "@/components/unauthorized";
-import SearchIcon from "@mui/icons-material/Search";
+import { useUserContext } from "@/userContext";
+import { apiUrl } from "@/utils/api";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import SearchIcon from "@mui/icons-material/Search";
+import CircularProgress from "@mui/material/CircularProgress";
+import { ptBR as corePtBR } from "@mui/material/locale";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { useRouter } from "next/navigation";
 
 type FormData = {
@@ -143,7 +144,41 @@ export default function TurmasTotais() {
   };
 
   const exportTabela = () => {
-    console.log("clicou");
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      "Relatório Geral - Quantitativos Totais\nSEMED 2024",
+      doc.internal.pageSize.width / 2,
+      15,
+      {
+        align: "center",
+      }
+    );
+
+    const sortedRows = [...rows].sort((a, b) =>
+      a.nameTurma.localeCompare(b.nameTurma)
+    );
+
+    const tableWidth = doc.internal.pageSize.width - 40;
+    const startX = (doc.internal.pageSize.width - tableWidth) / 2;
+    const startY = 30;
+
+    const tableSettings = {
+      head: [columns.map((column) => column.headerName)],
+      body: sortedRows.map((row) =>
+        columns.map((column) => row[column.field].toString())
+      ),
+      startY: startY,
+      margin: { left: startX, right: startX },
+      tableWidth: "auto",
+      styles: { cellPadding: 2, fontSize: 12, halign: "center" },
+    };
+
+    doc.autoTable(tableSettings);
+
+    doc.save("relatorio_geral.pdf");
   };
 
   if (user.role !== "admin") return <Unauthorized />;
@@ -158,7 +193,7 @@ export default function TurmasTotais() {
         ) : (
           <>
             <Typography variant="h3" marginBottom="8px" textAlign="center">
-              Relatório Geral
+              Relatório Geral - SEMED 2024
             </Typography>
             <Box marginTop="8px" width="100%" maxWidth="800px" marginX="auto">
               <Box display="flex" justifyContent="space-between">
@@ -212,7 +247,7 @@ export default function TurmasTotais() {
                             paginationModel: { page: 0, pageSize: 10 },
                           },
                         }}
-                        pageSizeOptions={[5, 10, 25]}
+                        pageSizeOptions={[5, 10]}
                         localeText={
                           ptBR?.components?.MuiDataGrid?.defaultProps.localeText
                         }

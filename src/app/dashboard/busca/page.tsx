@@ -256,15 +256,17 @@ export default function Turmas() {
               sx={{ backgroundColor: "#fff" }}
             >
               <Box>
-                <Button
-                  startIcon={<PictureAsPdfIcon />}
-                  size="large"
-                  color="success"
-                  variant="contained"
-                  onClick={exportTabela}
-                >
-                  Exportar tabela
-                </Button>
+                {rows.length > 0 && (
+                  <Button
+                    startIcon={<PictureAsPdfIcon />}
+                    size="large"
+                    color="success"
+                    variant="contained"
+                    onClick={exportTabela}
+                  >
+                    Exportar tabela
+                  </Button>
+                )}
 
                 <Typography margin="8px" variant="h5" textAlign="center">
                   {unidadeSelecionada?.nome} -{" "}
