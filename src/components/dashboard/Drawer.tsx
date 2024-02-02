@@ -87,7 +87,8 @@ export default function DrawerComponent({
           to="/dashboard/unidades"
           isActive={
             pathname === "/dashboard/unidades" ||
-            pathname.startsWith("/dashboard/unidades/edit")
+            pathname.startsWith("/dashboard/unidades/edit") ||
+            pathname.startsWith("/dashboard/unidades/view")
           }
         />
 
