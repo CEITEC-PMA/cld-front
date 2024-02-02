@@ -42,6 +42,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
+import SimpleBackdrop from "@/components/backdrop";
 
 interface Props {
   params: { id: string };
@@ -162,9 +163,9 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
     const map = useMapEvents({
       click: (e) => {
         const { lat, lng } = e.latlng;
-        setMarkerCoordinates([lat, lng]);
-        setValue("location.coordinates.0", lat.toString());
-        setValue("location.coordinates.1", lng.toString());
+        // setMarkerCoordinates([lat, lng]);
+        // setValue("location.coordinates.0", lat.toString());
+        // setValue("location.coordinates.1", lng.toString());
       },
     });
 
@@ -271,7 +272,9 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
     router.push("/dashboard/unidades");
   };
 
-  if (!user.role || user.role !== "admin") return <Unauthorized />;
+  if (isLoading) {
+    return <SimpleBackdrop open={isLoading} />;
+  }
 
   return (
     <Box
@@ -292,139 +295,173 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
           }}
         >
           {unidades.length > 0
-            ? `Editar Unidade de Ensino - ${unidades[0].nome}`
+            ? `Dados da Unidade de Ensino - ${unidades[0].nome}`
             : "Carregando"}
         </Typography>
-        <form onSubmit={handleSubmit(onSubmitHandler)}>
-          <Grid container padding={2} spacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <Typography
-                variant={smDown ? "h6" : "h5"}
-                sx={{ backgroundColor: "#" }}
-              >
-                Dados Gerais
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="nome"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    <TextField
-                      label="Nome da Unidade de Ensino"
-                      fullWidth
-                      value={
-                        idUnidade
-                          ? unidades && unidades.length > 0
-                            ? unidades[0]?.nome || ""
-                            : ""
-                          : field.value
-                      }
-                      onChange={(e) => {
-                        if (!idUnidade) {
-                          field.onChange(e.target.value.toUpperCase());
-                        }
-                      }}
-                      InputProps={{
-                        readOnly: !!idUnidade,
-                      }}
-                    />
-                  </>
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name="userId"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    id="userId"
-                    options={users}
-                    getOptionLabel={(user) => user.nome}
-                    value={
-                      users.find((user) =>
-                        Array.isArray(field.value)
-                          ? field.value.includes(user.id)
-                          : user.id === field.value
-                      ) || null
-                    }
-                    onChange={(_, newValue) => {
-                      field.onChange(newValue ? newValue.id : "");
-                    }}
-                    sx={{ width: "65%" }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Administrador da Unidade de Ensino"
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={smDown ? 4 : 3}>
-              <Controller
-                name="inep"
-                control={control}
-                defaultValue={0}
-                render={({ field }) => (
+
+        <Grid container padding={2} spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <Typography
+              variant={smDown ? "h6" : "h5"}
+              sx={{ backgroundColor: "#" }}
+            >
+              Dados Gerais
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="nome"
+              control={control}
+              render={({ field }) => (
+                <>
                   <TextField
+                    label="Nome da Unidade de Ensino"
                     fullWidth
-                    type="number"
-                    label="INEP"
-                    InputProps={{ readOnly: !!idUnidade }}
                     value={
-                      idUnidade && unidades.length > 0
-                        ? unidades[0]?.inep
+                      idUnidade
+                        ? unidades && unidades.length > 0
+                          ? unidades[0]?.nome || ""
+                          : ""
                         : field.value
                     }
                     onChange={(e) => {
                       if (!idUnidade) {
-                        field.onChange(e);
+                        field.onChange(e.target.value.toUpperCase());
                       }
                     }}
-                    sx={{
-                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                        {
-                          display: "none",
-                        },
-                      "& input[type=number]": {
-                        MozAppearance: "textfield",
-                      },
+                    InputProps={{
+                      readOnly: true,
                     }}
                   />
-                )}
-              />
-            </Grid>
-            <Grid item xs={mdDown ? 6 : 2.5}>
+                </>
+              )}
+            />
+          </Grid>
+          <Grid item xs={smDown ? 4 : 3}>
+            <Controller
+              name="inep"
+              control={control}
+              defaultValue={0}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="INEP"
+                  InputProps={{ readOnly: true }}
+                  value={
+                    idUnidade && unidades.length > 0
+                      ? unidades[0]?.inep
+                      : field.value
+                  }
+                  onChange={(e) => {
+                    if (!idUnidade) {
+                      field.onChange(e);
+                    }
+                  }}
+                  sx={{
+                    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                      {
+                        display: "none",
+                      },
+                    "& input[type=number]": {
+                      MozAppearance: "textfield",
+                    },
+                  }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={mdDown ? 6 : 2.5}>
+            <Controller
+              name="fone"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <InputMask
+                  mask="(62) 9999-9999"
+                  value={field.value}
+                  onChange={field.onChange}
+                >
+                  {
+                    //@ts-ignore
+                    () => (
+                      <TextField
+                        fullWidth
+                        type="tel"
+                        label="Telefone"
+                        InputProps={{ readOnly: true }}
+                        sx={{
+                          "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                            {
+                              display: "none",
+                            },
+                          "& input[type=number]": {
+                            MozAppearance: "textfield",
+                          },
+                        }}
+                      />
+                    )
+                  }
+                </InputMask>
+              )}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  type="email"
+                  fullWidth
+                  label="Email"
+                  InputProps={{ readOnly: true }}
+                  value={
+                    idUnidade && unidades.length > 0
+                      ? unidades[0]?.email
+                      : field.value
+                  }
+                  onChange={(e) => {
+                    if (!idUnidade) {
+                      field.onChange(e);
+                    }
+                  }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            justifyItems="center"
+            alignItems="center"
+            alignContent="center"
+          >
+            <Typography variant={smDown ? "h6" : "h5"}>Endereço</Typography>
+          </Grid>
+          <Grid item container xs={12} display="flex" spacing={2}>
+            <Grid item xs={smDown ? 4.2 : mdDown ? 3 : 1.9}>
               <Controller
-                name="fone"
+                name="endereco.cep"
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
                   <InputMask
-                    mask="(62) 9999-9999"
+                    mask="99999999"
+                    maskChar=""
                     value={field.value}
                     onChange={field.onChange}
+                    onBlur={handleBuscaCep}
                   >
                     {
-                      //@ts-ignore
+                      // @ts-ignore
                       () => (
                         <TextField
                           fullWidth
-                          type="tel"
-                          label="Telefone"
-                          sx={{
-                            "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                              {
-                                display: "none",
-                              },
-                            "& input[type=number]": {
-                              MozAppearance: "textfield",
-                            },
-                          }}
+                          InputProps={{ readOnly: true }}
+                          type="text"
+                          label="CEP"
                         />
                       )
                     }
@@ -432,280 +469,205 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={smDown ? 12 : mdDown ? 12 : 5}>
               <Controller
-                name="email"
+                name="endereco.logradouro"
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    type="email"
                     fullWidth
-                    label="Email"
-                    InputProps={{ readOnly: !!idUnidade }}
-                    value={
-                      idUnidade && unidades.length > 0
-                        ? unidades[0]?.email
-                        : field.value
-                    }
-                    onChange={(e) => {
-                      if (!idUnidade) {
-                        field.onChange(e);
-                      }
-                    }}
+                    type="string"
+                    InputProps={{ readOnly: true }}
+                    label="Logradouro"
+                    {...field}
+                    value={field.value?.toUpperCase()}
                   />
                 )}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              justifyItems="center"
-              alignItems="center"
-              alignContent="center"
-            >
-              <Typography variant={smDown ? "h6" : "h5"}>Endereço</Typography>
-            </Grid>
-            <Grid item container xs={12} display="flex" spacing={2}>
-              <Grid item xs={smDown ? 4.2 : mdDown ? 3 : 1.9}>
-                <Controller
-                  name="endereco.cep"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <InputMask
-                      mask="99999999"
-                      maskChar=""
-                      value={field.value}
-                      onChange={field.onChange}
-                      onBlur={handleBuscaCep}
-                    >
-                      {
-                        // @ts-ignore
-                        () => <TextField fullWidth type="text" label="CEP" />
-                      }
-                    </InputMask>
-                  )}
-                />
-              </Grid>
-              <Grid item xs={smDown ? 12 : mdDown ? 12 : 5}>
-                <Controller
-                  name="endereco.logradouro"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      label="Logradouro"
-                      {...field}
-                      value={field.value?.toUpperCase()}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={smDown ? 12 : mdDown ? 6 : 3}>
-                <Controller
-                  name="endereco.complemento"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      label="Complemento"
-                      {...field}
-                      value={field.value?.toUpperCase()}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={mdDown ? 3 : 1.05}>
-                <Controller
-                  name="endereco.quadra"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="text"
-                      label="Quadra"
-                      {...field}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={mdDown ? 3 : 1.05}>
-                <Controller
-                  name="endereco.lote"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField fullWidth type="text" label="Lote" {...field} />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={mdDown ? 12 : 3}>
-                <Controller
-                  name="endereco.bairro"
-                  control={control}
-                  defaultValue={""}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      label="Bairro"
-                      InputProps={{ readOnly: true }}
-                      {...field}
-                      value={field.value?.toUpperCase()}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={mdDown ? 12 : 4}>
-                <Controller
-                  name="endereco.localidade"
-                  control={control}
-                  defaultValue={""}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      label="Localidade"
-                      InputProps={{ readOnly: true }}
-                      {...field}
-                      value={field.value?.toUpperCase()}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={mdDown ? 3 : 1}>
-                <Controller
-                  name="endereco.uf"
-                  control={control}
-                  defaultValue={""}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      label="UF"
-                      InputProps={{ readOnly: true }}
-                      {...field}
-                      value={field.value?.toUpperCase()}
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              xs={mdDown ? 12 : 6}
-              display="flex"
-              spacing={2}
-            >
-              <Grid item xs={6}>
-                <InputLabel id="userId">Coordenada X</InputLabel>
-                <Controller
-                  name="location.coordinates.0"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputLabel id="userId">Coordenada Y</InputLabel>
-                <Controller
-                  name="location.coordinates.1"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      fullWidth
-                      type="string"
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
-            <Grid xs={12} padding="20px 16px">
-              {unidades.length > 0 ? (
-                <MapContainer
-                  center={centerCoordinates as LatLngTuple}
-                  zoom={!!idUnidade ? 16 : 12}
-                  style={{ height: "400px", width: "100%" }}
-                >
-                  <MapEventWrapper />
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            <Grid item xs={smDown ? 12 : mdDown ? 6 : 3}>
+              <Controller
+                name="endereco.complemento"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    label="Complemento"
+                    InputProps={{ readOnly: true }}
+                    {...field}
+                    value={field.value?.toUpperCase()}
                   />
-                  {leaflet && markerCoordinates[0] && markerCoordinates[1] && (
-                    <Marker position={markerCoordinates as LatLngTuple}>
-                      <Popup>Marcador</Popup>
-                    </Marker>
-                  )}
-                </MapContainer>
-              ) : (
-                <div>Carregando...</div>
-              )}
+                )}
+              />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              margin="0 4px"
-              alignItems="center"
-              justifyItems="center"
-              display="flex"
-              flexDirection="column"
-            >
-              <Button
-                endIcon={<SaveIcon />}
-                size="large"
-                type="submit"
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit(onSubmitHandler)}
-              >
-                SALVAR DADOS
-              </Button>
+            <Grid item xs={mdDown ? 3 : 1.05}>
+              <Controller
+                name="endereco.quadra"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="text"
+                    InputProps={{ readOnly: true }}
+                    label="Quadra"
+                    {...field}
+                  />
+                )}
+              />
             </Grid>
-            <BootstrapDialog
-              onClose={handleCloseModal}
-              aria-labelledby="customized-dialog-title"
-              open={openModal}
-            >
-              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                {!isError ? "Erro" : "Sucesso!"}
-              </DialogTitle>
-              <DialogContent>
-                <Typography gutterBottom>
-                  {!isError
-                    ? "Não foi possível concluir a solicitação"
-                    : "Dados atualizados com sucesso!"}
-                </Typography>
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  autoFocus
-                  onClick={handleCloseModal}
-                  variant="contained"
-                >
-                  OK
-                </Button>
-              </DialogActions>
-            </BootstrapDialog>
+            <Grid item xs={mdDown ? 3 : 1.05}>
+              <Controller
+                name="endereco.lote"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="text"
+                    InputProps={{ readOnly: true }}
+                    label="Lote"
+                    {...field}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={mdDown ? 12 : 3}>
+              <Controller
+                name="endereco.bairro"
+                control={control}
+                defaultValue={""}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    label="Bairro"
+                    InputProps={{ readOnly: true }}
+                    {...field}
+                    value={field.value?.toUpperCase()}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={mdDown ? 12 : 4}>
+              <Controller
+                name="endereco.localidade"
+                control={control}
+                defaultValue={""}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    label="Localidade"
+                    InputProps={{ readOnly: true }}
+                    {...field}
+                    value={field.value?.toUpperCase()}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={mdDown ? 3 : 1}>
+              <Controller
+                name="endereco.uf"
+                control={control}
+                defaultValue={""}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    label="UF"
+                    InputProps={{ readOnly: true }}
+                    {...field}
+                    value={field.value?.toUpperCase()}
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
-        </form>
+          <Grid item container xs={mdDown ? 12 : 6} display="flex" spacing={2}>
+            <Grid item xs={6}>
+              <InputLabel id="userId">Coordenada X</InputLabel>
+              <Controller
+                name="location.coordinates.0"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                    InputProps={{ readOnly: true }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <InputLabel id="userId">Coordenada Y</InputLabel>
+              <Controller
+                name="location.coordinates.1"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    type="string"
+                    value={field.value}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                    InputProps={{ readOnly: true }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Grid xs={12} padding="20px 16px">
+            {unidades.length > 0 ? (
+              <MapContainer
+                center={centerCoordinates as LatLngTuple}
+                zoom={!!idUnidade ? 16 : 12}
+                style={{ height: "400px", width: "100%" }}
+              >
+                <MapEventWrapper />
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {leaflet && markerCoordinates[0] && markerCoordinates[1] && (
+                  <Marker
+                    position={markerCoordinates as LatLngTuple}
+                    draggable={false}
+                  >
+                    <Popup>Marcador</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
+            ) : (
+              <div>Carregando...</div>
+            )}
+          </Grid>
+
+          <BootstrapDialog
+            onClose={handleCloseModal}
+            aria-labelledby="customized-dialog-title"
+            open={openModal}
+          >
+            <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+              {!isError ? "Erro" : "Sucesso!"}
+            </DialogTitle>
+            <DialogContent>
+              <Typography gutterBottom>
+                {!isError
+                  ? "Não foi possível concluir a solicitação"
+                  : "Dados atualizados com sucesso!"}
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={handleCloseModal} variant="contained">
+                OK
+              </Button>
+            </DialogActions>
+          </BootstrapDialog>
+        </Grid>
+
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={isLoading}

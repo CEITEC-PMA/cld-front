@@ -77,7 +77,7 @@ export default function ListaUnidades() {
 
             <IconButton
               color="success"
-              onClick={(event) => handleEditar(event, params.row.id)}
+              onClick={(event) => handleVisualizar(event, params.row.id)}
               title="Visualizar unidade"
             >
               <RemoveRedEyeIcon />
@@ -104,6 +104,14 @@ export default function ListaUnidades() {
   ) => {
     event.stopPropagation();
     router.push(`/dashboard/unidades/edit/${id}`);
+  };
+
+  const handleVisualizar = (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    id: string
+  ) => {
+    event.stopPropagation();
+    router.push(`/dashboard/unidades/view/${id}`);
   };
 
   const handleCreate = () => {
