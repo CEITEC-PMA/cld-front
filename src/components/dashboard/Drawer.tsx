@@ -81,17 +81,15 @@ export default function DrawerComponent({
           
         )} */}
 
-        {user.role === "admin" && (
-          <ListItems
-            label="Listar unidades"
-            icon={<MapsHomeWorkIcon />}
-            to="/dashboard/unidades"
-            isActive={
-              pathname === "/dashboard/unidades" ||
-              pathname.startsWith("/dashboard/unidades/edit")
-            }
-          />
-        )}
+        <ListItems
+          label="Listar unidades"
+          icon={<MapsHomeWorkIcon />}
+          to="/dashboard/unidades"
+          isActive={
+            pathname === "/dashboard/unidades" ||
+            pathname.startsWith("/dashboard/unidades/edit")
+          }
+        />
 
         <ListItems
           label="Turmas da unidade"
@@ -103,7 +101,7 @@ export default function DrawerComponent({
           }
         />
 
-        {user.role === "admin" && (
+        {user.role !== "user" && user.role !== "adminUnidade" && (
           <ListItems
             label="Detalhar unidade"
             icon={<SearchIcon />}
@@ -115,7 +113,7 @@ export default function DrawerComponent({
           />
         )}
 
-        {user.role === "admin" && (
+        {user.role !== "user" && user.role !== "adminUnidade" && (
           <ListItems
             label="Relatório Geral"
             icon={<InsertChartIcon />}

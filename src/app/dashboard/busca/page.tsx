@@ -28,6 +28,8 @@ import { apiUrl } from "@/utils/api";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import Unauthorized from "@/components/unauthorized";
+import SimpleBackdrop from "@/components/backdrop";
 
 type FormData = {
   selectedTurma: string;
@@ -247,6 +249,13 @@ export default function Turmas() {
     doc.save(`relatorio_${unidadeSelecionada?.nome}.pdf`);
   };
 
+  if (user.role === "user" || user.role === "adminUnidade")
+    return <Unauthorized />;
+
+  if (isLoading) {
+    return <SimpleBackdrop open={isLoading} />;
+  }
+
   return (
     <Box margin="24px">
       <Container>
@@ -347,12 +356,6 @@ export default function Turmas() {
             </Box>
           )}
         </Box>{" "}
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={isLoading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
       </Container>
     </Box>
   );

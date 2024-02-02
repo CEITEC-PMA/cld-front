@@ -96,7 +96,7 @@ export default function App() {
       options: {
         textAlign: "center",
         customBodyRender: (value, tableMeta, updateValue) => {
-          const options = ["admin", "user", "adminUnidade"];
+          const options = ["admin", "user", "adminUnidade", "adminAnalista"];
 
           return (
             <Select

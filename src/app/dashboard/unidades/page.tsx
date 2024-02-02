@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import CreateIcon from "@mui/icons-material/Create";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { ptBR as corePtBR } from "@mui/material/locale";
 
 export default function ListaUnidades() {
@@ -64,12 +65,22 @@ export default function ListaUnidades() {
       renderCell: (params: GridRenderCellParams) => {
         return (
           <div>
+            {user.role !== "user" && user.role !== "adminUnidade" && (
+              <IconButton
+                color="primary"
+                onClick={(event) => handleEditar(event, params.row.id)}
+                title="Editar unidade"
+              >
+                <CreateIcon />
+              </IconButton>
+            )}
+
             <IconButton
-              color="primary"
+              color="success"
               onClick={(event) => handleEditar(event, params.row.id)}
-              title="Editar unidade"
+              title="Visualizar unidade"
             >
-              <CreateIcon />
+              <RemoveRedEyeIcon />
             </IconButton>
           </div>
         );
@@ -130,13 +141,15 @@ export default function ListaUnidades() {
 
         <Grid container spacing={2} justifyContent="center" marginTop="4px">
           <Grid item xs={12} md={8} lg={7}>
-            <Button
-              variant="contained"
-              onClick={handleCreate}
-              startIcon={<AddCircleIcon />}
-            >
-              Adicionar unidade
-            </Button>
+            {user.role !== "user" && user.role !== "adminUnidade" && (
+              <Button
+                variant="contained"
+                onClick={handleCreate}
+                startIcon={<AddCircleIcon />}
+              >
+                Adicionar unidade
+              </Button>
+            )}
             <ThemeProvider theme={theme}>
               <DataGrid
                 sx={{ backgroundColor: "#fff", mt: 2 }}
