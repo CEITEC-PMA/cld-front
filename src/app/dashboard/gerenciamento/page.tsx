@@ -76,7 +76,7 @@ export default function TurmasTotais() {
   const theme = createTheme(
     {
       palette: {
-        primary: { main: "#1976d2" },
+        primary: { main: "#0F4C81" },
       },
     },
     ptBR,
@@ -144,7 +144,10 @@ export default function TurmasTotais() {
   };
 
   const exportTabela = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: "portrait",
+      format: "a4",
+    });
 
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
@@ -173,7 +176,16 @@ export default function TurmasTotais() {
       startY: startY,
       margin: { left: startX, right: startX },
       tableWidth: "auto",
-      styles: { cellPadding: 2, fontSize: 12, halign: "center" },
+      styles: {
+        cellPadding: 2,
+        fontSize: 12,
+        halign: "center",
+      },
+      headStyles: {
+        fillColor: [15, 76, 129],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+      },
     };
 
     doc.autoTable(tableSettings);

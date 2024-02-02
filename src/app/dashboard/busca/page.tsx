@@ -26,6 +26,8 @@ import { useUserContext } from "@/userContext";
 import { ptBR as corePtBR } from "@mui/material/locale";
 import { apiUrl } from "@/utils/api";
 import { TUnidadeEscolar } from "@/utils/types/unidade.types";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 type FormData = {
   selectedTurma: string;
@@ -196,7 +198,53 @@ export default function Turmas() {
   };
 
   const exportTabela = () => {
-    console.log("clicou");
+    const doc = new jsPDF({
+      orientation: "portrait",
+      format: "a4",
+    });
+
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      `Relatório ${unidadeSelecionada?.nome}\nQuantitativos`,
+      doc.internal.pageSize.width / 2,
+      15,
+      {
+        align: "center",
+      }
+    );
+
+    const sortedRows = [...rows].sort((a, b) =>
+      a.nameTurma.localeCompare(b.nameTurma)
+    );
+
+    const tableWidth = doc.internal.pageSize.width - 40;
+    const startX = (doc.internal.pageSize.width - tableWidth) / 2;
+    const startY = 30;
+
+    const tableSettings = {
+      head: [columns.map((column) => column.headerName)],
+      body: sortedRows.map((row) =>
+        columns.map((column) => row[column.field].toString())
+      ),
+      startY: startY,
+      margin: { left: startX, right: startX },
+      tableWidth: "auto",
+      styles: {
+        cellPadding: 2,
+        fontSize: 12,
+        halign: "center",
+      },
+      headStyles: {
+        fillColor: [15, 76, 129],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+      },
+    };
+
+    doc.autoTable(tableSettings);
+
+    doc.save(`relatorio_${unidadeSelecionada?.nome}.pdf`);
   };
 
   return (
