@@ -42,6 +42,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
+import SimpleBackdrop from "@/components/backdrop";
 
 interface Props {
   params: { id: string };
@@ -271,7 +272,12 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
     router.push("/dashboard/unidades");
   };
 
-  if (!user.role || user.role !== "admin") return <Unauthorized />;
+  if (user.role === "user" || user.role === "adminUnidade")
+    return <Unauthorized />;
+
+  if (isLoading) {
+    return <SimpleBackdrop open={isLoading} />;
+  }
 
   return (
     <Box
@@ -706,12 +712,6 @@ const UnidadeEdit: React.FC<Props> = ({ onSubmit, params }) => {
             </BootstrapDialog>
           </Grid>
         </form>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={isLoading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
       </Box>
     </Box>
   );
