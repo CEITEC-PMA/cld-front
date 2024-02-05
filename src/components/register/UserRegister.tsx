@@ -139,7 +139,10 @@ export default function UserRegister() {
                     error={!!errors.username}
                     helperText={errors.username?.message}
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/\D/g, "");
+                      field.onChange(numericValue);
+                    }}
                   />
                 )}
               />
