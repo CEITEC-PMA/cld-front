@@ -503,10 +503,10 @@ export default function Turmas() {
                         <MenuItem value="3º ANO">3º ANO</MenuItem>
                         <MenuItem value="4º ANO">4º ANO</MenuItem>
                         <MenuItem value="5º ANO">5º ANO</MenuItem>
-                        <MenuItem value="6º ANO">6º ANO</MenuItem>
+                        {/* <MenuItem value="6º ANO">6º ANO</MenuItem>
                         <MenuItem value="7º ANO">7º ANO</MenuItem>
                         <MenuItem value="8º ANO">8º ANO</MenuItem>
-                        <MenuItem value="9º ANO">9º ANO</MenuItem>
+                        <MenuItem value="9º ANO">9º ANO</MenuItem> */}
                       </Select>
                     )}
                   />
