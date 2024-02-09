@@ -348,8 +348,8 @@ export default function App() {
   const handleReset = async (rowData: TUser) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/users/${rowData?.id}`, {
-        method: "PATCH",
+      const response = await fetch(`${apiUrl}/user/${rowData?.id}`, {
+        method: "PUT",
         body: JSON.stringify({ acesso: 0 }),
         headers: {
           "Content-Type": "application/json",
