@@ -151,10 +151,22 @@ export default function TurmasTotais() {
     });
 
     const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}/${
-      currentDate.getMonth() + 1
-    }/${currentDate.getFullYear()}`;
-    const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    const formattedDate = `${currentDate
+      .getDate()
+      .toString()
+      .padStart(2, "0")}/${(currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${currentDate.getFullYear()}`;
+    const formattedTime = `${currentDate
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${currentDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}:${currentDate
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`;
     const dateTime = `${formattedDate} ${formattedTime}`;
 
     doc.setFontSize(16);
