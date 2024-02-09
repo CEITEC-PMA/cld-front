@@ -242,7 +242,6 @@ export default function TurmasTotais() {
                 width="100%"
                 maxWidth="800px"
                 marginX="auto"
-                sx={{ backgroundColor: "#fff" }}
               >
                 {rows.length > 0 ? (
                   <>
@@ -255,6 +254,7 @@ export default function TurmasTotais() {
                     </Typography>
                     <ThemeProvider theme={theme}>
                       <DataGrid
+                        sx={{ backgroundColor: "#fff" }}
                         getRowId={(row) => row.id}
                         rows={rows}
                         columns={columns}

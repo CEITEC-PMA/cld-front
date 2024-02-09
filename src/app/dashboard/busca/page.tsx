@@ -305,13 +305,7 @@ export default function Turmas() {
           </Box>
 
           {selectedUnidadeId && (
-            <Box
-              marginTop="16px"
-              width="100%"
-              maxWidth="800px"
-              marginX="auto"
-              sx={{ backgroundColor: "#fff" }}
-            >
+            <Box marginTop="16px" width="100%" maxWidth="800px" marginX="auto">
               <Box>
                 {rows.length > 0 && (
                   <Button
@@ -335,6 +329,7 @@ export default function Turmas() {
               <ThemeProvider theme={theme}>
                 {rows.length > 0 && (
                   <DataGrid
+                    sx={{ backgroundColor: "#fff" }}
                     getRowId={(row) => row.id}
                     rows={rows || []}
                     columns={columns}
