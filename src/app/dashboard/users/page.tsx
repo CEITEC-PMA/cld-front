@@ -348,7 +348,7 @@ export default function App() {
   const handleReset = async (rowData: TUser) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${apiUrl}/user/${rowData?.id}`, {
+      const response = await fetch(`${apiUrl}/users/${rowData?.id}`, {
         method: "PUT",
         body: JSON.stringify({ acesso: 0 }),
         headers: {
