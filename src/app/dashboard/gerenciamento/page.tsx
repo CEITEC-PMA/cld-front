@@ -150,10 +150,17 @@ export default function TurmasTotais() {
       format: "a4",
     });
 
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${
+      currentDate.getMonth() + 1
+    }/${currentDate.getFullYear()}`;
+    const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    const dateTime = `${formattedDate} ${formattedTime}`;
+
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text(
-      "Relatório Geral - Quantitativos Totais\nSEMED 2024",
+      `Relatório Geral - Quantitativos Totais\nSEMED 2024\nRelatório obtido em  ${dateTime}`,
       doc.internal.pageSize.width / 2,
       15,
       {

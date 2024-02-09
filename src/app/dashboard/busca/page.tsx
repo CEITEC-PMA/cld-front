@@ -205,10 +205,17 @@ export default function Turmas() {
       format: "a4",
     });
 
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${
+      currentDate.getMonth() + 1
+    }/${currentDate.getFullYear()}`;
+    const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    const dateTime = `${formattedDate} ${formattedTime}`;
+
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text(
-      `Relatório ${unidadeSelecionada?.nome}\nQuantitativos`,
+      `Relatório ${unidadeSelecionada?.nome}\nQuantitativos\nRelatório obtido em ${dateTime}`,
       doc.internal.pageSize.width / 2,
       15,
       {
