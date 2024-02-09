@@ -254,70 +254,72 @@ export default function Turmas() {
   const handleSave: SubmitHandler<FormData> = async (data) => {
     try {
       setIsLoading(true);
-      const { selectedTurma, qtdeAlunos, qtdeProf } = data;
-      const turmaExists = rows.some((row) => row.nameTurma === selectedTurma);
+      setTimeout(async () => {
+        const { selectedTurma, qtdeAlunos, qtdeProf } = data;
+        const turmaExists = rows.some((row) => row.nameTurma === selectedTurma);
 
-      if (turmaExists && !isEditMode) {
-        console.error(
-          "Essa turma já existe, favor verificar e/ou editar os dados."
-        );
-        alert("Essa turma já existe, favor verificar e/ou editar os dados.");
-        setIsLoading(false);
-        handleClose();
-      } else if (isEditMode) {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/turma/${selectedItemId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            unidadeId: selectedUnidadeId,
-            nameTurma: selectedTurma,
-            qtdeAlunos: qtdeAlunos,
-            qtdeProf: qtdeProf,
-          }),
-        });
-
-        if (response.ok) {
-          console.log(data);
-          console.log("Sucesso ao editar:", await response.json());
-          reset();
-          setIsModalOpen(false);
+        if (turmaExists && !isEditMode) {
+          console.error(
+            "Essa turma já existe, favor verificar e/ou editar os dados."
+          );
+          alert("Essa turma já existe, favor verificar e/ou editar os dados.");
           setIsLoading(false);
           handleClose();
-          fetchTurmas();
-        } else {
-          setIsLoading(false);
-          console.error("Erro ao editar a turma.");
-        }
-      } else {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${apiUrl}/turma`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            unidadeId: selectedUnidadeId,
-            nameTurma: selectedTurma,
-            qtdeAlunos: qtdeAlunos,
-            qtdeProf: qtdeProf,
-          }),
-        });
+        } else if (isEditMode) {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${apiUrl}/turma/${selectedItemId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              unidadeId: selectedUnidadeId,
+              nameTurma: selectedTurma,
+              qtdeAlunos: qtdeAlunos,
+              qtdeProf: qtdeProf,
+            }),
+          });
 
-        if (response.ok) {
-          reset();
-          setIsModalOpen(false);
-          setIsLoading(false);
-          fetchTurmas();
+          if (response.ok) {
+            console.log(data);
+            console.log("Sucesso ao editar:", await response.json());
+            reset();
+            setIsModalOpen(false);
+            setIsLoading(false);
+            handleClose();
+            fetchTurmas();
+          } else {
+            setIsLoading(false);
+            console.error("Erro ao editar a turma.");
+          }
         } else {
-          setIsLoading(false);
-          console.error("Erro ao salvar a turma.");
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${apiUrl}/turma`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              unidadeId: selectedUnidadeId,
+              nameTurma: selectedTurma,
+              qtdeAlunos: qtdeAlunos,
+              qtdeProf: qtdeProf,
+            }),
+          });
+
+          if (response.ok) {
+            reset();
+            setIsModalOpen(false);
+            setIsLoading(false);
+            fetchTurmas();
+          } else {
+            setIsLoading(false);
+            console.error("Erro ao salvar a turma.");
+          }
         }
-      }
+      }, 2000); // 2 segundos de atraso
     } catch (error) {
       setIsLoading(false);
       console.error(
@@ -579,6 +581,7 @@ export default function Turmas() {
                   variant="contained"
                   color="success"
                   type="submit"
+                  disabled={isLoading}
                 >
                   {selectedItemId ? "Salvar" : "Criar turma"}
                 </Button>
