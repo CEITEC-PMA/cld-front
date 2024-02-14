@@ -312,7 +312,7 @@ export default function App() {
     try {
       const response = await fetch(`${apiUrl}/users/${userId}`, {
         method: "PATCH",
-        body: JSON.stringify({ role: value.toLowerCase() }),
+        body: JSON.stringify({ role: value }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
