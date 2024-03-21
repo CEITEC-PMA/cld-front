@@ -44,6 +44,8 @@ type Turma = {
   nameTurma: string;
   qtdeAlunos: number | null;
   qtdeProf: number | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type UnidadeTurmas = {
@@ -97,6 +99,13 @@ export default function Turmas() {
     {
       field: "qtdeProf",
       headerName: "QTDE (professores)",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "lastUpdate",
+      headerName: "Última atualização",
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -175,7 +184,11 @@ export default function Turmas() {
 
       if (response.ok) {
         const data = await response.json();
-        setRows(data.results);
+        const formattedRows = data.results.map((turma: Turma) => ({
+          ...turma,
+          lastUpdate: new Date(turma.updatedAt).toLocaleString("pt-BR"),
+        }));
+        setRows(formattedRows);
         setIsLoading(false);
       } else {
         setIsLoading(false);
